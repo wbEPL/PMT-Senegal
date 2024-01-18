@@ -39,8 +39,8 @@ global swdDatain	"${data_library}/EHCVM_2021/Dataout"
  
 *folder from project 
 global scripts 		"$gitrepo"
-global swdTemp		"$project/temp"
-global swdFinal		"$project/final"
+global swdTemp		"$project/data/temp"
+global swdFinal		"$project/data/final"
 global swdResults	"$project/results"
 
 * You need to install the follwoing programs

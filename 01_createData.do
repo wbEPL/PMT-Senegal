@@ -40,7 +40,16 @@ Toilet:
 - Not sure about the difference between Chasse d'eau avec egout ou fosse septique
  and Chasse d'eau avec egout in the original PMT and how to match it with the new info of W.C
 
-	*
+
+
+
+Livestock 
+
+- Problems with the raw data so access to harmonize variables 
+	*Large ruminants:  Combine horses and cows 
+	*Small ruminants:  Combine sheeps and goats
+	* We have poultry
+	* Two additional type of animals not very relevant (Rabbits and porks) 
 */	 		
 *-------------------------------------------------------------------------------	
 
@@ -103,9 +112,7 @@ use "${swdDataraw}/Menage/s11_me_sen_2021.dta", clear
 	label var c_ligthing "Lightning (rec of s11q37)"
 	
 *----## toilet -------
-	tab s11q54
-	tab s11q54, nol
-	*not sure how to recode this to get the same variables, used the code from 07_PMT_2022
+	fre s11q54
 	recode 	s11q54 ///
 		(11 =1  "In nauture (Aucune toilette (dans la nature)") ///
 		(1 2 3 4 = 2  "Solar (solaire)")  ///
@@ -116,10 +123,6 @@ use "${swdDataraw}/Menage/s11_me_sen_2021.dta", clear
 	gen (c_toilet)
 	label var c_toilet "Toilet (rec of s11q54)"
 
-********************************************************
-** Assets  -------------
-********************************************************
-
 **## landline --------
 	tab s11q42
 	tab s11q42, nol
@@ -128,10 +131,114 @@ use "${swdDataraw}/Menage/s11_me_sen_2021.dta", clear
 	tab s11q42, nol
 	label var s11q42 "Landline"
 
-**## keep variables and save data -----
-	keep grappe menage vague s11q18 s11q20 s11q26a s11q26b s11q37 s11q42 toilette
-	save "${swdTemp}/section_11_temp.dta", replace
+*----## storing -------
 
+	keep grappe menage vague c_* s11q18 s11q20 s11q26a s11q26b s11q37 s11q42 
+	save "${swdTemp}/section_11_temp.dta", replace
+	
+********************************************************
+** Assets  -------------
+********************************************************
+
+use "${swdDataraw}/Menage/s12_me_sen_2021.dta", clear
+
+	gen hhid=grappe*100+menage 
+	sort hhid s12q01
+	
+	gen tv=s12q01==20 & s12q02==1
+	gen fer=s12q01==7 & s12q02==1
+	gen frigo=(s12q01==16 | s12q01==17) & (s12q02==1)
+	gen cuisin=s12q01==9 & s12q02==1
+	gen ordin=s12q01==37 & s12q02==1
+	gen decod=s12q01==22 & s12q02==1
+	gen car=s12q01==28 & s12q02==1
+	
+	gen moto =s12q01==29 & s12q02==1
+	gen radio=s12q01==19 & s12q02==1
+	gen fan=s12q01==18 & s12q02==1
+	gen landline=s12q01==34 & s12q02==1
+	gen mobile=s12q01==35 & s12q02==1
+	gen boat=s12q01==40 & s12q02==1
+	gen aircond=s12q01==25 & s12q02==1
+	
+	
+	
+	keep  hhid car tv ordin frigo  fer  cuisin  decod  moto radio fan landline mobile boat aircond  	// fer: electric iron 
+	local vars_assets "car tv ordin frigo  fer  cuisin  decod  moto radio fan landline mobile boat aircond"
+	collapse (sum) `vars_assets', by (hhid)
+	
+	lab var tv 		"Menage a TV"
+	lab var fer 	"Menage a fer electrique"
+	lab var frigo 	"Menage a frigo/congel"
+	lab var cuisin 	"Menage a cuisiniere elec/gaz"
+	lab var ordin 	"Menage a ordinateur"
+	lab var decod 	"Menage a decodeur/antenne"
+	lab var car 	"Menage a voiture"
+	
+	lab var moto 	"Menage a moto"
+	lab var radio 	"Menage a radio"
+	lab var fan 	"Menage a fan"
+	lab var landline "Menage a landline"
+	lab var mobile 	"Menage a mobile"
+	lab var boat 	"Menage a boat"
+	lab var aircond "Menage a aircond"
+	
+	
+save "${swdTemp}/household_assets1.dta", replace
+
+
+use "${swdDataraw}/Menage/s19_me_sen_2021.dta", clear
+
+gen hhid=grappe*100+menage 
+	sort hhid s19q02
+	
+	gen tractor=s19q02==101 & s19q03==1
+	gen wagon=s19q02==114 & s19q03==1
+	
+	collapse (sum) tractor wagon, by (hhid)
+	
+	lab var tractor "Menage a tractor"
+	lab var wagon "Menage a wagon"
+	
+	
+save "${swdTemp}/household_assets2.dta", replace
+
+
+use "${swdDataraw}/Menage/s11_me_sen_2021.dta", clear
+
+gen hhid=grappe*100+menage 
+	sort hhid 
+	
+	gen aircond_b=s11q03__1==1
+	gen hotwater=s11q03__2==1
+	gen fan_b=s11q03__3==1
+	
+	local vars_assets "aircond_b hotwater fan_b"
+	collapse (sum) `vars_assets', by (hhid)
+	
+	lab var aircond_b "Menage a aircond_b (mod 11)"
+	lab var hotwater  "Menage a hotwater (mod 11)"
+	lab var fan_b 	  "Menage a fan_b (mod 11)"
+	
+	
+save "${swdTemp}/household_assets3.dta", replace
+
+
+********************************************************
+** Livestock  -------------
+********************************************************
+
+use "${swdDatain}/ehcvm_menage_SEN_2021.dta", clear
+
+	ren grosrum  c_largerum 
+	ren petitrum c_smallrum 
+	ren volail 	 c_poultry
+	
+	label var c_poultry   "# Poultry"
+	label var c_largerum  "# large ruminants(horses, bovine)"
+	label var c_smallrum  "# small ruminants(goats, sheep)"
+	
+save "${swdTemp}/household_temp2.dta", replace
 
 
 **# Welfare data ---------------------------
@@ -146,21 +253,29 @@ gen logzise = ln(hhsize)
 
 save "${swdTemp}/welfare_temp.dta", replace
 
-**# household data ------------------------
-use "${swdDatain}/ehcvm_menage_SEN_2021.dta", clear
-drop sh_id_demo sh_co_natu sh_co_eco sh_co_vio sh_co_oth
-save "${swdTemp}/household_temp.dta", replace
+********************************************************
+** Demographics  -------------
+********************************************************
 
-
-**# individual data -----------------------
+**## literacy in french ------
+use "${swdDataraw}/Menage/s02_me_sen_2021.dta", clear
+	
+	gen hhid=grappe*100+menage 
+	gen french_lit=s02q01__1==1 & s02q02__1==1
+	keep if s01q00a == 1
+	keep hhid french_lit
+	
+save "${swdTemp}/french_temp.dta", replace
+	
+**## education ------
 use "${swdDatain}/ehcvm_individu_SEN_2021.dta", clear
 
-preserve
-keep if lien == 1 /*Keep only head of hh*/
-keep hhid alfa alfa2
-save "${swdTemp}/educ_temp.dta", replace
+	keep if lien == 1 /*Keep only head of hh*/
+	keep hhid alfa alfa2
+	save "${swdTemp}/educ_temp.dta", replace
 
 **## dependency ratios ------
+use "${swdDatain}/ehcvm_individu_SEN_2021.dta", clear
 
 * Generate a variable for oldage group
 gen oldgroup = .
@@ -196,13 +311,21 @@ collapse (mean) oadr yadr, by(hhid)
 save "${swdTemp}/individual_temp.dta", replace
 
 
-
 **# Merge data -----
-merge 1:1 hhid using "${swdTemp}/household_temp.dta"
-drop _merge
-merge 1:1 hhid using "${swdTemp}/welfare_temp.dta"
-drop _merge
-merge 1:1 hhid using "${swdTemp}/educ_temp.dta"
+merge 1:1 hhid using "${swdTemp}/household_assets1.dta", nogen 
+
+merge 1:1 hhid using "${swdTemp}/household_assets2.dta", nogen 
+
+merge 1:1 hhid using "${swdTemp}/household_assets3.dta", nogen 
+
+merge 1:1 hhid using "${swdTemp}/household_temp2.dta", nogen 
+
+merge 1:1 hhid using "${swdTemp}/welfare_temp.dta", nogen 
+
+merge 1:1 hhid using "${swdTemp}/educ_temp.dta", nogen 
+
+merge 1:1 hhid using "${swdTemp}/french_temp.dta", nogen // 839 households withouth info, needs to fix some issues with id variable 
 
 
 save "${swdFinal}/data4model_2021.dta", replace
+

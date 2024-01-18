@@ -24,6 +24,7 @@ use "${swdFinal}/data4model_2021.dta", clear
 
 keep if milieu == 2
 
+
 local xvars "i.region  volail lapin porc petitrum grosrum frigo fer ordin tv car toilet eva_toi eva_eau eauboi_ss  eauboi_sp sol toit mur yadr oadr logzise" 
 *TODO: bovins is not in data, there is big and small rumiants
 *TODO: several assets not included, shouuld we include agicultural surface?
