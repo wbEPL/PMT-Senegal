@@ -228,17 +228,59 @@ save "${swdTemp}/household_assets3.dta", replace
 ** Livestock  -------------
 ********************************************************
 
-use "${swdDatain}/ehcvm_menage_SEN_2021.dta", clear
+* use "${swdDatain}/ehcvm_menage_SEN_2021.dta", clear
 
-	ren grosrum  c_largerum 
-	ren petitrum c_smallrum 
-	ren volail 	 c_poultry
+	* ren grosrum  c_largerum 
+	* ren petitrum c_smallrum 
+	* ren volail 	 c_poultry
 	
-	label var c_poultry   "# Poultry"
-	label var c_largerum  "# large ruminants(horses, bovine)"
-	label var c_smallrum  "# small ruminants(goats, sheep)"
+	* label var c_poultry   "# Poultry"
+	* label var c_largerum  "# large ruminants(horses, bovine)"
+	* label var c_smallrum  "# small ruminants(goats, sheep)"
+
+
+use "${swdDataraw}/Menage/s17_me_sen_2021.dta", clear
+
+	sort grappe menage s17q01 
+	gen hhid=grappe*100+menage 
 	
-save "${swdTemp}/household_temp2.dta", replace
+	sum s17q05
+	recode s17q05 (.=0)
+	gen horses=s17q05 if s17q01==5 //  Equins (Chevaux)
+	gen goats=s17q05 if s17q01==3 //   Caprins (Chèvres) 
+	gen sheep=s17q05 if s17q01==2 //   Ovins (Moutons)
+	gen poultry=s17q05 if s17q01==9 | s17q01==10 | s17q01==11 // Poules / poulets;  Pintades; Autres volailles 
+	gen bovines=s17q05 if s17q01==1 //  Bovins 
+	gen pigs=s17q05 if s17q01==7 //  Porcins 
+	gen donkey=s17q05 if s17q01==6 //  Porcins 
+	
+	gen grosrum=s17q05 if s17q01==1 | s17q01==4 | s17q01==5 | s17q01==6 
+	gen petitrum=s17q05 if s17q01==2 | s17q01==3 
+	gen rabbit=s17q05 if s17q01==8 
+	
+	
+	local livestock "horses goats sheep poultry bovines pigs donkey grosrum petitrum rabbit"
+	collapse (sum) `livestock', by (hhid)
+	
+	lab var grosrum "Nbr gros ruminants"
+	lab var petitrum "Nbr petits ruminants"
+	lab var rabbit "Nbr rabbit"
+	lab var donkey "Nbr donkey"
+	lab var pigs "Nbr pigs"
+	lab var bovines "Nbr bovines"
+	lab var poultry "Nbr poultry"
+	lab var sheep "Nbr sheep"
+	lab var goats "Nbr goats"
+	lab var horses "Nbr horses"
+	
+
+
+
+
+	
+save "${swdTemp}/household_livestock.dta", replace
+
+
 
 
 **# Welfare data ---------------------------
@@ -318,7 +360,7 @@ merge 1:1 hhid using "${swdTemp}/household_assets2.dta", nogen
 
 merge 1:1 hhid using "${swdTemp}/household_assets3.dta", nogen 
 
-merge 1:1 hhid using "${swdTemp}/household_temp2.dta", nogen 
+merge 1:1 hhid using "${swdTemp}/household_livestock.dta", nogen 
 
 merge 1:1 hhid using "${swdTemp}/welfare_temp.dta", nogen 
 
