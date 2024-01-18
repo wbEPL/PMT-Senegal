@@ -5,7 +5,7 @@
 *		- ehcvm_welfare_SEN_2021.dta
 *		- ehcvm_menage_SEN_2021.dta
 *		- ehcvm_individu_SEN_2021.dta
-*	The following data is created:                        
+*	The following data is created:
 *		- welfare_temp.dta
 *		- household_temp.dta
 *		- individual_temp.dta
@@ -19,57 +19,101 @@
 *	Last edited: 12 January 2024
 *	Reviewer: TBD
 *	Last Reviewed: TBD
-			
+
+Notes: 
+Dwellings: 
+less variance in soil (from 5 to 4)
+Water: neighbor faucet
+Electricity: lap solaire tag as lamp Rechargeable
+			  Gas lamp and storm lamp ommitted
+			  Candle and wood/lumber needs to be combined here
+Walls:  Soil comes with other (Banco alu, vitres)
+		Straw joined with clod of earth
+		-Aluminium, recycled materials , stones are new categories difficiault to match to missing categories such as wood and stalk 
+Toilet: 
+  Simple latrines ( Latrines dallées simplement) are classified as covered non coverede or improved ventilated. It is not a trivial questions since these three categories exist already in the survey and they represent 17 percent of obs
+		-Latrines VIP (dallées, ventillées)     6.32     
+        6  Latrines ECOSAN (dallées, couvertes)   7.71   
+        7  Latrines SANPLAT (dallées, non couvertes) 4.19
+  No difference between interior and exterior W.C. nor manual vs flush (Which not sure if people can identify)
+  Base category is in nature, the opposite to other variables where the base are good and categories with more observations
+- Not sure about the difference between Chasse d'eau avec egout ou fosse septique
+ and Chasse d'eau avec egout in the original PMT and how to match it with the new info of W.C
+
+	*
 */	 		
 *-------------------------------------------------------------------------------	
 
-**# Section 11 -------------
+	
+use "${swdDataraw}/Menage/s11_me_sen_2021.dta", clear
 
-	use "${swdDataraw}/Menage/s11_me_sen_2021.dta", clear
+**# Dewelling charactersitics 11 -------------
 
-	**## walls ----------------
-
-	tab s11q18
-	tab s11q18, nol
-	label var s11q18 "Wall material"
+*----## floor --------------
+	fre s11q20
+	recode s11q20 (2=1 "Cement (Ciment)") ///
+				   (1=2 "Tiles (Carreux)") ///
+				   (3=3 "Clay soil and sand (Terre battue/Sable)") ///
+				   (4 5 =4  "Other (Bouse d'animaux)"), ///
+	gen (c_floor)
+	label var c_floor "Floor material (rec of s11q20) "
 	*looks good for model
+	
+*----## walls ----------------
+	fre s11q18
+	recode s11q18 ///
+		(1 2 =1 "Cement and bricks (ciment, beton , pierres, briques cuites)") ///
+		(4 = 2 "Clay Soil (Banco amélioré/ semi-dur)") ///
+		(3 5 7 = 3 "Straw, Recycled (Paille, planches, toles)")  ///
+		(6 8 9 = 4 "Other (stones, not protected)"),  ///
+	gen (c_walls)
+	label var c_walls "Wall material (rec of s11q18)"
 
-
-	**## floor --------------
-	tab s11q20
-	tab s11q20, nol
-	label var s11q20 "Floor material"
-	*looks good for model
-
-	**## water ------------
-	tab s11q21
+*----## water ------------
+	tab s11q21 // Is the household connected to a running water network?
 	tab s11q26a
 	tab s11q26a s11q21
 	*the question on running water and on main source of water are not entirely related, will use on source to keep same PMT
-	tab s11q26a s11q26b
-	tab s11q26a, nol
-	*not sure what is the difference between s11q26a and s11q26b, will use s11q26b
-	label var s11q26a "Water source"
-	label var s11q26b "Water source 2"
-
-	**## electricity -------
-	tab s11q37
-	tab s11q37, nol
-	label var s11q37 "Lightining"
-
-	**## landline --------
-	tab s11q42
-	tab s11q42, nol
-	recode s11q42 (2=0)
-	tab s11q42
-	tab s11q42, nol
-	label var s11q42 "Landline"
-
-	**## toilet -------
+	compare s11q26a s11q26b //*not sure what is the difference between s11q26a and s11q26b	
+	
+	recode s11q26a ///
+		(1 2 =1 "court or dwelling faucet (Robinet ... loge, cour, voisin)") ///
+		(3 4 = 2 "Pub Faucet (voisin and public)")  ///
+		(7 8 = 3 "Protected well (Puits couvert)")  ///
+		(6 5 = 4 "Unprotected well (Puits ouvert)") ///
+		(9 10 = 5 "Drilling (Forage)") ///
+		(14 16 17 = 6 "Mineral water (schet, bouteille, vendeur)") ///
+		(11 12 13 = 7 "Fluvial, source developed (Spring)") ///
+		(18= 8 "Other"), ///
+	gen (c_water)
+	label var c_water "Water source (rec of s11q26a)"
+	
+*----## electricity -------
+	fre s11q37
+	recode 	s11q37 ///
+		(1 2  =1  "Network and generator (Electricité réseau)") ///
+		(3 	  = 2 "Solar (solaire)")  ///
+		(4    = 3 "Petrol lamp (Lampe petrol)")  ///
+		(5    = 4 "Rechargeable lamp(pile solaire)") ///
+		(6    = 5 "Wood others (Paraffine, bois, planche)") ///
+		(7    = 6 "Other"), ///
+	gen (c_ligthing)
+	label var c_ligthing "Lightning (rec of s11q37)"
+	
+*----## toilet -------
 	tab s11q54
 	tab s11q54, nol
 	*not sure how to recode this to get the same variables, used the code from 07_PMT_2022
-
+	recode 	s11q54 ///
+		(11 =1  "In nauture (Aucune toilette (dans la nature)") ///
+		(1 2 3 4 = 2  "Solar (solaire)")  ///
+		(6 8 = 3 "Covered latrines (ECOSAN,: dalles, couvertes)")  ///
+		(7 = 4 "Uncovered latrines (SANPLAT,: dalles, non couvertes)") ///
+		(5 = 5 "Improved ventilated latrine (VIP: dalles, ventillees)") ///
+		(9 10 12 = 6 "Other"), ///
+	gen (c_ligthing)
+	label var c_ligthing "Lightning (rec of s11q37)"
+	
 	gen toilette=1 if inlist(s11q54,1,2,3,4)
 		replace toilette=2 if inlist(s11q54,5,6,7,8)
 		replace toilette=3 if inlist(s11q54,9)
@@ -79,6 +123,13 @@
 	
 	label var toilette "Toilet"
 
+**## landline --------
+	tab s11q42
+	tab s11q42, nol
+	recode s11q42 (2=0)
+	tab s11q42
+	tab s11q42, nol
+	label var s11q42 "Landline"
 
 **## keep variables and save data -----
 	keep grappe menage vague s11q18 s11q20 s11q26a s11q26b s11q37 s11q42 toilette
