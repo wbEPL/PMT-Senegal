@@ -47,7 +47,9 @@ Toilet:
 	
 use "${swdDataraw}/Menage/s11_me_sen_2021.dta", clear
 
-**# Dewelling charactersitics 11 -------------
+********************************************************
+** Dewelling charactersitics 11 -------------
+********************************************************
 
 *----## floor --------------
 	fre s11q20
@@ -111,17 +113,12 @@ use "${swdDataraw}/Menage/s11_me_sen_2021.dta", clear
 		(7 = 4 "Uncovered latrines (SANPLAT,: dalles, non couvertes)") ///
 		(5 = 5 "Improved ventilated latrine (VIP: dalles, ventillees)") ///
 		(9 10 12 = 6 "Other"), ///
-	gen (c_ligthing)
-	label var c_ligthing "Lightning (rec of s11q37)"
-	
-	gen toilette=1 if inlist(s11q54,1,2,3,4)
-		replace toilette=2 if inlist(s11q54,5,6,7,8)
-		replace toilette=3 if inlist(s11q54,9)
-		replace toilette=4 if inlist(s11q54,10)
-		replace toilette=5 if inlist(s11q54,11)
-		replace toilette=6 if inlist(s11q54,12)
-	
-	label var toilette "Toilet"
+	gen (c_toilet)
+	label var c_toilet "Toilet (rec of s11q54)"
+
+********************************************************
+** Assets  -------------
+********************************************************
 
 **## landline --------
 	tab s11q42
