@@ -1,7 +1,12 @@
 * ------------------------------------------------------------------
 *    
-*     This file contains the initialization to run the pipeline
-*     processing the KAP-FD K-LSRH Data
+*	Authors: Gabriel N. Camargo-Toledo gcamargotoledo@worldbank.org
+*			 Daniel Valderrama dvalderramagonza@worldbank.org
+*	
+*	Last edited: 12 January 2024
+* 	Version 2.0 created by Daniel VAlderrama 
+*	Reviewer: TBD
+*	Last Reviewed: TBD
 *                         
 *-------------------------------------------------------------------
  
@@ -17,12 +22,11 @@ global suser = c(username)
 
 *Gabriel create globals for folders
 else if (inlist("${suser}","wb545737")) {
-	global swdDatain = "C:/Users/wb545737/WBG/Daniel Valderrama Gonzalez - EHCVM/EHCVM_2021/Dataout" 
+	//@Gabriel please update your paths following the logic I outlined below. There are three main folder that are not necessary together. 
+		//The folder of scripts, which is linked to Github 
+		//The folder of data_library which for data files that are not specific to the project (like a general survey for Senegal) but that will be used in the project. 
+		//The folder of project 
 	
-	global swdDataraw = "C:/Users/wb545737/WBG/Daniel Valderrama Gonzalez - EHCVM/EHCVM_2021/Datain" 
-	global swdResults = "C:/Users/wb545737/WBG/Daniel Valderrama Gonzalez - 03_PMT/results"
-	global swdTemp = "C:/Users/wb545737/WBG/Daniel Valderrama Gonzalez - 03_PMT/data/temp"
-	global swdFinal = "C:/Users/wb545737/WBG/Daniel Valderrama Gonzalez - 03_PMT/data/final"
 }
 
 else if (inlist("${suser}","wb419055")) {

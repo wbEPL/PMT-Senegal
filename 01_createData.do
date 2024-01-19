@@ -17,6 +17,7 @@
 *			grouped for definitive materials yes or no
 *	Author: Gabriel N. Camargo-Toledo gcamargotoledo@worldbank.org
 *	Last edited: 12 January 2024
+* 	Version 2.0 created by Daniel VAlderrama 
 *	Reviewer: TBD
 *	Last Reviewed: TBD
 
@@ -24,7 +25,7 @@ Notes:
 Dwellings: 
 less variance in soil (from 5 to 4)
 Water: neighbor faucet
-Electricity: lap solaire tag as lamp Rechargeable
+Electricity:  lap solaire tag as lamp Rechargeable
 			  Gas lamp and storm lamp ommitted
 			  Candle and wood/lumber needs to be combined here
 Walls:  Soil comes with other (Banco alu, vitres)
@@ -49,17 +50,23 @@ Livestock
 	*Large ruminants:  Combine horses and cows 
 	*Small ruminants:  Combine sheeps and goats
 	* We have poultry
-	* Two additional type of animals not very relevant (Rabbits and porks) 
+	* Two additional type of animals not very relevant (Rabbits and porks)
+
+Dependency ratios
+		-Over working age population or over household size 
 */	 		
 *-------------------------------------------------------------------------------	
 
 	
+********************************************************
+** Dewelling charactersitics  -------------
+********************************************************
+
+
 use "${swdDataraw}/Menage/s11_me_sen_2021.dta", clear
 
-********************************************************
-** Dewelling charactersitics 11 -------------
-********************************************************
-
+gen hhid=grappe*100+menage 
+	
 *----## floor --------------
 	fre s11q20
 	recode s11q20 (2=1 "Cement (Ciment)") ///
@@ -115,7 +122,7 @@ use "${swdDataraw}/Menage/s11_me_sen_2021.dta", clear
 	fre s11q54
 	recode 	s11q54 ///
 		(11 =1  "In nauture (Aucune toilette (dans la nature)") ///
-		(1 2 3 4 = 2  "Solar (solaire)")  ///
+		(1 2 3 4 = 2  "W.C. connected")  ///
 		(6 8 = 3 "Covered latrines (ECOSAN,: dalles, couvertes)")  ///
 		(7 = 4 "Uncovered latrines (SANPLAT,: dalles, non couvertes)") ///
 		(5 = 5 "Improved ventilated latrine (VIP: dalles, ventillees)") ///
@@ -133,8 +140,8 @@ use "${swdDataraw}/Menage/s11_me_sen_2021.dta", clear
 
 *----## storing -------
 
-	keep grappe menage vague c_* s11q18 s11q20 s11q26a s11q26b s11q37 s11q42 
-	save "${swdTemp}/section_11_temp.dta", replace
+	keep hhid grappe menage vague c_* s11q18 s11q20 s11q26a s11q26b s11q37 s11q42 
+	save "${swdTemp}/dwelling_temp.dta", replace
 	
 ********************************************************
 ** Assets  -------------
@@ -167,21 +174,21 @@ use "${swdDataraw}/Menage/s12_me_sen_2021.dta", clear
 	local vars_assets "car tv ordin frigo  fer  cuisin  decod  moto radio fan landline mobile boat aircond"
 	collapse (sum) `vars_assets', by (hhid)
 	
-	lab var tv 		"Menage a TV"
-	lab var fer 	"Menage a fer electrique"
-	lab var frigo 	"Menage a frigo/congel"
-	lab var cuisin 	"Menage a cuisiniere elec/gaz"
-	lab var ordin 	"Menage a ordinateur"
-	lab var decod 	"Menage a decodeur/antenne"
-	lab var car 	"Menage a voiture"
+	lab var tv 		 "has TV"
+	lab var fer 	 "has electric iron"
+	lab var frigo 	 "has refrigerator"
+	lab var cuisin 	 "has stove elect/gas"
+	lab var ordin 	 "has computer"
+	lab var decod 	 "has decod/antenna"
+	lab var car 	 "has car"
 	
-	lab var moto 	"Menage a moto"
-	lab var radio 	"Menage a radio"
-	lab var fan 	"Menage a fan"
-	lab var landline "Menage a landline"
-	lab var mobile 	"Menage a mobile"
-	lab var boat 	"Menage a boat"
-	lab var aircond "Menage a aircond"
+	lab var moto 	 "has moto"
+	lab var radio 	 "has radio"
+	lab var fan 	 "has fan"
+	lab var landline "has landline"
+	lab var mobile 	 "has mobile"
+	lab var boat 	 "has boat"
+	lab var aircond  "has aircond"
 	
 	
 save "${swdTemp}/household_assets1.dta", replace
@@ -197,8 +204,8 @@ gen hhid=grappe*100+menage
 	
 	collapse (sum) tractor wagon, by (hhid)
 	
-	lab var tractor "Menage a tractor"
-	lab var wagon "Menage a wagon"
+	lab var tractor "has tractor"
+	lab var wagon 	"has wagon"
 	
 	
 save "${swdTemp}/household_assets2.dta", replace
@@ -216,9 +223,9 @@ gen hhid=grappe*100+menage
 	local vars_assets "aircond_b hotwater fan_b"
 	collapse (sum) `vars_assets', by (hhid)
 	
-	lab var aircond_b "Menage a aircond_b (mod 11)"
-	lab var hotwater  "Menage a hotwater (mod 11)"
-	lab var fan_b 	  "Menage a fan_b (mod 11)"
+	lab var aircond_b "has aircond_b (mod 11)"
+	lab var hotwater  "has hotwater (mod 11)"
+	lab var fan_b 	  "has fan_b (mod 11)"
 	
 	
 save "${swdTemp}/household_assets3.dta", replace
@@ -227,17 +234,6 @@ save "${swdTemp}/household_assets3.dta", replace
 ********************************************************
 ** Livestock  -------------
 ********************************************************
-
-* use "${swdDatain}/ehcvm_menage_SEN_2021.dta", clear
-
-	* ren grosrum  c_largerum 
-	* ren petitrum c_smallrum 
-	* ren volail 	 c_poultry
-	
-	* label var c_poultry   "# Poultry"
-	* label var c_largerum  "# large ruminants(horses, bovine)"
-	* label var c_smallrum  "# small ruminants(goats, sheep)"
-
 
 use "${swdDataraw}/Menage/s17_me_sen_2021.dta", clear
 
@@ -262,8 +258,8 @@ use "${swdDataraw}/Menage/s17_me_sen_2021.dta", clear
 	local livestock "horses goats sheep poultry bovines pigs donkey grosrum petitrum rabbit"
 	collapse (sum) `livestock', by (hhid)
 	
-	lab var grosrum "Nbr gros ruminants"
-	lab var petitrum "Nbr petits ruminants"
+	lab var grosrum "Nbr large ruminants"
+	lab var petitrum "Nbr small ruminants"
 	lab var rabbit "Nbr rabbit"
 	lab var donkey "Nbr donkey"
 	lab var pigs "Nbr pigs"
@@ -273,17 +269,15 @@ use "${swdDataraw}/Menage/s17_me_sen_2021.dta", clear
 	lab var goats "Nbr goats"
 	lab var horses "Nbr horses"
 	
-
-
-
-
 	
 save "${swdTemp}/household_livestock.dta", replace
 
 
 
-
-**# Welfare data ---------------------------
+	
+********************************************************
+** Welfare data
+********************************************************
 
 use "${swdDatain}/ehcvm_welfare_SEN_2021.dta", clear
 
@@ -303,10 +297,10 @@ save "${swdTemp}/welfare_temp.dta", replace
 use "${swdDataraw}/Menage/s02_me_sen_2021.dta", clear
 	
 	gen hhid=grappe*100+menage 
-	gen french_lit=s02q01__1==1 & s02q02__1==1
+	gen alfa_french=s02q01__1==1 & s02q02__1==1
 	keep if s01q00a == 1
-	keep hhid french_lit
-	
+	keep hhid alfa_french
+	label var alfa_french "read and write french"
 save "${swdTemp}/french_temp.dta", replace
 	
 **## education ------
@@ -320,32 +314,24 @@ use "${swdDatain}/ehcvm_individu_SEN_2021.dta", clear
 use "${swdDatain}/ehcvm_individu_SEN_2021.dta", clear
 
 * Generate a variable for oldage group
-gen oldgroup = .
-replace oldgroup = 1 if age >= 65
-replace oldgroup = 0 if age >=15 & age < 65 /*TODO: Ask the lower part of working age ranges*/
+gen oldgroup =  age > 64
+gen working_age= age >=15 & age <= 64 
+gen young= age <15
 
 * Calculate the number of elderly and working age population by household
-egen elderly = total(oldgroup == 1), by(hhid)
-egen working_age = total(oldgroup == 0), by(hhid)
+egen tot_old = total(oldgroup ), by(hhid)
+egen tot_working_age = total(working_age ), by(hhid)
+egen tot_young = total(young ), by(hhid)
 
 * Calculate the old age dependency ratio
 gen oadr = .
-replace oadr = elderly/working_age * 100
+replace oadr = tot_old/tot_working_age * 100
 label var oadr "Old age dependency ratio"
-
-* Generate a variable for youngage group
-gen younggroup = .
-replace younggroup = 1 if age <= 15
-replace younggroup = 0 if age >=15 & age < 65 /*TODO: Ask the lower part of working age ranges*/
-
-* Calculate the number of elderly and working age population by household
-egen young = total(younggroup == 1), by(hhid)
 
 * Calculate the old age dependency ratio
 gen yadr = .
-replace yadr = young/working_age * 100
+replace yadr = tot_young/tot_working_age * 100
 label var yadr "Young age dependency ratio"
-*TODO: Can't find number of orphans or a variable to create this
 
 *collapse household level
 collapse (mean) oadr yadr, by(hhid)
@@ -359,6 +345,8 @@ merge 1:1 hhid using "${swdTemp}/household_assets1.dta", nogen
 merge 1:1 hhid using "${swdTemp}/household_assets2.dta", nogen 
 
 merge 1:1 hhid using "${swdTemp}/household_assets3.dta", nogen 
+
+merge 1:1 hhid using "${swdTemp}/dwelling_temp.dta", nogen 
 
 merge 1:1 hhid using "${swdTemp}/household_livestock.dta", nogen 
 
