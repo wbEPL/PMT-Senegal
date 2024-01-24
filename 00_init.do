@@ -23,12 +23,14 @@ global suser = c(username)
 *Gabriel create globals for folders
 else if (inlist("${suser}","wb545737")) {
 	//@Gabriel please update your paths following the logic I outlined below. There are three main folder that are not necessary together. 
-		//The folder of scripts, which is linked to Github 
-		//The folder of data_library which for data files that are not specific to the project (like a general survey for Senegal) but that will be used in the project. 
-		//The folder of project 
+		global gitrepo "C:/Users/wb545737/WBG/Daniel Valderrama Gonzalez - 03_PMT/scripts/scripts_gc/gitrepo" 
+		global project "C:/Users/wb545737/WBG/Daniel Valderrama Gonzalez - 03_PMT/"
+		
+		global data_library = "C:/Users/wb545737/WBG/Daniel Valderrama Gonzalez - EHCVM/" 
+		
 	
 }
-
+*Daniel
 else if (inlist("${suser}","wb419055")) {
 
 	global gitrepo "C:/Users/wb419055\OneDrive - WBG/West Africa/Senegal/Senegal_tool/Projects/03_PMT/scripts/gitrepo"
@@ -47,11 +49,14 @@ global swdTemp		"$project/data/temp"
 global swdFinal		"$project/data/final"
 global swdResults	"$project/results"
 
-* You need to install the follwoing programs
-*ssc install fre
-
-
-
-
+* Making sure fre gtools and egenmor packages are installed, if not install them
+local commands = "fre gtools"
+foreach c of local commands {
+	qui capture which `c' 
+	qui if _rc!=0 {
+		noisily di "This command requires '`c''. The package will now be downloaded and installed."
+		ssc install `c'
+	}
+}
 include "$scripts/01_createData.do"
 
