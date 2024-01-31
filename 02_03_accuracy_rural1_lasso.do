@@ -1,19 +1,19 @@
 /* ------------------------------------------------------------------------------			
 *			
-*	This .do file is run inside 02_estimate_models.do to export the accuracy measures of urban
+*	This .do file is run inside 02_estimate_models.do to export the accuracy measures of rural lasso 1
 *	of the new PMT 
 *	ONLY works inside 02_estimate_models.do
 *	Author: Gabriel N. Camargo-Toledo gcamargotoledo@worldbank.org
-*	Last edited: 23 January 2024
+*	Last edited: 31 January 2024
 *	Reviewer: TBD
 *	Last Reviewed: TBD
 
 *------------------------------------------------------------------------------- */
 
-putexcel set "${swdResults}/accuracy2015vs2021.xlsx", modify sheet("Accuracy")
+putexcel set "${swdResults}/accuracy2015vs2021.xlsx", modify sheet("Accuracy Lasso 1")
 
 *total accuracy
-local col "H I J K L"
+local col "T U V W X"
 local i = 1
 foreach t in 20 25 30 50 75{
 	local l: word `i' of `col'
@@ -23,7 +23,7 @@ foreach t in 20 25 30 50 75{
 
 
 *poverty accuracy
-local col "H I J K L"
+local col "T U V W X"
 local i = 1
 foreach t in 20 25 30 50 75{
 	local l: word `i' of `col'
@@ -32,7 +32,7 @@ foreach t in 20 25 30 50 75{
 }
 
 *non-poverty accuracy
-local col "H I J K L"
+local col "T U V W X"
 local i = 1
 foreach t in 20 25 30 50 75{
 	local l: word `i' of `col'
@@ -41,7 +41,7 @@ foreach t in 20 25 30 50 75{
 }
 
 *undercoverage
-local col "H I J K L"
+local col "T U V W X"
 local i = 1
 foreach t in 20 25 30 50 75{
 	local l: word `i' of `col'
@@ -50,7 +50,7 @@ foreach t in 20 25 30 50 75{
 }
 
 *leakeage
-local col "H I J K L"
+local col "T U V W X"
 local i = 1
 foreach t in 20 25 30 50 75{
 	local l: word `i' of `col'

@@ -50,7 +50,7 @@ global swdFinal		"$project/data/final"
 global swdResults	"$project/results"
 
 * Making sure fre gtools and egenmor packages are installed, if not install them
-local commands = "fre gtools"
+local commands = "fre gtools quantiles"
 foreach c of local commands {
 	qui capture which `c' 
 	qui if _rc!=0 {
@@ -58,5 +58,6 @@ foreach c of local commands {
 		ssc install `c'
 	}
 }
-include "$scripts/01_createData.do"
+
+
 

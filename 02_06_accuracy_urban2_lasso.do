@@ -10,7 +10,7 @@
 
 *------------------------------------------------------------------------------- */
 
-putexcel set "${swdResults}/accuracy2015vs2021.xlsx", modify sheet("Accuracy")
+putexcel set "${swdResults}/accuracy2015vs2021.xlsx", modify sheet("Accuracy Lasso 2")
 
 *total accuracy
 local col "H I J K L"
