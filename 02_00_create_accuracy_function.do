@@ -10,8 +10,10 @@
 *------------------------------------------------------------------------------- */
 capture program drop accuracy_measures
 program define accuracy_measures
-
+	 
 	foreach t in 20 25 30 50 75 {
+		capture drop poor_real_`t' poor_hat_`t' correct_`t' undercovered_`t' leaked_`t'
+
 		* identify poor people in data and in model
 		gen poor_real_`t' = qreal < `t' 
 		gen poor_hat_`t' = qhat < `t'

@@ -4,14 +4,13 @@
 *			 Daniel Valderrama dvalderramagonza@worldbank.org
 *	
 *	Last edited: 29 January 2024
-* 	Version 1.0 created by Gabriel N. Camargo/Toledo
+* 	Version 1.0 created by Gabriel N. Camargo-Toledo
 *	Reviewer: TBD
 *	Last Reviewed: TBD
 *                         
 *-------------------------------------------------------------------
 
 
-include "$scripts/00_init.do"
 
 include "$scripts/01_createData.do"
 

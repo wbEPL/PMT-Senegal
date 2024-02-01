@@ -40,18 +40,16 @@ accuracy_measures
 run "$scripts/02_01_accuracy_rural.do"
 
 **## Urban -----
-
-use "${swdFinal}/data4model_2021.dta", clear
-
+capture drop yhat qhat qreal
 reg lpcexp logsize yadr ///
 			i.c_floor i.c_ligthing i.c_toilet i.c_walls ///
 			a_car a_computer a_fridge a_stove a_fan a_tv a_radio a_homephone ar_tractor a_iron ///
-			l_donkeys_n l_equines_n l_pigs_n ///
+			l_donkeys_n l_horses_n l_pigs_n ///
 			i.region ///
 			[aweight = hhweight*hhsize] if milieu == 1, r
 predict yhat, xb
 estimates store ols_urban
-
+capture drop qhat q
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
@@ -61,8 +59,7 @@ run "$scripts/02_02_accuracy_urban.do"
 
 
 **## Lasso 1 rural, assets and livestock as dummy, include all livestock separately --------------
-use "${swdFinal}/data4model_2021.dta", clear
-
+capture drop yhat qhat qreal
 **### globals of variables
 global demo "logsize oadr yadr alfa_french i.region"
 
@@ -97,6 +94,7 @@ accuracy_measures
 run "$scripts/02_03_accuracy_rural1_lasso.do"
 
 **## Lasso 2 rural, assets and livestock as number --------------
+capture drop yhat qhat qreal
 
 **### globals of variables
 global asset_num "a_living_n a_dining_n a_bed_n a_singlemat_n a_cupboard_n a_carpet_n a_iron_n a_charcoaliron_n a_stove_n a_gastank_n a_hotplate_n a_oven_n a_fireplace_n a_foodprocessor_n a_fruitpress_n a_fridge_n a_freezer_n a_fan_n a_radio_n a_tv_n a_dvd_n a_satellite_n a_washer_n a_vacuum_n a_ac_n a_lawnmower_n a_generator_n a_car_n a_moped_n a_bike_n a_camera_n a_camcorder_n a_hifisystem_n a_homephone_n a_cellphone_n a_tablet_n a_computer_n a_printer_n a_videocam_n a_boat_n a_shotgun_n a_guitar_n a_piano_n a_building_n a_land_n ad_aircond_b ad_hotwater ad_fan_b"
@@ -112,7 +110,6 @@ cvplot
 graph save "${swdResults}/graphs/cvplot_rural2", replace
 lassocoef rural1 rural2
 lassogof rural1 rural2, over(sample) postselection
-drop  yhat qhat qreal
 
 predict yhat if milieu == 2, xb postselection
 
@@ -125,6 +122,7 @@ run "$scripts/02_04_accuracy_rural2_lasso.do"
 
 
 **## Lasso 1 urban, assets as dummy ------------------
+capture drop yhat qhat qreal
 
 lasso linear lpcexp $demo $asset_dum $asset_rur_dum $dwell $livest_all_dum if milieu == 1 & sample == 1
 estimates store urban1
@@ -142,6 +140,7 @@ accuracy_measures
 run "$scripts/02_05_accuracy_urban1_lasso.do"
 
 **## Lasso 2 urban, assets and livestock as number --------------
+capture drop yhat qhat qreal
 
 
 lasso linear lpcexp $demo $asset_num $asset_rur_num $dwell $livest_all_num if milieu == 1 & sample == 1
@@ -150,7 +149,6 @@ cvplot
 graph save "${swdResults}/graphs/cvplot_urban2", replace
 lassocoef urban1 urban2
 lassogof urban1 urban2, over(sample) postselection
-drop  yhat qhat qreal
 
 predict yhat if milieu == 1, xb postselection
 
