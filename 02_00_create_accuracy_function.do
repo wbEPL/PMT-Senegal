@@ -48,7 +48,7 @@ program define accuracy_measures
 		scalar mean_undercoverage_`t' =  el(r(table),1,1)
 
 		* inclusion error
-		qui mean leaked_`t' if poor_hat_`t' == 1
+		qui mean leaked_`t' if  poor_real_`t' == 0
 		scalar mean_leakeage_`t' =  el(r(table),1,1)
 	}
 
