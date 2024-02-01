@@ -16,7 +16,8 @@ program define accuracy_measures
 
 		* identify poor people in data and in model
 		gen poor_real_`t' = qreal < `t' 
-		gen poor_hat_`t' = qreal < `t'
+* summarize lpcexp if qreal == t 
+		gen poor_hat_`t' = yhat < local_lpcexp /*Guardar el valor del q_t real */
 		
 		* identify accurate individual
 		gen correct_`t' = poor_real_`t' == poor_hat_`t'
