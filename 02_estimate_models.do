@@ -36,6 +36,7 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 
+
 accuracy_measures
 run "$scripts/02_01_accuracy_rural.do"
 
@@ -53,6 +54,7 @@ capture drop qhat q
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
+
 
 accuracy_measures
 run "$scripts/02_02_accuracy_urban.do"
@@ -73,7 +75,7 @@ global livest_all_dum "l_bovines l_sheep l_goats l_camels l_horses l_donkeys l_p
 
 **### split sample
 
-splitsample, generate(sample) nsplit(2)
+splitsample, generate(sample) split(0.7 0.3)
 label define sample 1 "Training" 2 "Testing"
 label values sample sample
 
@@ -116,6 +118,7 @@ predict yhat if milieu == 2, xb postselection
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
+
 
 accuracy_measures
 run "$scripts/02_04_accuracy_rural2_lasso.do"

@@ -16,40 +16,40 @@ program define accuracy_measures
 
 		* identify poor people in data and in model
 		gen poor_real_`t' = qreal < `t' 
-* summarize lpcexp if qreal == t 
-		gen poor_hat_`t' = yhat < local_lpcexp /*Guardar el valor del q_t real */
+		
+		mean lpcexp [aw=hhweight*hhsize] if qreal == `t' 
+		scalar mean_lpcexp =  el(r(table),1,1)
+		gen poor_hat_`t' = yhat < mean_lpcexp
 		
 		* identify accurate individual
 		gen correct_`t' = poor_real_`t' == poor_hat_`t'
 		
 		* identify undercovered individual
-		gen undercovered_`t' = .
+		gen undercovered_`t' = 0
 		replace undercovered_`t' = 1 if poor_real_`t' == 1 & poor_hat_`t' == 0
-		replace undercovered_`t' = 0 if poor_real_`t' == 1 & poor_hat_`t' == 1
 		
 		* identify leaked individual
-		gen leaked_`t' = .
+		gen leaked_`t' = 0
 		replace leaked_`t' = 1 if poor_real_`t' == 0 & poor_hat_`t' == 1
-		replace leaked_`t' = 0 if poor_real_`t' == 0 & poor_hat_`t' == 0
 		
 		* total accuracy
-		qui mean correct_`t'
+		qui mean correct_`t' [aw=hhweight*hhsize] 
 		scalar mean_correct_`t' =  el(r(table),1,1)
 		
 		* Poverty accuracy
-		qui mean correct_`t' if poor_real_`t' == 1
+		qui mean correct_`t' [aw=hhweight*hhsize] if poor_real_`t' == 1
 		scalar mean_poverty_`t' =  el(r(table),1,1)
 
 		* Non-poverty accuracy
-		qui mean correct_`t' if poor_real_`t' == 0
+		qui mean correct_`t' [aw=hhweight*hhsize] if poor_real_`t' == 0
 		scalar mean_non_poverty_`t' =  el(r(table),1,1)
 		
 		* exclusion error
-		qui mean undercovered_`t' if poor_real_`t' == 1 
+		qui mean undercovered_`t' [aw=hhweight*hhsize] if poor_real_`t' == 1 
 		scalar mean_undercoverage_`t' =  el(r(table),1,1)
 
 		* inclusion error
-		qui mean leaked_`t' if  poor_real_`t' == 0
+		mean leaked_`t' [aw=hhweight*hhsize]  if  poor_hat_`t' == 1
 		scalar mean_leakeage_`t' =  el(r(table),1,1)
 	}
 
