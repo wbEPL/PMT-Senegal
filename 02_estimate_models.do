@@ -45,7 +45,7 @@ run "$scripts/02_01_accuracy_rural.do"
 
 **## Urban -----
 capture drop yhat qhat qreal
-reg lpcexp logsize yadr ///
+reg lpcexp logsize yadr alfa_french///
 			i.c_floor i.c_ligthing i.c_toilet i.c_walls ///
 			a_car a_computer a_fridge a_stove a_fan a_tv a_radio a_homephone ar_tractor a_iron ///
 			l_donkeys_n l_horses_n l_pigs_n ///
@@ -99,7 +99,7 @@ dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not.
 
 * run ols with selected covariates and pop weights
 
-reg lpcexp logsize yadr alfa_french region a_living a_bed a_singlemat a_cupboard ///
+reg lpcexp logsize yadr alfa_french i.region a_living a_bed a_singlemat a_cupboard ///
 	a_carpet a_charcoaliron a_gastank a_fireplace a_foodprocessor a_fridge ///
 	a_freezer a_fan a_radio a_tv a_dvd a_satellite a_generator a_car a_moped ///
 	a_bike a_cellphone a_computer a_land ad_fan_b ar_sprayer ar_tiller ///
@@ -109,7 +109,7 @@ reg lpcexp logsize yadr alfa_french region a_living a_bed a_singlemat a_cupboard
 	i.c_connectoelec i.c_ligthing i.c_connectedtoint i.c_connectedtotv i.c_fuelfirst_r ///
 	i.c_garbage i.c_toilet ///
 	l_bovines l_sheep l_goats l_donkeys l_pigs l_chickens l_other_poultry ///
-	[aw=hhweight*hhsize] if milieu == 2 & sample == 1
+	[aw=hhweight*hhsize] if milieu == 2 & sample == 1, r
 
 estimates store rural1_ols
 	
@@ -148,7 +148,7 @@ dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not.
 
 * run ols with selected covariates and pop weights
 
-reg lpcexp logsize yadr alfa_french region a_dining_n a_bed_n a_carpet_n ///
+reg lpcexp logsize yadr alfa_french i.region a_dining_n a_bed_n a_carpet_n ///
 	a_iron_n a_charcoaliron_n a_gastank_n a_fireplace_n a_foodprocessor_n ///
 	a_fridge_n a_freezer_n a_fan_n a_radio_n a_tv_n a_satellite_n a_generator_n ///
 	a_car_n a_moped_n a_cellphone_n a_computer_n a_boat_n a_land_n ad_fan_b ///
@@ -160,7 +160,7 @@ reg lpcexp logsize yadr alfa_french region a_dining_n a_bed_n a_carpet_n ///
 	i.c_connectedtotv i.c_fuelfirst_r i.c_garbage i.c_toilet l_bovines_n l_sheep_n ///
 	l_goats_n l_donkeys_n l_pigs_n l_chickens_n l_guinea_fowl_n ///
 	l_other_poultry_n ///
-	[aw=hhweight*hhsize] if milieu == 2 & sample == 1
+	[aw=hhweight*hhsize] if milieu == 2 & sample == 1, r
 
 estimates store rural2_ols
 
@@ -192,7 +192,7 @@ dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not.
 
 * run ols with selected covariates and pop weights
 
-reg lpcexp logsize yadr alfa_french region a_living a_bed a_singlemat ///
+reg lpcexp logsize yadr alfa_french i.region a_living a_bed a_singlemat ///
 	a_cupboard a_iron a_charcoaliron a_stove a_gastank a_hotplate ///
 	a_foodprocessor a_fruitpress a_fridge a_freezer a_fan a_radio a_tv ///
 	a_satellite a_washer a_ac a_car a_moped a_hifisystem a_homephone a_computer ///
@@ -202,7 +202,7 @@ reg lpcexp logsize yadr alfa_french region a_living a_bed a_singlemat ///
 	i.c_connectowater i.c_water_dry i.c_water_rainy i.c_connectoelec i.c_ligthing ///
 	i.c_connectedtoint i.c_internettype i.c_connectedtotv i.c_fuelfirst_r i.c_garbage ///
 	i.c_toilet l_bovines l_sheep l_horses l_pigs l_rabbits ///
-	[aw=hhweight*hhsize] if milieu == 1 & sample == 1
+	[aw=hhweight*hhsize] if milieu == 1 & sample == 1, r
 
 estimates store urban1_ols
 
@@ -232,7 +232,7 @@ dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not.
 
 * run ols with selected covariates and pop weights
 
-reg lpcexp logsize yadr alfa_french region a_cupboard_n a_carpet_n a_iron_n ///
+reg lpcexp logsize yadr alfa_french i.region a_cupboard_n a_carpet_n a_iron_n ///
 		a_charcoaliron_n a_stove_n a_gastank_n a_hotplate_n a_fireplace_n ///
 		a_foodprocessor_n a_fruitpress_n a_fridge_n a_freezer_n a_fan_n ///
 		a_radio_n a_tv_n a_satellite_n a_washer_n a_ac_n a_car_n a_hifisystem_n ///
@@ -242,7 +242,7 @@ reg lpcexp logsize yadr alfa_french region a_cupboard_n a_carpet_n a_iron_n ///
 		i.c_connectowater i.c_water_dry i.c_water_rainy i.c_connectoelec i.c_ligthing ///
 		i.c_landline i.c_connectedtoint i.c_internettype i.c_connectedtotv ///
 		i.c_fuelfirst_r i.c_garbage i.c_toilet l_sheep_n l_donkeys_n l_pigs_n l_chickens_n ///
-	[aw=hhweight*hhsize] if milieu == 1 & sample == 1
+	[aw=hhweight*hhsize] if milieu == 1 & sample == 1, r
 
 estimates store urban2_ols
 
@@ -283,7 +283,7 @@ dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not.
 reg lpcexp logsize yadr i.c_floor i.c_water_dry i.c_ligthing i.c_walls i.c_toilet ///
 	a_moped a_radio a_car a_fan a_tv ad_hotwater a_cellphone a_boat a_computer a_ac ///
 	a_fridge l_horses_n l_goats_n l_sheep_n l_poultry_n l_bovines_n i.region ///
-	[aw=hhweight*hhsize] if milieu == 2 & sample == 1
+	[aw=hhweight*hhsize] if milieu == 2 & sample == 1,r 
 
 estimates store rural3_ols
 
@@ -301,7 +301,7 @@ run "$scripts/02_07_accuracy_rural3_lasso.do"
 **## Lasso 3 urban, same covariates as OLS 2015 ------------------
 capture drop yhat qhat qreal
 
-lasso linear lpcexp logsize yadr ///
+lasso linear lpcexp logsize yadr alfa_french ///
 			i.c_floor i.c_ligthing i.c_toilet i.c_walls ///
 			a_car a_computer a_fridge a_stove a_fan a_tv a_radio a_homephone ar_tractor a_iron ///
 			l_donkeys_n l_horses_n l_pigs_n ///
@@ -319,9 +319,9 @@ dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not.
 
 * run ols with selected covariates and pop weights
 
-reg lpcexp logsize yadr i.c_floor i.c_ligthing i.c_toilet i.c_walls a_car a_computer ///
-	a_fridge a_stove a_fan a_tv a_radio a_homephone a_iron l_donkeys_n i.region ///
-	[aw=hhweight*hhsize] if milieu == 1 & sample == 1
+reg lpcexp logsize alfa_french yadr i.c_floor i.c_ligthing i.c_toilet i.c_walls a_car a_computer ///
+	a_fridge a_stove a_fan a_tv a_radio a_homephone a_iron l_horses_n i.region ///
+	[aw=hhweight*hhsize] if milieu == 1 & sample == 1, r
 
 estimates store urban3_ols
 
@@ -333,4 +333,15 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 
 accuracy_measures
-run "$scripts/02_07_accuracy_urban3_lasso.do"
+run "$scripts/02_08_accuracy_urban3_lasso.do"
+
+**#ugly way to count covariates, how to program this?? urgent!!
+estimates restore rural1_ols
+dis e(cmdline)
+
+**# Export ols using lasso with the same covariates
+estimates restore rural3_ols
+outreg2 using  "${swdResults}/LassoResultsRural.xls", replace label
+
+estimates restore urban3_ols
+outreg2 using "${swdResults}/LassoResultsUrban.xls", replace label
