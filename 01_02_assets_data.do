@@ -33,9 +33,13 @@ recode s12q02 (2 = 0) (1 = 1)
 label define s12q02 0 "No" 1 "Yes", replace
 
 replace s12q03 = 0 if s12q02 == 0
-
+recode s12q03 (0 = 0 "Not owned") ///
+			  (1 = 1 "Owns 1") ///
+			  (2/max = 2 "Owns more than 1"), ///
+			  gen(s12q04)
+			 
 **## Reshape so column is an asset -----
-reshape wide s12q02 s12q03, i(hhid) j(s12q01) favor(speed)
+reshape wide s12q02 s12q03 s12q04, i(hhid) j(s12q01) favor(speed)
 
 **## Labels and rename dummy ---- 
 label var s12q021 "Living room (armchairs and coffee table)"
@@ -224,6 +228,99 @@ rename s12q0343 a_piano_n
 rename s12q0344 a_building_n
 rename s12q0345 a_land_n
 
+**## Labels and rename 0-1-2 ---- 
+label var s12q041 "Rec. Living room"
+label var s12q042 "Rec. Dining table"
+label var s12q043 "Rec. Bed"
+label var s12q044 "Rec. Single mattress"
+label var s12q045 "Rec. Cupboards and other furniture"
+label var s12q046 "Rec. Carpet"
+label var s12q047 "Rec. Electric iron"
+label var s12q048 "Rec. Charcoal iron"
+label var s12q049 "Rec. Gas or electric stove"
+label var s12q0410 "Rec. Gas cylinder"
+label var s12q0411 "Rec. Gas or electric hotplate"
+label var s12q0412 "Rec. Microwave or electric oven"
+label var s12q0413 "Rec. Improved fireplaces"
+label var s12q0414 "Rec. Electric food processor (Moulinex)"
+label var s12q0415 "Rec. Non-electric mixer/fruit press"
+label var s12q0416 "Rec. Refrigerator"
+label var s12q0417 "Rec. Freezer"
+label var s12q0418 "Rec. Free-standing fan"
+label var s12q0419 "Rec. Radio/Radio cassette"
+label var s12q0420 "Rec. TV set"
+label var s12q0421 "Rec. VCR/CD/DVD"
+label var s12q0422 "Rec. Satellite dish/decoder"
+label var s12q0423 "Rec. Washing machine, tumble dryer"
+label var s12q0424 "Rec. Vacuum cleaner"
+label var s12q0425 "Rec. Air conditioners/splits (not wall-mounted)"
+label var s12q0426 "Rec. Lawnmowers and other gardening equipment"
+label var s12q0427 "Rec. Generator"
+label var s12q0428 "Rec. Personal car"
+label var s12q0429 "Rec. Moped/moped, motorcycle"
+label var s12q0430 "Rec. Bicycle, racing bike"
+label var s12q0431 "Rec. Camera"
+label var s12q0432 "Rec. Camcorder"
+label var s12q0433 "Rec. Hi Fi system"
+label var s12q0434 "Rec. Home phone"
+label var s12q0435 "Rec. Cell phone"
+label var s12q0436 "Rec. Tablet"
+label var s12q0437 "Rec. Computer"
+label var s12q0438 "Rec. Printer/Fax"
+label var s12q0439 "Rec. Video camera"
+label var s12q0440 "Rec. Pirogue and outboard (pleasure boats)"
+label var s12q0441 "Rec. Shotguns"
+label var s12q0442 "Rec. Guitar"
+label var s12q0443 "Rec. Piano and other musical equipment"
+label var s12q0444 "Rec. Building/House"
+label var s12q0445 "Rec. Undeveloped land"
+
+rename s12q041 a_living_r
+rename s12q042 a_dining_r
+rename s12q043 a_bed_r
+rename s12q044 a_singlemat_r
+rename s12q045 a_cupboard_r
+rename s12q046 a_carpet_r
+rename s12q047 a_iron_r
+rename s12q048 a_charcoaliron_r
+rename s12q049 a_stove_r
+rename s12q0410 a_gastank_r
+rename s12q0411 a_hotplate_r
+rename s12q0412 a_oven_r
+rename s12q0413 a_fireplace_r
+rename s12q0414 a_foodprocessor_r
+rename s12q0415 a_fruitpress_r
+rename s12q0416 a_fridge_r
+rename s12q0417 a_freezer_r
+rename s12q0418 a_fan_r
+rename s12q0419 a_radio_r
+rename s12q0420 a_tv_r
+rename s12q0421 a_dvd_r
+rename s12q0422 a_satellite_r
+rename s12q0423 a_washer_r
+rename s12q0424 a_vacuum_r
+rename s12q0425 a_ac_r
+rename s12q0426 a_lawnmower_r
+rename s12q0427 a_generator_r
+rename s12q0428 a_car_r
+rename s12q0429 a_moped_r
+rename s12q0430 a_bike_r
+rename s12q0431 a_camera_r
+rename s12q0432 a_camcorder_r
+rename s12q0433 a_hifisystem_r
+rename s12q0434 a_homephone_r
+rename s12q0435 a_cellphone_r
+rename s12q0436 a_tablet_r
+rename s12q0437 a_computer_r
+rename s12q0438 a_printer_r
+rename s12q0439 a_videocam_r
+rename s12q0440 a_boat_r
+rename s12q0441 a_shotgun_r
+rename s12q0442 a_guitar_r
+rename s12q0443 a_piano_r
+rename s12q0444 a_building_r
+rename s12q0445 a_land_r
+
 save "${swdTemp}/household_assets1.dta", replace
 
 **********************************************************
@@ -239,9 +336,13 @@ recode s19q03 (2 = 0) (1 = 1)
 label define s19q03 0 "No" 1 "Yes", replace
 
 replace s19q04 = 0 if s19q03 == 0
+recode s19q04 (0 = 0 "Not owned") ///
+			  (1 = 1 "Owns 1") ///
+			  (2/max = 2 "Owns more than 1"), ///
+			  gen(s19q05)
 
 **## Reshape so column is one asset --------------
-reshape wide s19q03 s19q04, i(hhid) j(s19q02) favor(speed)
+reshape wide s19q03 s19q04 s19q05, i(hhid) j(s19q02) favor(speed)
 
 **## labels and names dummy --------------
 label var s19q03101 "Tractor"
@@ -392,6 +493,82 @@ rename s19q04137 ar_sparrowhawk_n
 rename s19q04138 ar_hook_longli_n
 rename s19q04139 ar_harpoon_n
 rename s19q04140 ar_others_n
+
+
+**## labels and names rec 0-1-2 --------------
+label var s19q05101 "Rec. Tractor"
+label var s19q05102 "Rec. Sprayer"
+label var s19q05103 "Rec. Tiller"
+label var s19q05104 "Rec. Multicultivator"
+label var s19q05105 "Rec. Plough "
+label var s19q05106 "Rec. Axe/pickaxe"
+label var s19q05107 "Rec. Hoe/daba/hill"
+label var s19q05108 "Rec. Machete"
+label var s19q05110 "Rec. Asinine hoe"
+label var s19q05111 "Rec. Seed drill"
+label var s19q05112 "Rec. Harrow"
+label var s19q05113 "Rec. Ploughing animals "
+label var s19q05114 "Rec. Carts"
+label var s19q05115 "Rec. Beehives"
+label var s19q05117 "Rec. Rice husker"
+label var s19q05118 "Rec. Corn sheller"
+label var s19q05119 "Rec. Thresher"
+label var s19q05121 "Rec. Motor pump unit"
+label var s19q05122 "Rec. Hand pump"
+label var s19q05123 "Rec. Scale"
+label var s19q05124 "Rec. Bundling machine"
+label var s19q05125 "Rec. Straw chopper"
+label var s19q05126 "Rec. Drinker/Feeder"
+label var s19q05128 "Rec. Mower"
+label var s19q05129 "Rec. Mill"
+label var s19q05130 "Rec. Fertilizer spreader"
+label var s19q05131 "Rec. Milking machine"
+label var s19q05132 "Rec. Incubator"
+label var s19q05133 "Rec. Motorized canoe"
+label var s19q05134 "Rec. Non-motorized canoe"
+label var s19q05135 "Rec. Gill net"
+label var s19q05136 "Rec. Seine"
+label var s19q05137 "Rec. Sparrowhawk"
+label var s19q05138 "Rec. Hook longline"
+label var s19q05139 "Rec. Harpoon"
+label var s19q05140 "Rec. Others"
+
+rename s19q05101 ar_tractor_r
+rename s19q05102 ar_sprayer_r
+rename s19q05103 ar_tiller_r
+rename s19q05104 ar_multicultiva_r
+rename s19q05105 ar_plough_r
+rename s19q05106 ar_axe_pickaxe_r
+rename s19q05107 ar_hoe_daba_hill_r
+rename s19q05108 ar_machete_r
+rename s19q05110 ar_asinine_hoe_r
+rename s19q05111 ar_seed_drill_r
+rename s19q05112 ar_harrow_r
+rename s19q05113 ar_plou_anima_r
+rename s19q05114 ar_carts_r
+rename s19q05115 ar_beehives_r
+rename s19q05117 ar_rice_husker_r
+rename s19q05118 ar_corn_sheller_r
+rename s19q05119 ar_thresher_r
+rename s19q05121 ar_motor_pump_r
+rename s19q05122 ar_hand_pump_r
+rename s19q05123 ar_scale_r
+rename s19q05124 ar_bund_mach_r
+rename s19q05125 ar_straw_chop_r
+rename s19q05126 ar_drinker_fee_r
+rename s19q05128 ar_mower_r
+rename s19q05129 ar_mill_r
+rename s19q05130 ar_fertili_spre_r
+rename s19q05131 ar_milk_machi_r
+rename s19q05132 ar_incubator_r
+rename s19q05133 ar_motor_canoe_r
+rename s19q05134 ar_ro_motor_can_r
+rename s19q05135 ar_gill_ret_r
+rename s19q05136 ar_seine_r
+rename s19q05137 ar_sparrowhawk_r
+rename s19q05138 ar_hook_longli_r
+rename s19q05139 ar_harpoon_r
+rename s19q05140 ar_others_r
 
 save "${swdTemp}/household_assets_rural2.dta", replace
 

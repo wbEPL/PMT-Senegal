@@ -6,67 +6,33 @@
 *	The following result files are created:
 *		- TBD
 *	Open points that need to be addressed:
-* 		- Should we use water source during dry or rainy season?
+* 		- is there a way to automate the inclusion of selected lasso vars  in ols?
 *	Author: Gabriel N. Camargo-Toledo gcamargotoledo@worldbank.org
-*	Last edited: 23 January 2024
+*	Last edited: 16 February2024
 *	Reviewer: TBD
 *	Last Reviewed: TBD
 
 *------------------------------------------------------------------------------- */
 
-**# INIT
-set seed 37492674
+**# INIT ----------------------
 use "${swdFinal}/data4model_2021.dta", clear
 
 **## Add accurate measure function
 include "$scripts/02_00_create_accuracy_function.do"
 
+
+**## split sample
+
+splitsample, generate(sample) split(0.7 0.3)
+label define sample 1 "Training" 2 "Testing"
+label values sample sample
+
+
 **# OLS same as 2015 covariates ---
-**## Rural -----
-
-
-reg lpcexp logsize oadr yadr ///
-			i.c_floor i.c_water_dry i.c_ligthing i.c_walls i.c_toilet ///
-			a_moped a_radio a_car a_fan a_tv ad_hotwater a_cellphone a_boat a_homephone a_computer a_ac ar_carts a_fridge  ///
-			l_horses_n l_goats_n l_sheep_n l_poultry_n l_bovines_n ///
-			i.region ///
-			[aweight = hhweight*hhsize] if milieu == 2, r
-
-predict yhat, xb
-estimates store ols_rural
-
-quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
-
-quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
-
-
-accuracy_measures
-run "$scripts/02_01_accuracy_rural.do"
-
-**## Urban -----
-capture drop yhat qhat qreal
-reg lpcexp logsize yadr alfa_french///
-			i.c_floor i.c_ligthing i.c_toilet i.c_walls ///
-			a_car a_computer a_fridge a_stove a_fan a_tv a_radio a_homephone ar_tractor a_iron ///
-			l_donkeys_n l_horses_n l_pigs_n ///
-			i.region ///
-			[aweight = hhweight*hhsize] if milieu == 1, r
-predict yhat, xb
-estimates store ols_urban
-capture drop qhat q
-quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
-
-quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
-
-
-accuracy_measures
-run "$scripts/02_02_accuracy_urban.do"
+include "$scripts/02_01_estimate_ols.do"
 
 **# Lassos ------------------------
-
-**## Lasso 1 rural, assets and livestock as dummy, include all livestock separately --------------
-capture drop yhat qhat qreal
-**### globals of variables
+**### globals of variables livestock as dummy
 global demo "logsize oadr yadr alfa_french i.region"
 
 global asset_dum "a_living a_dining a_bed a_singlemat a_cupboard a_carpet a_iron a_charcoaliron a_stove a_gastank a_hotplate a_oven a_fireplace a_foodprocessor a_fruitpress a_fridge a_freezer a_fan a_radio a_tv a_dvd a_satellite a_washer a_vacuum a_ac a_lawnmower a_generator a_car a_moped a_bike a_camera a_camcorder a_hifisystem a_homephone a_cellphone a_tablet a_computer a_printer a_videocam a_boat a_shotgun a_guitar a_piano a_building a_land ad_aircond_b ad_hotwater ad_fan_b"
@@ -77,56 +43,8 @@ global dwell "i.c_typehousing c_numberofrooms_c i.c_housingocup i.c_businessindw
 
 global livest_all_dum "l_bovines l_sheep l_goats l_camels l_horses l_donkeys l_pigs l_rabbits l_chickens l_guinea_fowl l_other_poultry"
 
-**## split sample
 
-splitsample, generate(sample) split(0.7 0.3)
-label define sample 1 "Training" 2 "Testing"
-label values sample sample
-
-**### Run lasso regresion, save results
-lasso linear lpcexp $demo $asset_dum $asset_rur_dum $dwell $livest_all_dum if milieu == 2 & sample == 1
-estimates store rural1
-cvplot
-graph save "${swdResults}/graphs/cvplot_rural1", replace
-*show selected coefs
-lassocoef rural1
-*show model goodness of fit
-lassogof rural1, over(sample) postselection
-
-*Show selected covariates
-dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
-						For now I'll do it by hand but if it can be done programatically better*/
-
-* run ols with selected covariates and pop weights
-
-reg lpcexp logsize yadr alfa_french i.region a_living a_bed a_singlemat a_cupboard ///
-	a_carpet a_charcoaliron a_gastank a_fireplace a_foodprocessor a_fridge ///
-	a_freezer a_fan a_radio a_tv a_dvd a_satellite a_generator a_car a_moped ///
-	a_bike a_cellphone a_computer a_land ad_fan_b ar_sprayer ar_tiller ///
-	ar_axe_pickaxe ar_hoe_daba_hill ar_scale ar_drinker_fee ar_fertili_spre /// 
-	ar_others i.c_typehousing c_numberofrooms_c i.c_housingocup c_businessindwe ///
-	i.c_walls i.c_roof i.c_floor i.c_connectowater i.c_water_dry i.c_water_rainy ///
-	i.c_connectoelec i.c_ligthing i.c_connectedtoint i.c_connectedtotv i.c_fuelfirst_r ///
-	i.c_garbage i.c_toilet ///
-	l_bovines l_sheep l_goats l_donkeys l_pigs l_chickens l_other_poultry ///
-	[aw=hhweight*hhsize] if milieu == 2 & sample == 1, r
-
-estimates store rural1_ols
-	
-predict yhat  if milieu == 2, xb 
-
-quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
-
-quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
-lassogof rural1 rural1_ols, over(sample) postselection
-
-accuracy_measures
-run "$scripts/02_03_accuracy_rural1_lasso.do"
-
-**## Lasso 2 rural, assets and livestock as number --------------
-capture drop yhat qhat qreal
-
-**### globals of variables
+**### globals of variables assets and livestock as number
 global asset_num "a_living_n a_dining_n a_bed_n a_singlemat_n a_cupboard_n a_carpet_n a_iron_n a_charcoaliron_n a_stove_n a_gastank_n a_hotplate_n a_oven_n a_fireplace_n a_foodprocessor_n a_fruitpress_n a_fridge_n a_freezer_n a_fan_n a_radio_n a_tv_n a_dvd_n a_satellite_n a_washer_n a_vacuum_n a_ac_n a_lawnmower_n a_generator_n a_car_n a_moped_n a_bike_n a_camera_n a_camcorder_n a_hifisystem_n a_homephone_n a_cellphone_n a_tablet_n a_computer_n a_printer_n a_videocam_n a_boat_n a_shotgun_n a_guitar_n a_piano_n a_building_n a_land_n ad_aircond_b ad_hotwater ad_fan_b"
 
 global asset_rur_num "ar_tractor_n ar_sprayer_n ar_tiller_n ar_multicultiva_n ar_plough_n ar_axe_pickaxe_n ar_hoe_daba_hill_n ar_machete_n ar_asinine_hoe_n ar_seed_drill_n ar_harrow_n ar_plou_anima_n ar_carts_n ar_beehives_n ar_rice_husker_n ar_corn_sheller_n ar_thresher_n ar_motor_pump_n ar_hand_pump_n ar_scale_n ar_bund_mach_n ar_straw_chop_n ar_drinker_fee_n ar_mower_n ar_mill_n ar_fertili_spre_n ar_milk_machi_n ar_incubator_n ar_motor_canoe_n ar_no_motor_can_n ar_gill_net_n ar_seine_n ar_sparrowhawk_n ar_hook_longli_n ar_harpoon_n ar_others_n"
@@ -134,214 +52,11 @@ global asset_rur_num "ar_tractor_n ar_sprayer_n ar_tiller_n ar_multicultiva_n ar
 global livest_all_num "l_bovines_n l_sheep_n l_goats_n l_camels_n l_horses_n l_donkeys_n l_pigs_n l_rabbits_n l_chickens_n l_guinea_fowl_n l_other_poultry_n"
 
 
-lasso linear lpcexp $demo $asset_num $asset_rur_num $dwell $livest_all_num if milieu == 2 & sample == 1
-estimates store rural2
-cvplot
-graph save "${swdResults}/graphs/cvplot_rural2", replace
-lassocoef rural1 rural2
-lassogof rural1 rural2, over(sample) postselection
+**## Lasso 1 rural, assets and livestock as dummy, include all livestock separately --------------
+include "$scripts/02_02_estimate_lasso1_rural.do"
 
-
-*Show selected covariates
-dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
-						For now I'll do it by hand but if it can be done programatically better*/
-
-* run ols with selected covariates and pop weights
-
-reg lpcexp logsize yadr alfa_french i.region a_dining_n a_bed_n a_carpet_n ///
-	a_iron_n a_charcoaliron_n a_gastank_n a_fireplace_n a_foodprocessor_n ///
-	a_fridge_n a_freezer_n a_fan_n a_radio_n a_tv_n a_satellite_n a_generator_n ///
-	a_car_n a_moped_n a_cellphone_n a_computer_n a_boat_n a_land_n ad_fan_b ///
-	ar_sprayer_n ar_tiller_n ar_axe_pickaxe_n ar_machete_n ar_plou_anima_n ///
-	ar_carts_n ar_corn_sheller_n ar_motor_pump_n ar_hand_pump_n ar_scale_n ///
-	ar_drinker_fee_n ar_fertili_spre_n ar_harpoon_n ar_others_n i.c_typehousing ///
-	i.c_numberofrooms_c i.c_housingocup i.c_businessindwe i.c_walls i.c_roof i.c_floor ///
-	i.c_connectowater i.c_water_rainy i.c_connectoelec i.c_ligthing i.c_connectedtoint ///
-	i.c_connectedtotv i.c_fuelfirst_r i.c_garbage i.c_toilet l_bovines_n l_sheep_n ///
-	l_goats_n l_donkeys_n l_pigs_n l_chickens_n l_guinea_fowl_n ///
-	l_other_poultry_n ///
-	[aw=hhweight*hhsize] if milieu == 2 & sample == 1, r
-
-estimates store rural2_ols
-
-predict yhat if milieu == 2, xb 
-
-quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
-
-quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
-lassogof rural2 rural2_ols, over(sample) postselection
-
-
-accuracy_measures
-run "$scripts/02_04_accuracy_rural2_lasso.do"
-
+**## Lasso 2 rural, assets and livestock as number --------------
+include "$scripts/02_03_estimate_lasso2_rural.do"
 
 **## Lasso 1 urban, assets as dummy ------------------
-capture drop yhat qhat qreal
-
-lasso linear lpcexp $demo $asset_dum $asset_rur_dum $dwell $livest_all_dum if milieu == 1 & sample == 1
-estimates store urban1
-cvplot
-graph save "${swdResults}/graphs/cvplot_urban1", replace
-lassocoef urban1
-lassogof urban1, over(sample) postselection
-
-*Show selected covariates
-dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
-						For now I'll do it by hand but if it can be done programatically better*/
-
-* run ols with selected covariates and pop weights
-
-reg lpcexp logsize yadr alfa_french i.region a_living a_bed a_singlemat ///
-	a_cupboard a_iron a_charcoaliron a_stove a_gastank a_hotplate ///
-	a_foodprocessor a_fruitpress a_fridge a_freezer a_fan a_radio a_tv ///
-	a_satellite a_washer a_ac a_car a_moped a_hifisystem a_homephone a_computer ///
-	a_printer a_boat a_land ad_fan_b ar_tiller ar_axe_pickaxe ar_harrow ///
-	ar_plou_anima ar_drinker_fee ar_mower ar_incubator ar_gill_net ar_others ///
-	i.c_typehousing i.c_numberofrooms_c i.c_housingocup i.c_walls i.c_roof i.c_floor ///
-	i.c_connectowater i.c_water_dry i.c_water_rainy i.c_connectoelec i.c_ligthing ///
-	i.c_connectedtoint i.c_internettype i.c_connectedtotv i.c_fuelfirst_r i.c_garbage ///
-	i.c_toilet l_bovines l_sheep l_horses l_pigs l_rabbits ///
-	[aw=hhweight*hhsize] if milieu == 1 & sample == 1, r
-
-estimates store urban1_ols
-
-predict yhat if milieu == 1, xb 
-
-quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
-
-quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
-lassogof urban1 urban1_ols, over(sample) postselection
-
-accuracy_measures
-run "$scripts/02_05_accuracy_urban1_lasso.do"
-
-**## Lasso 2 urban, assets and livestock as number --------------
-capture drop yhat qhat qreal
-
-lasso linear lpcexp $demo $asset_num $asset_rur_num $dwell $livest_all_num if milieu == 1 & sample == 1
-estimates store urban2
-cvplot
-graph save "${swdResults}/graphs/cvplot_urban2", replace
-lassocoef urban1 urban2
-lassogof urban1 urban2, over(sample) postselection
-
-*Show selected covariates
-dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
-						For now I'll do it by hand but if it can be done programatically better*/
-
-* run ols with selected covariates and pop weights
-
-reg lpcexp logsize yadr alfa_french i.region a_cupboard_n a_carpet_n a_iron_n ///
-		a_charcoaliron_n a_stove_n a_gastank_n a_hotplate_n a_fireplace_n ///
-		a_foodprocessor_n a_fruitpress_n a_fridge_n a_freezer_n a_fan_n ///
-		a_radio_n a_tv_n a_satellite_n a_washer_n a_ac_n a_car_n a_hifisystem_n ///
-		a_cellphone_n a_tablet_n a_computer_n a_printer_n a_boat_n a_land_n ///
-		ad_hotwater ad_fan_b ar_tiller_n ar_incubator_n ar_no_motor_can_n ///
-		ar_others_n i.c_typehousing i.c_housingocup i.c_walls i.c_roof i.c_floor ///
-		i.c_connectowater i.c_water_dry i.c_water_rainy i.c_connectoelec i.c_ligthing ///
-		i.c_landline i.c_connectedtoint i.c_internettype i.c_connectedtotv ///
-		i.c_fuelfirst_r i.c_garbage i.c_toilet l_sheep_n l_donkeys_n l_pigs_n l_chickens_n ///
-	[aw=hhweight*hhsize] if milieu == 1 & sample == 1, r
-
-estimates store urban2_ols
-
-
-lassogof urban2 urban2_ols, over(sample) postselection
-
-
-predict yhat if milieu == 1, xb
-
-quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
-
-quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
-
-accuracy_measures
-run "$scripts/02_06_accuracy_urban2_lasso.do"
-
-**## Lasso 3 rural, same covariates as OLS 2015 ------------------
-capture drop yhat qhat qreal
-
-lasso linear lpcexp logsize oadr yadr ///
-			i.c_floor i.c_water_dry i.c_ligthing i.c_walls i.c_toilet ///
-			a_moped a_radio a_car a_fan a_tv ad_hotwater a_cellphone a_boat a_homephone a_computer a_ac ar_carts a_fridge  ///
-			l_horses_n l_goats_n l_sheep_n l_poultry_n l_bovines_n ///
-			i.region if milieu == 2 & sample == 1
-estimates store rural3
-cvplot
-graph save "${swdResults}/graphs/cvplot_rural3", replace
-lassocoef rural3
-lassogof rural3, over(sample) postselection
-
-
-*Show selected covariates
-dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
-						For now I'll do it by hand but if it can be done programatically better*/
-
-* run ols with selected covariates and pop weights
-
-reg lpcexp logsize yadr i.c_floor i.c_water_dry i.c_ligthing i.c_walls i.c_toilet ///
-	a_moped a_radio a_car a_fan a_tv ad_hotwater a_cellphone a_boat a_computer a_ac ///
-	a_fridge l_horses_n l_goats_n l_sheep_n l_poultry_n l_bovines_n i.region ///
-	[aw=hhweight*hhsize] if milieu == 2 & sample == 1,r 
-
-estimates store rural3_ols
-
-predict yhat if milieu == 2, xb 
-lassogof rural3 rural3_ols, over(sample) postselection
-
-quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
-
-quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
-
-accuracy_measures
-run "$scripts/02_07_accuracy_rural3_lasso.do"
-
-
-**## Lasso 3 urban, same covariates as OLS 2015 ------------------
-capture drop yhat qhat qreal
-
-lasso linear lpcexp logsize yadr alfa_french ///
-			i.c_floor i.c_ligthing i.c_toilet i.c_walls ///
-			a_car a_computer a_fridge a_stove a_fan a_tv a_radio a_homephone ar_tractor a_iron ///
-			l_donkeys_n l_horses_n l_pigs_n ///
-			i.region if milieu == 1 & sample == 1
-estimates store urban3
-cvplot
-graph save "${swdResults}/graphs/cvplot_urban3", replace
-lassocoef urban3
-lassogof urban3, over(sample) postselection
-
-
-*Show selected covariates
-dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
-						For now I'll do it by hand but if it can be done programatically better*/
-
-* run ols with selected covariates and pop weights
-
-reg lpcexp logsize alfa_french yadr i.c_floor i.c_ligthing i.c_toilet i.c_walls a_car a_computer ///
-	a_fridge a_stove a_fan a_tv a_radio a_homephone a_iron l_horses_n i.region ///
-	[aw=hhweight*hhsize] if milieu == 1 & sample == 1, r
-
-estimates store urban3_ols
-
-predict yhat if milieu == 1, xb 
-lassogof urban3 urban3_ols, over(sample) postselection
-
-quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
-
-quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
-
-accuracy_measures
-run "$scripts/02_08_accuracy_urban3_lasso.do"
-
-**#ugly way to count covariates, how to program this?? urgent!!
-estimates restore rural1_ols
-dis e(cmdline)
-
-**# Export ols using lasso with the same covariates
-estimates restore rural3_ols
-outreg2 using  "${swdResults}/LassoResultsRural.xls", replace label
-
-estimates restore urban3_ols
-outreg2 using "${swdResults}/LassoResultsUrban.xls", replace label
+* WIP

@@ -50,7 +50,7 @@ global swdFinal		"$project/data/final"
 global swdResults	"$project/results"
 
 * Making sure fre gtools and egenmor packages are installed, if not install them
-local commands = "fre gtools quantiles"
+local commands = "fre gtools quantiles outreg2"
 foreach c of local commands {
 	qui capture which `c' 
 	qui if _rc!=0 {
