@@ -16,12 +16,12 @@ This step estimates the following models:
 
 I have chosen the following lambdas of lasso models 1 and 2 to graph, besides the one chosen by the lasso stata algorithm:
 
-| Model    | Lambdas          |
-| -------- | ---------------- |
-| Rural 1  | 0.01, 0.03, 0.05 |
-| Rural 2  | 0.02, 0.03, 0.05 |
-| Urban 1  | TBD              |
-| Urban 2  | TBD              |
+| Model    | Lambdas           |
+| -------- | ----------------  |
+| Rural 1  | 0.01, 0.03, 0.05  |
+| Rural 2  | 0.02, 0.03, 0.05  |
+| Urban 1  | 0.025, 0.05, 0.08 |
+| Urban 2  | 0.04, 0.06, 0.08  |
 
 
 ## Results files:
