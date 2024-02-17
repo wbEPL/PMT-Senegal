@@ -25,6 +25,7 @@ lassogof rural1 rural2 if milieu == 2, over(sample) postselection
 *Show selected covariates
 dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
 						For now I'll do it by hand but if it can be done programatically better*/
+scalar ncovariates = wordcount(e(post_sel_vars))-1
 
 * run ols with selected covariates and pop weights
 
