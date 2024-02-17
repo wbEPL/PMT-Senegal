@@ -165,7 +165,6 @@ program define save_measures
 	local i = 1
 	foreach t in 20 25 30 50 75{
 		local l: word `i' of `col'
-		qui mean_leakeage_`t'
 		qui putexcel `l'8 = mean_leakeage_`t'*100, nformat("#.00")
 		local ++i
 	}
@@ -240,7 +239,6 @@ program define save_measures_test
 	local i = 1
 	foreach t in 20 25 30 50 75{
 		local l: word `i' of `col'
-		qui mean_leakeage_`t'
 		qui putexcel `l'8 = mean_leakeage_`t'_te*100, nformat("#.00")
 		local ++i
 	}
