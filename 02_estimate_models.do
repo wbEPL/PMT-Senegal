@@ -67,4 +67,41 @@ include "$scripts/02_05_estimate_lasso2_urban.do"
 **## Lasso 3 urban and rural, start same covariates 2015, do not move lambdas--------------
 include "$scripts/02_06_estimate_lasso3.do"
 
+**# Goodness of fit rural
+qui putexcel set "$swdResults/goodness.xlsx", replace sheet("Rural")
+lassogof ols_rural /// ols 2021
+		rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols /// model 1
+		rural2_ols rural2_lam02_ols rural2_lam03_ols rural2_lam05_ols /// model2
+		rural3_ols if milieu == 2, over(sample)
 
+matrix list r(table)
+qui putexcel B2 = matrix(r(table))
+
+qui putexcel A1 = "Model", bold
+qui putexcel B1 = "MSE", bold
+qui putexcel C1 = "R-squared", bold
+qui putexcel D1 = "N-obs", bold
+
+forvalues i = 2(2)20 {
+	local j = `i' + 1
+    qui putexcel (A`i':A`j'), merge hcenter vcenter
+}
+
+local row = 2
+qui putexcel A`row' = "Ols as 2015"
+
+foreach l in 1 2 {
+    local row = `row' + 2
+    qui putexcel A`row' = "Lasso `l', lambda CV"
+    foreach lambda in 0.01 0.03 0.05 {
+        local row = `row' + 2
+        qui putexcel A`row' = "Lasso `l', lambda `lambda'"
+    }
+}
+
+local row = `row' + 2
+qui putexcel A`row' = "Lasso 3, lambda CV"
+
+
+
+putexcel save
