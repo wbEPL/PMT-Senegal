@@ -59,4 +59,12 @@ include "$scripts/02_02_estimate_lasso1_rural.do"
 include "$scripts/02_03_estimate_lasso2_rural.do"
 
 **## Lasso 1 urban, assets as dummy ------------------
-* WIP
+include "$scripts/02_04_estimate_lasso1_urban.do"
+
+**## Lasso 2 urban, assets and livestock as number --------------
+include "$scripts/02_05_estimate_lasso2_urban.do"
+
+**## Lasso 3 urban and rural, start same covariates 2015, do not move lambdas--------------
+include "$scripts/02_06_estimate_lasso3.do"
+
+

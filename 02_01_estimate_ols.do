@@ -27,11 +27,11 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 
+outreg2 using "${swdResults}/rural_coefficients.xls", replace ctitle("OLS") label
 estiaccu_measures
 save_measures "accuracy2015vs2021.xlsx" "Accuracy" "TRUE"
 save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy" "TRUE"
 save_lambdmeasu "accuracies_OLS.xlsx" "Rural"
-outreg2 using "rural_coefficients.xls", replace ctitle("OLS") label
 
 **## Urban -----
 capture drop yhat qhat qreal
@@ -48,9 +48,8 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 
-
+outreg2 using "${swdResults}/urban_coefficients.xls", replace ctitle("Urban OLS") label
 estiaccu_measures
 save_measures "accuracy2015vs2021.xlsx" "Accuracy" "FALSE"
 save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy" "FALSE"
 save_lambdmeasu "accuracies_OLS.xlsx" "Urban"
-outreg2 using "urban_coefficients.xls", replace ctitle("Urban OLS") label
