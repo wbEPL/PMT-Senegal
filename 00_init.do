@@ -1,5 +1,4 @@
 * ------------------------------------------------------------------
-*    
 *	Authors: Gabriel N. Camargo-Toledo gcamargotoledo@worldbank.org
 *			 Daniel Valderrama dvalderramagonza@worldbank.org
 *	
@@ -33,7 +32,7 @@ else if (inlist("${suser}","wb545737")) {
 *Daniel
 else if (inlist("${suser}","wb419055")) {
 
-	global gitrepo "C:/Users/wb419055\OneDrive - WBG/West Africa/Senegal/Senegal_tool/Projects/03_PMT/scripts/gitrepo"
+	global gitrepo "C:\Users\wb419055\OneDrive - WBG\West Africa\Senegal\Senegal_tool\Projects\03_PMT\git_PMT-Senegal"
 	global project "C:/Users/wb419055/OneDrive - WBG/West Africa/Senegal/Senegal_tool/Projects/03_PMT"
 	
 	global data_library  "C:/Users/wb419055/OneDrive - WBG/West Africa/Senegal/data/EHCVM" 
@@ -58,6 +57,14 @@ foreach c of local commands {
 		ssc install `c'
 	}
 }
+
+* Dofiles 
+
+// Cleaning dataset on assets, dwelling characteristics and other 
+	include "$scripts/01_00_createData.do.do"
+
+// Running models 
+	include "$scripts/02_00_estimate_models.do"
 
 
 

@@ -10,7 +10,9 @@
 *                         
 *-------------------------------------------------------------------
 
-include "$scripts/01_createData.do"
 
-include "$scripts/02_estimate_models.do"
+include "$scripts/01_00_createData.do.do"
+
+include "$scripts/02_00_estimate_models.do"
+
 *Some of the exported excel files require a template that is already on onedrive to be complete (some labels, the summary 25 sheet, and the 2015 results were created on excel beforehand)

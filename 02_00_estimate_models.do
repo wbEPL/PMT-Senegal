@@ -18,7 +18,7 @@
 use "${swdFinal}/data4model_2021.dta", clear
 
 **## Add accurate measure function
-include "$scripts/02_00_create_accuracy_function.do"
+include "$scripts/02_00a_create_accuracy_function.do"
 
 
 **## split sample
