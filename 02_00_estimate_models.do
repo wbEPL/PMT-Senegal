@@ -27,11 +27,14 @@ splitsample, generate(sample) split(0.7 0.3)
 label define sample 1 "Training" 2 "Testing"
 label values sample sample
 
-
 **# OLS same as 2015 covariates ---
 include "$scripts/02_01_estimate_ols.do"
 
 **# Lassos ------------------------
+**### globals of categorical variables 
+global categorical_v "region c_typehousing c_numberofrooms_c c_housingocup c_businessindwe c_walls c_roof c_floor c_connectowater c_water_dry c_water_rainy c_connectoelec c_ligthing c_landline c_connectedtoint c_internettype c_connectedtotv c_fuelfirst_r c_garbage c_toilet"
+
+
 **### globals of variables livestock as dummy
 global demo "logsize oadr yadr alfa_french i.region"
 

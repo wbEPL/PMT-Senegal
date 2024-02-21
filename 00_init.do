@@ -61,7 +61,7 @@ foreach c of local commands {
 * Dofiles 
 
 // Cleaning dataset on assets, dwelling characteristics and other 
-	include "$scripts/01_00_createData.do.do"
+	*include "$scripts/01_00_createData.do.do"
 
 // Running models 
 	include "$scripts/02_00_estimate_models.do"
