@@ -30,6 +30,8 @@ label values sample sample
 **# OLS same as 2015 covariates ---
 include "$scripts/02_01_estimate_ols.do"
 
+
+
 **# Lassos ------------------------
 **### globals of categorical variables 
 global categorical_v "region c_typehousing c_numberofrooms_c c_housingocup c_businessindwe c_walls c_roof c_floor c_connectowater c_water_dry c_water_rainy c_connectoelec c_ligthing c_landline c_connectedtoint c_internettype c_connectedtotv c_fuelfirst_r c_garbage c_toilet"
@@ -55,22 +57,35 @@ global asset_rur_num "ar_tractor_n ar_sprayer_n ar_tiller_n ar_multicultiva_n ar
 global livest_all_num "l_bovines_n l_sheep_n l_goats_n l_camels_n l_horses_n l_donkeys_n l_pigs_n l_rabbits_n l_chickens_n l_guinea_fowl_n l_other_poultry_n"
 
 
+tempfile cleaned_dataset
+save `cleaned_dataset', replace 
+
+
 **## Lasso 1 rural, assets and livestock as dummy, include all livestock separately --------------
 include "$scripts/02_02_estimate_lasso1_rural.do"
 
 **## Lasso 2 rural, assets and livestock as number --------------
+use `cleaned_dataset', replace
 include "$scripts/02_03_estimate_lasso2_rural.do"
 
 **## Lasso 1 urban, assets as dummy ------------------
+use `cleaned_dataset', replace
 include "$scripts/02_04_estimate_lasso1_urban.do"
 
 **## Lasso 2 urban, assets and livestock as number --------------
+use `cleaned_dataset', replace
 include "$scripts/02_05_estimate_lasso2_urban.do"
 
 **## Lasso 3 urban and rural, start same covariates 2015, do not move lambdas--------------
+use `cleaned_dataset', replace
 include "$scripts/02_06_estimate_lasso3.do"
 
+
 **# Goodness of fit rural
+use `cleaned_dataset', replace
+include "$scripts/02_07_goodness_fit.do"
+
+/* to delete after testing 02_07 
 qui putexcel set "$swdResults/goodness.xlsx", modify sheet("Rural")
 lassogof ols_rural /// ols 2021
 		rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols /// model 1
@@ -153,3 +168,5 @@ qui putexcel A18 = "Lasso 2, lambda 0.05"
 qui putexcel A20 = "Lasso 3, lambda CV"
 
 putexcel save
+
+*/

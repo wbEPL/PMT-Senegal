@@ -12,6 +12,7 @@
 
 
 capture drop yhat qhat qreal
+keep if milieu == 2
 **# Run lasso regresion, save results chosen lambda
 
 lasso linear lpcexp $demo $asset_num $asset_rur_num $dwell $livest_all_num if milieu == 2 & sample == 1, rseed(124578)
@@ -28,7 +29,23 @@ dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not.
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 
 * run ols with selected covariates and pop weights
+* writing categorical variables
+local list "`e(post_sel_vars)'"
+dis "`list'"
 
+foreach c in $categorical_v { // categorical_v is variables that are categorical 
+	local list = subinstr("`list'", "`c'", "i.`c'", 1)
+}
+
+local test_y =substr("`list'", 1, 6) // eliminating the 
+assert  "`test_y'" == "lpcexp"
+
+
+
+reg `list' ///
+	[aw=hhweight] if milieu == 2 & sample == 1, r // I see the logic for indicators being a weighted average by population but much less standard the regression *hhsize
+local list ""
+/* @gabriel a_cupboard_n was missing here, was a typo or something more structural. Notice I tried using the same weights, may be the fact I am loading again the same dataset? we need to try with your codes in you local computer  
 reg lpcexp logsize yadr alfa_french i.region a_dining_n a_bed_n a_carpet_n ///
 			a_iron_n a_charcoaliron_n a_gastank_n a_foodprocessor_n a_fridge_n ///
 			a_freezer_n a_fan_n a_radio_n a_tv_n a_satellite_n a_generator_n ///
@@ -40,8 +57,9 @@ reg lpcexp logsize yadr alfa_french i.region a_dining_n a_bed_n a_carpet_n ///
 			c_landline c_connectedtoint c_connectedtotv i.c_fuelfirst_r i.c_garbage ///
 			i.c_toilet l_sheep_n l_goats_n l_chickens_n l_guinea_fowl_n ///
 	[aw=hhweight*hhsize] if milieu == 2 & sample == 1, r
-
+*/
 estimates store rural2_ols
+local list "" // being sure to clear the local list 
 
 predict yhat if milieu == 2, xb 
 
@@ -67,14 +85,22 @@ dis "amount of covariates is: "
 dis ncovariates
 dis e(post_sel_vars)
 
-reg lpcexp logsize yadr i.region a_carpet_n a_iron_n a_gastank_n a_fridge_n ///
-			a_freezer_n a_fan_n a_radio_n a_tv_n a_satellite_n a_car_n a_moped_n ///
-			a_cellphone_n a_tablet_n ar_sprayer_n ar_axe_pickaxe_n ar_straw_chop_n ///
-			i.c_typehousing c_numberofrooms_c i.c_housingocup c_businessindwe ///
-			i.c_walls i.c_roof i.c_floor c_connectowater c_connectoelec ///
-			i.c_ligthing c_landline c_connectedtoint c_connectedtotv i.c_fuelfirst_r ///
-			i.c_garbage i.c_toilet l_sheep_n l_goats_n l_chickens_n ///
-		[aw=hhweight*hhsize] if milieu == 2 & sample == 1, r
+
+* writing categorical variables
+local list "`e(post_sel_vars)'"
+dis "`list'"
+
+foreach c in $categorical_v { // categorical_v is variables that are categorical 
+	local list = subinstr("`list'", "`c'", "i.`c'", 1)
+}
+
+local test_y =substr("`list'", 1, 6) // eliminating the 
+assert  "`test_y'" == "lpcexp"
+
+
+reg `list' ///
+[aw=hhweight] if milieu == 2 & sample == 1, r
+local list ""
 
 estimates store rural2_lam02_ols
 	
@@ -99,12 +125,21 @@ dis "amount of covariates is: "
 dis ncovariates
 dis e(post_sel_vars)
 
-reg lpcexp logsize logsize yadr i.region a_cupboard_n a_carpet_n a_gastank_n ///
-			a_fridge_n a_freezer_n a_fan_n a_radio_n a_tv_n a_satellite_n a_car_n ///
-			a_moped_n a_cellphone_n c_numberofrooms_c i.c_housingocup c_businessindwe ///
-			i.c_walls i.c_roof c_connectoelec i.c_ligthing c_connectedtoint ///
-			c_connectedtotv i.c_fuelfirst_r i.c_garbage i.c_toilet l_sheep_n ///
-	[aw=hhweight*hhsize] if milieu == 2 & sample == 1, r
+
+* writing categorical variables
+local list "`e(post_sel_vars)'"
+dis "`list'"
+
+foreach c in $categorical_v { // categorical_v is variables that are categorical 
+	local list = subinstr("`list'", "`c'", "i.`c'", 1)
+}
+
+local test_y =substr("`list'", 1, 6) // eliminating the 
+assert  "`test_y'" == "lpcexp"
+
+
+reg `list' ///
+	[aw=hhweight] if milieu == 2 & sample == 1, r
 
 estimates store rural2_lam03_ols
 	
@@ -129,10 +164,21 @@ dis "amount of covariates is: "
 dis ncovariates
 dis e(post_sel_vars)
 
-reg lpcexp logsize yadr i.region a_gastank_n a_fridge_n a_freezer_n a_fan_n ///
-			a_radio_n a_tv_n a_satellite_n a_car_n a_moped_n i.c_walls i.c_roof ///
-			c_connectoelec i.c_ligthing c_connectedtoint c_connectedtotv i.c_fuelfirst_r i.c_toilet ///
-		[aw=hhweight*hhsize] if milieu == 2 & sample == 1, r
+* writing categorical variables
+local list "`e(post_sel_vars)'"
+dis "`list'"
+
+foreach c in $categorical_v { // categorical_v is variables that are categorical 
+	local list = subinstr("`list'", "`c'", "i.`c'", 1)
+}
+
+local test_y =substr("`list'", 1, 6) // eliminating the 
+assert  "`test_y'" == "lpcexp"
+
+
+reg `list' ///
+		[aw=hhweight] if milieu == 2 & sample == 1, r
+local list ""
 
 estimates store rural2_lam05_ols
 	

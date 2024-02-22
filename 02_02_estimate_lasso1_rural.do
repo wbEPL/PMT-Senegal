@@ -10,6 +10,12 @@
 *------------------------------------------------------------------------------- */
 
 capture drop yhat qhat qreal
+
+ 
+/* Rural model */
+
+
+keep if milieu == 2
 **# Run lasso regresion, save results chosen lambda
 lasso linear lpcexp $demo $asset_dum $asset_rur_dum $dwell $livest_all_dum if milieu == 2 & sample == 1, rseed(124578)
 estimates store rural1
@@ -28,26 +34,20 @@ scalar ncovariates = wordcount(e(post_sel_vars))-1
 * run ols with selected covariates and pop weights
 
 * writing categorical variables
-
 local list "`e(post_sel_vars)'"
 dis "`list'"
 
-foreach c in $categorical_v {
+foreach c in $categorical_v { // categorical_v is variables that are categorical 
 	local list = subinstr("`list'", "`c'", "i.`c'", 1)
 }
-local list =subinstr("`list'", "lpcexp", "", 1)
 
-reg lpcexp logsize oadr yadr alfa_french i.region a_living a_dining a_cupboard a_carpet ///
-		a_iron a_charcoaliron a_gastank a_oven a_foodprocessor a_fridge a_freezer a_fan ///
-		a_radio a_tv a_dvd a_satellite a_generator a_car a_moped a_bike a_tablet a_shotgun ///
-		a_land ar_sprayer ar_axe_pickaxe ar_hoe_daba_hill ar_asinine_hoe ar_scale ///
-		ar_straw_chop ar_drinker_fee ar_mower ar_mill i.c_typehousing c_numberofrooms_c ///
-		i.c_housingocup c_businessindwe i.c_walls i.c_roof i.c_floor i.c_water_rainy ///
-		c_connectoelec i.c_ligthing c_landline c_connectedtoint c_connectedtotv ///
-		i.c_fuelfirst_r i.c_garbage i.c_toilet l_sheep l_donkeys l_pigs l_chickens ///
-		l_other_poultry ///
+local test_y =substr("`list'", 1, 6) // eliminating the 
+assert  "`test_y'" == "lpcexp"
+
+
+reg `list' ///
 	[aw=hhweight] if milieu == 2 & sample == 1, r // I see the logic for indicators being a weighted average by population but much less standard the regression *hhsize
-
+local list "" // being sure to clear the local list 
 
 estimates store rural1_ols
 	
@@ -56,6 +56,7 @@ predict yhat  if milieu == 2, xb
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
+
 lassogof rural1 rural1_ols if milieu == 2, over(sample) postselection
 
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda CV") label
@@ -74,16 +75,26 @@ dis "amount of covariates is: "
 dis ncovariates
 dis e(post_sel_vars)
 
-reg lpcexp logsize oadr yadr alfa_french i.region a_living a_dining a_cupboard a_carpet ///
-	a_iron a_charcoaliron a_gastank a_oven a_fridge a_freezer a_fan a_radio a_tv ///
-	a_dvd a_satellite a_car a_moped a_bike a_tablet a_shotgun a_land ar_sprayer ///
-	ar_axe_pickaxe ar_scale ar_straw_chop ar_drinker_fee ar_mower ar_mill ///
-	i.c_typehousing c_numberofrooms_c i.c_housingocup c_businessindwe i.c_walls ///
-	i.c_roof i.c_water_rainy c_connectoelec i.c_ligthing c_landline c_connectedtoint ///
-	c_connectedtotv i.c_fuelfirst_r i.c_garbage i.c_toilet l_sheep l_pigs l_chickens l_other_poultry ///
-	[aw=hhweight*hhsize] if milieu == 2 & sample == 1, r
-	
+
+* run ols with selected covariates and pop weights
+
+* writing categorical variables
+local list "`e(post_sel_vars)'"
+dis "`list'"
+
+foreach c in $categorical_v { // categorical_v is variables that are categorical 
+	local list = subinstr("`list'", "`c'", "i.`c'", 1)
+}
+
+local test_y =substr("`list'", 1, 6) // eliminating the 
+assert  "`test_y'" == "lpcexp"
+
+
+reg `list' ///
+	[aw=hhweight] if milieu == 2 & sample == 1, r
+local list "" 	
 estimates store rural1_lam01_ols
+
 	
 predict yhat  if milieu == 2, xb 
 
@@ -106,14 +117,24 @@ dis "amount of covariates is: "
 dis ncovariates
 dis e(post_sel_vars)
 
-reg lpcexp logsize yadr i.region a_living a_cupboard a_carpet a_charcoaliron a_gastank ///
-	 a_oven a_fridge a_freezer a_fan a_radio a_tv a_satellite a_car a_moped ///
-	 ar_sprayer c_numberofrooms_c i.c_housingocup c_businessindwe i.c_walls ///
-	 i.c_roof c_connectoelec i.c_ligthing c_connectedtoint c_connectedtotv ///
-	 i.c_fuelfirst_r i.c_garbage i.c_toilet l_sheep ///
-	[aw=hhweight*hhsize] if milieu == 2 & sample == 1, r
 
+* writing categorical variables
+local list "`e(post_sel_vars)'"
+dis "`list'"
+
+foreach c in $categorical_v { // categorical_v is variables that are categorical 
+	local list = subinstr("`list'", "`c'", "i.`c'", 1)
+}
+
+local test_y =substr("`list'", 1, 6) // eliminating the 
+assert  "`test_y'" == "lpcexp"
+
+
+reg `list' ///
+	[aw=hhweight] if milieu == 2 & sample == 1, r
+local list "" 
 estimates store rural1_lam03_ols
+
 	
 predict yhat  if milieu == 2, xb 
 
@@ -136,15 +157,33 @@ dis "amount of covariates is: "
 dis ncovariates
 dis e(post_sel_vars)
 
+
+* writing categorical variables
+local list "`e(post_sel_vars)'"
+dis "`list'"
+
+foreach c in $categorical_v { // categorical_v is variables that are categorical 
+	local list = subinstr("`list'", "`c'", "i.`c'", 1)
+}
+
+local test_y =substr("`list'", 1, 6) // eliminating the 
+assert  "`test_y'" == "lpcexp"
+
+
+reg `list' ///
+[aw=hhweight] if milieu == 2 & sample == 1, r
+local list "" 
+estimates store rural1_lam05_ols
+
+/* @gabriel, I have few different covariates here. We need to check here why with your code. 
 reg lpcexp logsize yadr i.region a_living a_cupboard a_carpet a_charcoaliron ///
 			a_gastank a_fridge a_freezer a_fan a_tv a_satellite a_car i.c_walls ///
 			i.c_roof c_connectoelec i.c_ligthing c_connectedtoint c_connectedtotv ///
 			i.c_fuelfirst_r c_toilet ///
 	[aw=hhweight*hhsize] if milieu == 2 & sample == 1, r
-
+*/
 	 
 	
-estimates store rural1_lam05_ols
 	
 predict yhat  if milieu == 2, xb 
 
@@ -156,3 +195,5 @@ lassogof rural1 rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols if
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda 0.05") label
 estiaccu_measures
 save_lambdmeasu "accuracies_rural1.xlsx" "Lambda 0.05"
+
+esttab rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols

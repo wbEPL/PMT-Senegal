@@ -30,11 +30,21 @@ dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not.
 
 * run ols with selected covariates and pop weights
 
-reg lpcexp logsize yadr i.c_floor i.c_water_dry i.c_ligthing i.c_walls i.c_toilet ///
-	a_moped a_radio a_car a_fan a_tv ad_hotwater a_cellphone a_boat a_computer a_ac ///
-	a_fridge l_horses_n l_goats_n l_sheep_n l_poultry_n l_bovines_n i.region ///
-	[aw=hhweight*hhsize] if milieu == 2 & sample == 1,r 
+* writing categorical variables
+local list "`e(post_sel_vars)'"
+dis "`list'"
 
+foreach c in $categorical_v { // categorical_v is variables that are categorical 
+	local list = subinstr("`list'", "`c'", "i.`c'", 1)
+}
+
+local test_y =substr("`list'", 1, 6) // eliminating the 
+assert  "`test_y'" == "lpcexp"
+
+
+reg `list' ///
+	[aw=hhweight] if milieu == 2 & sample == 1,r 
+local list ""
 estimates store rural3_ols
 
 predict yhat if milieu == 2, xb 
@@ -69,10 +79,21 @@ dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not.
 
 * run ols with selected covariates and pop weights
 
-reg lpcexp logsize alfa_french yadr i.c_floor i.c_ligthing i.c_toilet i.c_walls a_car a_computer ///
-	a_fridge a_stove a_fan a_tv a_radio a_homephone a_iron l_horses_n i.region ///
-	[aw=hhweight*hhsize] if milieu == 1 & sample == 1, r
+* writing categorical variables
+local list "`e(post_sel_vars)'"
+dis "`list'"
 
+foreach c in $categorical_v { // categorical_v is variables that are categorical 
+	local list = subinstr("`list'", "`c'", "i.`c'", 1)
+}
+
+local test_y =substr("`list'", 1, 6) // eliminating the 
+assert  "`test_y'" == "lpcexp"
+
+
+reg `list' ///
+	[aw=hhweight] if milieu == 1 & sample == 1, r
+local list ""
 estimates store urban3_ols
 
 predict yhat if milieu == 1, xb 
