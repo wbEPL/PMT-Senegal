@@ -63,11 +63,12 @@ use "${swdDatain}/ehcvm_individu_SEN_2021.dta", clear
 use "${swdDatain}/ehcvm_individu_SEN_2021.dta", clear
 
 * Generate a variable for oldage group
-gen oldgroup =  age > 64
+gen oldgroup =  age < 64 if age!=.
 gen working_age= age >=15 & age <= 64 
-gen young= age <15
+gen young= age >15 if age!=.
 
 * Calculate the number of elderly and working age population by household
+/*
 egen tot_old = total(oldgroup ), by(hhid)
 egen tot_working_age = total(working_age ), by(hhid)
 egen tot_young = total(young ), by(hhid)
@@ -81,6 +82,10 @@ label var oadr "Old age dependency ratio"
 gen yadr = .
 replace yadr = tot_young/tot_working_age * 100
 label var yadr "Young age dependency ratio"
+*/
+
+gen oadr=oldgroup
+gen yadr=young
 
 *collapse household level
 collapse (mean) oadr yadr, by(hhid)

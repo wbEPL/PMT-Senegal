@@ -12,8 +12,8 @@
 **## Lasso 3 rural, same covariates as OLS 2015 ------------------
 capture drop yhat qhat qreal
 
-lasso linear lpcexp logsize oadr yadr ///
-			i.c_floor i.c_water_dry i.c_ligthing i.c_walls i.c_toilet ///
+lasso linear lpcexp logsize oadr yadr c_rooms_pc ///
+			i.c_floor i.c_water_dry i.c_lighting i.c_walls i.c_toilet /// is equivalent to use toilet or toilet_rur
 			a_moped a_radio a_car a_fan a_tv ad_hotwater a_cellphone a_boat a_homephone a_computer a_ac ar_carts a_fridge  ///
 			l_horses_n l_goats_n l_sheep_n l_poultry_n l_bovines_n ///
 			i.region if milieu == 2 & sample == 1
@@ -61,8 +61,8 @@ save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy Lasso 3" "TRUE
 **## Lasso 3 urban, same covariates as OLS 2015 ------------------
 capture drop yhat qhat qreal
 
-lasso linear lpcexp logsize yadr alfa_french ///
-			i.c_floor i.c_ligthing i.c_toilet i.c_walls ///
+lasso linear lpcexp logsize c_rooms_pc yadr alfa_french ///
+			i.c_floor i.c_lighting i.c_toilet i.c_walls /// same c_toilet_urb as c_toilet if conditional to miieu 
 			a_car a_computer a_fridge a_stove a_fan a_tv a_radio a_homephone ar_tractor a_iron ///
 			l_donkeys_n l_horses_n l_pigs_n ///
 			i.region if milieu == 1 & sample == 1

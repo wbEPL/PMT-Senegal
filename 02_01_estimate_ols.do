@@ -12,12 +12,12 @@
 
 **## Rural -----
 
-reg lpcexp logsize oadr yadr ///
-			i.c_floor i.c_water_dry i.c_ligthing i.c_walls i.c_toilet ///
+reg lpcexp logsize oadr yadr c_rooms_pc ///
+			i.c_floor i.c_water_dry i.c_lighting i.c_walls i.c_toilet ///
 			a_moped a_radio a_car a_fan a_tv ad_hotwater a_cellphone a_boat a_homephone a_computer a_ac ar_carts a_fridge  ///
 			l_horses_n l_goats_n l_sheep_n l_poultry_n l_bovines_n ///
 			i.region ///
-			[aweight = hhweight*hhsize] if milieu == 2, r
+			[aweight = hhweight] if milieu == 2, r
 
 predict yhat, xb
 scalar ncovariates = wordcount(e(cmdline))-10 /* THIS ONLY WORKS IF YOU DO NOT CHANGE THE SPACES AMONG THE DIFFERENT PARTS ON THE REG COMMAND, for example if you erase the space between aweight = that will change the count*/
@@ -35,12 +35,12 @@ save_lambdmeasu "accuracies_OLS.xlsx" "Rural"
 
 **## Urban -----
 capture drop yhat qhat qreal
-reg lpcexp logsize yadr alfa_french ///
-			i.c_floor i.c_ligthing i.c_toilet i.c_walls ///
+reg lpcexp logsize yadr alfa_french c_rooms_pc ///
+			i.c_floor i.c_lighting i.c_toilet i.c_walls ///
 			a_car a_computer a_fridge a_stove a_fan a_tv a_radio a_homephone ar_tractor a_iron ///
 			l_donkeys_n l_horses_n l_pigs_n ///
 			i.region ///
-			[aweight = hhweight*hhsize] if milieu == 1, r
+			[aweight = hhweight] if milieu == 1, r
 predict yhat, xb
 estimates store ols_urban
 scalar ncovariates = wordcount(e(cmdline))-10 /* THIS ONLY WORKS IF YOU DO NOT CHANGE THE SPACES AMONG THE DIFFERENT PARTS ON THE REG COMMAND, for example if you erase the space between aweight = that will change the count*/

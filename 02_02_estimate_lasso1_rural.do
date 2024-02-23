@@ -178,7 +178,7 @@ estimates store rural1_lam05_ols
 /* @gabriel, I have few different covariates here. We need to check here why with your code. 
 reg lpcexp logsize yadr i.region a_living a_cupboard a_carpet a_charcoaliron ///
 			a_gastank a_fridge a_freezer a_fan a_tv a_satellite a_car i.c_walls ///
-			i.c_roof c_connectoelec i.c_ligthing c_connectedtoint c_connectedtotv ///
+			i.c_roof c_connectoelec i.c_lighting c_connectedtoint c_connectedtotv ///
 			i.c_fuelfirst_r c_toilet ///
 	[aw=hhweight*hhsize] if milieu == 2 & sample == 1, r
 */

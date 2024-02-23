@@ -23,7 +23,7 @@ gen hhid=grappe*100+menage
 
 **# type of housing --------------------
 	fre s11q01
-	recode s11q01 (3=1 "Low house (Maison Basse)") ///
+	recode s11q01  (3=1 "Low house (Maison Basse)") ///
 				   (2=2 "Single-story house(Maison à Etage)") ///
 				   (4 5=3 "Shack/Hut (Baraque/Case)") ///
 				   (1=4 "Apartment (Appartement dans un immeuble)"), ///
@@ -33,11 +33,14 @@ gen hhid=grappe*100+menage
 	
 **# number of rooms ---------------------
 	fre s11q02
-	recode s11q02 (11/max = 11), gen (c_numberofrooms_c)
+	recode s11q02 (7/max = 7), gen (c_numberofrooms_c)
 	label var c_numberofrooms "Number of rooms censored at 11 (rec of s11q02)"
 	tab s11q02 c_numberofrooms
-
-
+	
+	
+	gen c_rooms_pc= s11q02 
+	label var c_rooms_pc "Number of rooms pc (rec of s11q02)" // since hhsize is not here it will be added
+	
 **# Housing ocupation status -------------
 	fre s11q04
 	recode s11q04 (1 3=1 "Owner or co-owner with title") ///
@@ -99,7 +102,7 @@ gen hhid=grappe*100+menage
 **# Water source during dry season ----------------
 	fre s11q26a
 	recode s11q26a ///
-		(1 2 =1 "court or dwelling faucet (Robinet ... loge, cour, voisin)") ///
+		(1 2 =1 "Court or dwelling faucet (Robinet ... loge, cour, voisin)") ///
 		(3 4 = 2 "Pub Faucet (voisin and public)")  ///
 		(7 8 = 3 "Protected well (Puits couvert)")  ///
 		(6 5 = 4 "Unprotected well (Puits ouvert)") ///
@@ -110,10 +113,19 @@ gen hhid=grappe*100+menage
 	gen (c_water_dry)
 	label var c_water_dry "Water source dry season (rec of s11q26a)"
 	
+	recode s11q26a ///
+		(1 2 14 16 17 = 1 "Court, dwelling faucet Mineral water (schet, bouteille, vendeur)") ///
+		(3 4 = 2 "Pub Faucet (voisin and public)")  ///
+		(5 6 7 8 = 3 "Protected/Unprotected well (Puits couvert/ouvert)")  ///
+		(9 10 11 12 13 18 = 4 "Drilling (Forage), Fluvial, source developed (Spring)"), ///
+		gen (s_c_water_dry)
+		
+	label var s_c_water_dry "Water source dry season simplified  (rec of s11q26a)"
+	
 **# Water source during rainy season ----------------
 	fre s11q26b
 	recode s11q26b ///
-		(1 2 =1 "court or dwelling faucet (Robinet ... loge, cour, voisin)") ///
+		(1 2 =1  "Court or dwelling faucet (Robinet ... loge, cour, voisin)") ///
 		(3 4 = 2 "Pub Faucet (voisin and public)")  ///
 		(7 8 = 3 "Protected well (Puits couvert)")  ///
 		(6 5 = 4 "Unprotected well (Puits ouvert)") ///
@@ -124,17 +136,36 @@ gen hhid=grappe*100+menage
 	gen (c_water_rainy)
 	label var c_water_rainy "Water source rainy season (rec of s11q26b)"
 	
+	
+	recode s11q26b ///
+		(1 2 14 16 17=1 "Court, dwelling faucet (Robinet ... loge, cour, voisin), Mineral water (schet, bouteille, vendeur)") ///
+		(3 4 = 2 "Pub Faucet (voisin and public)")  ///
+		(6 5 7 8 = 3 "Protected/Unprotected well (Puits couvert/ouvert)")  ///
+		(9 10 11 12 13 18 = 4 "Drilling (Forage), Fluvial, source developed (Spring)"), ///
+		gen (s_c_water_rainy)
+	label var s_c_water_rainy "Water source rainy season simplified (rec of s11q26b)"
+	
+	
+	
 **# connected to electricity -----------------
 	fre s11q33
 	recode s11q33 (1=1 "Yes, to network") ///
-				  (2=2 "Yes to neighbot") ///
+				  (2=2 "Yes to neighbor") ///
 				  (3=3 "Directly connected to pole") ///
 				  (4=4 "Not connected"), ///
 		gen(c_connectoelec)
 	label var c_connectoelec "Connected to electricity (s11q33)"
 	tab s11q33 c_connectoelec
 	
-**# Lightning -------------------------------
+	recode s11q33 (1=1 "Yes, to network") ///
+				  (2 3=2 "Yes to neighbor, pole or other") ///
+				  (4=3 "Not connected"), ///
+		gen(s_c_connectoelec)
+		
+	label var s_c_connectoelec "Connected to electricity simplified  (s11q33)"
+	tab s11q33 s_c_connectoelec
+	
+**# lighting -------------------------------
 	fre s11q37
 	recode 	s11q37 ///
 		(1 2  =1  "Network and generator (Electricité réseau)") ///
@@ -143,8 +174,20 @@ gen hhid=grappe*100+menage
 		(5    = 4 "Rechargeable lamp(pile solaire)") ///
 		(6    = 5 "Wood others (Paraffine, bois, planche)") ///
 		(7    = 6 "Other"), ///
-	gen (c_ligthing)
-	label var c_ligthing "Lightning (rec of s11q37)"
+	gen (c_lighting)
+	label var c_lighting "lighting (rec of s11q37)"
+	
+	recode 	s11q37 ///
+		(1 2  =1  "Network and generator (Electricité réseau)") ///
+		(3 	  = 2 "Solar (solaire)")  ///
+		(5    = 3 "Rechargeable lamp(pile solaire)") ///
+		(4 6 7= 4 "Petrol lamp, Wood, Other (Lampe petrol, Paraffine, bois, planche)"),  ///
+	gen (s_c_lighting)
+	label var s_c_lighting "lighting simplified (rec of s11q37)"
+	
+	
+	
+	
 	
 **# landline ---------------------------
 	fre s11q42
@@ -200,43 +243,58 @@ gen hhid=grappe*100+menage
 	
 **## Recode first fuel choice ----
 	fre c_fuelfirst
-	recode c_fuelfirst (5 6 7 8 = 5 "Other/Electricity/Oil/Animal waste"), ///
+	recode c_fuelfirst (4=1 "Gas") (1 2 =2 "Wood") (3=3 "Charcoal") (5 6 7 8 = 5 "Other/Electricity/Oil/Animal waste"), ///
 		gen(c_fuelfirst_r)
 	label var c_fuelfirst_r "First fuel source (rec of c_fuelfirst)"
 	fre c_fuelfirst_r
 	
 **# Garbage disposal	 --------
 	fre s11q53
-	recode s11q53 (1=1 "Public dumpsite") ///
-				  (2=2 "Collection") ///
-				  (3=3 "Burned by household") ///
-				  (5=4 "Informal dumpsite") ///
-				  (4 6=6 "Other/burried by household") , ///
-		gen(c_garbage)
+	recode s11q53 (1=2 "Public dumpsite") ///
+				  (2=1 "Collection") ///
+				  (3 4 5=3 "Burned by household, Informal dumpsite, Other/burried by household"), ///
+			gen(c_garbage)
 	label var c_garbage "Garbage disposal (rec of s11q53)"
 
 **# toilet -----------------------------
 	fre s11q54
 	recode 	s11q54 ///
-		(11 =1  "In nauture (Aucune toilette (dans la nature)") ///
-		(1 2 3 4 = 2  "W.C. connected")  ///
-		(6 8 = 3 "Covered latrines (ECOSAN,: dalles, couvertes)")  ///
-		(7 = 4 "Uncovered latrines (SANPLAT,: dalles, non couvertes)") ///
-		(5 = 5 "Improved ventilated latrine (VIP: dalles, ventillees)") ///
-		(9 10 12 = 6 "Other"), ///
-	gen (c_toilet)
-	label var c_toilet "Toilet (rec of s11q54)"
+		(11 =1  		"In nauture (Aucune toilette (dans la nature)") ///
+		(1 2 3 4 = 2  	"W.C. connected")  ///
+		(6 8 = 3 		"Covered latrines (ECOSAN,: dalles, couvertes)")  ///
+		(7 = 4 			"Uncovered latrines (SANPLAT,: dalles, non couvertes)") ///
+		(5 = 5 			"Improved ventilated latrine (VIP: dalles, ventillees)") ///
+		(9 10 12 = 6 	"Other"), ///
+	gen (c_toilet_rur)
+	label var c_toilet_rur "Toilet rural  (rec of s11q54)"
+	
+	recode 	s11q54 ///
+		(1 2 3 4 = 1  	"W.C. connected")  ///
+		(6  8 = 2 		"Covered latrines (ECOSAN: dalles, couvertes couvertes)")  ///
+		(5 = 3 			"Improved ventilated latrine (VIP: dalles, ventillees)") ///
+		(7  = 4 		"Uncovered latrines (SANPLAT: dalles, non couvertes)")  ///
+		(9 10 11 12 = 5 "In nauture (Aucune toilette)"), ///
+	gen (c_toilet_urb)
+	label var c_toilet_urb "Toilet urban (rec of s11q54)"
+	
+	
+	recode 	s11q54 ///
+		(1 2 3 4 = 1  	"W.C. connected")  ///
+		(6 7 8 = 2 		"Covered latrines (ECOSAN,SANPLAT: dalles, couvertes & non couvertes)")  ///
+		(5 = 3 			"Improved ventilated latrine (VIP: dalles, ventillees)") ///
+		(9 10 11 12 = 4 "In nauture (Aucune toilette)"), ///
+	gen (c_s_toilet_urb_rur)
+	label var c_s_toilet_urb_rur "Toilet urb & rur simplified (rec of s11q54)"
+	
+	
 	
 **# waste disposal -----------------------------
 	fre s11q57
 	recode 	s11q57 ///
 		(1 = 1  "Sewer") ///
-		(2 = 2 "Septic tank")  ///
-		(3 = 3 "Watertight tank")  ///
-		(4 = 4 "Simple pit") ///
-		(5 = 5 "Compost") ///
-		(6 = 6 "Street/Yard/Gutter/Nature") ///
-		(7 = 7 "Other"), ///
+		(2 3= 2 "Septic or Watertight tank")  ///
+		(4 = 3 "Simple pit") ///
+		(5 6 7 = 4 "Compost, Street/Yard/Gutter/Nature, Other"), ///
 	gen (c_waste)
 	label var c_waste "Waste disposal (s11q57)"
 

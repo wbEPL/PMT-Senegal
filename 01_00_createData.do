@@ -101,5 +101,11 @@ merge 1:1 hhid using "${swdTemp}/french_temp.dta", nogen // 839 households witho
 
 gen lpcexp=ln(pcexp)
 
+replace c_toilet_urb=. if milieu==2
+replace c_toilet_rur=. if milieu==1
+egen c_toilet=rowtotal(c_toilet_rur c_toilet_urb)
+
+replace c_rooms_pc=c_rooms_pc/hhsize
+
 save "${swdFinal}/data4model_2021.dta", replace
 

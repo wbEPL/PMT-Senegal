@@ -53,7 +53,7 @@ reg lpcexp logsize yadr alfa_french i.region a_dining_n a_bed_n a_carpet_n ///
 			ar_tiller_n ar_axe_pickaxe_n ar_machete_n ar_beehives_n ar_scale_n ///
 			ar_straw_chop_n ar_drinker_fee_n ar_mower_n ar_mill_n i.c_typehousing ///
 			c_numberofrooms_c i.c_housingocup c_businessindwe i.c_walls i.c_roof ///
-			i.c_floor c_connectowater i.c_water_rainy c_connectoelec i.c_ligthing ///
+			i.c_floor c_connectowater i.c_water_rainy c_connectoelec i.c_lighting ///
 			c_landline c_connectedtoint c_connectedtotv i.c_fuelfirst_r i.c_garbage ///
 			i.c_toilet l_sheep_n l_goats_n l_chickens_n l_guinea_fowl_n ///
 	[aw=hhweight*hhsize] if milieu == 2 & sample == 1, r

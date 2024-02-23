@@ -588,8 +588,8 @@ gen hhid=grappe*100+menage
 	local vars_assets "ad_aircond_b ad_hotwater ad_fan_b"
 	collapse (sum) `vars_assets', by (hhid)
 	
-	lab var ad_aircond_b "has aircond_b (mod 11)"
-	lab var ad_hotwater  "has hotwater (mod 11)"
+	lab var ad_aircond_b  "has aircond_b (mod 11)"
+	lab var ad_hotwater   "has hotwater (mod 11)"
 	lab var ad_fan_b 	  "has fan_b (mod 11)"
 	
 	
