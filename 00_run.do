@@ -11,7 +11,7 @@
 *-------------------------------------------------------------------
 
 
-include "$scripts/01_00_createData.do.do"
+include "$scripts/01_00_createData.do"
 
 include "$scripts/02_00_estimate_models.do"
 
