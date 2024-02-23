@@ -34,6 +34,7 @@ save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy" "TRUE"
 save_lambdmeasu "accuracies_OLS.xlsx" "Rural"
 
 **## Urban -----
+
 capture drop yhat qhat qreal
 reg lpcexp logsize yadr alfa_french c_rooms_pc ///
 			i.c_floor i.c_lighting i.c_toilet i.c_walls ///

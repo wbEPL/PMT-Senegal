@@ -20,7 +20,7 @@ use "${swdDataraw}/Menage/s17_me_sen_2021.dta", clear
 gen hhid=grappe*100+menage 
 keep hhid grappe menage s17q01 s17q03 s17q05
 
-recode s17q03 (2 = 0) (1 = 1)
+recode s17q03  (1 = 1) (2   = 0)  (missing = 0 )
 label define s17q03 0 "No" 1 "Yes", replace
 
 replace s17q05 = 0 if s17q03 == 0
