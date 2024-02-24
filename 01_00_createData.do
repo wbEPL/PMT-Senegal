@@ -100,8 +100,6 @@ merge 1:1 hhid using "${swdTemp}/educ_temp.dta", nogen
 merge 1:1 hhid using "${swdTemp}/french_temp.dta", nogen // 839 households withouth hh head info 
 
 gen lpcexp=ln(pcexp)
-
-
 replace c_rooms_pc=c_rooms_pc/hhsize
 
 save "${swdFinal}/data4model_2021.dta", replace
