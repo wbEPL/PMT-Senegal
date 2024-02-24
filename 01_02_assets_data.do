@@ -32,12 +32,14 @@ keep hhid grappe menage s12q01 s12q02 s12q03
 recode s12q02 (2 = 0) (1 = 1)
 label define s12q02 0 "No" 1 "Yes", replace
 
-replace s12q03 = 0 if s12q02 == 0
+replace s12q03 = 0 if s12q02 == 0 & s12q03==.
+replace s12q03 = 1 if s12q02 == 1 & s12q03==.
 recode s12q03 (0 = 0 "Not owned") ///
 			  (1 = 1 "Owns 1") ///
 			  (2/max = 2 "Owns more than 1"), ///
 			  gen(s12q04)
-			 
+
+ 			 
 **## Reshape so column is an asset -----
 reshape wide s12q02 s12q03 s12q04, i(hhid) j(s12q01) favor(speed)
 
@@ -331,18 +333,34 @@ use "${swdDataraw}/Menage/s19_me_sen_2021.dta", clear
 
 gen hhid=grappe*100+menage 
 keep hhid grappe menage s19q00 s19q02 s19q03 s19q04 
-keep if s19q00 == 1
+*keep if s19q00 == 1
 recode s19q03 (2 = 0) (1 = 1)
 label define s19q03 0 "No" 1 "Yes", replace
+replace s19q03=0 if s19q00 == 2 & s19q03==.
+replace s19q03=0 if s19q00==. //  there are 1387 households without info are assumed to not have assets  
 
-replace s19q04 = 0 if s19q03 == 0
+replace s19q02=999 if s19q00==. & s19q02==. // obs withouth info have asset 9999
+replace s19q02=999 if s19q03==0  & s19q02==. // same for for peopel who respond to have no assets 
+
+
+replace s19q04 = 0 if s19q03 == 0 & s19q04==.
+replace s19q04 = 1 if s19q03 == 1 & s19q04==.
 recode s19q04 (0 = 0 "Not owned") ///
 			  (1 = 1 "Owns 1") ///
 			  (2/max = 2 "Owns more than 1"), ///
 			  gen(s19q05)
-
+drop s19q00
 **## Reshape so column is one asset --------------
 reshape wide s19q03 s19q04 s19q05, i(hhid) j(s19q02) favor(speed)
+drop s19q03999 s19q04999 s19q05999 // 999 means nothing and was created to do the reshape 
+
+des, varlist 
+foreach v in `r(varlist)' {
+	if "`v'"!="hhid" {
+		replace `v'=0 if `v'==.
+	}
+}
+
 
 **## labels and names dummy --------------
 label var s19q03101 "Tractor"

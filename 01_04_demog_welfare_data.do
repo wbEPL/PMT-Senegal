@@ -37,12 +37,14 @@ save "${swdTemp}/welfare_temp.dta", replace
 **# literacy in french --------------------------------
 *******************************************************
 
-use "${swdDataraw}/Menage/s02_me_sen_2021.dta", clear
-	
+
+use "${swdDataraw}/Menage/s01_me_sen_2021.dta", clear 
+
+	merge 1:1 grappe menage s01q00a using "${swdDataraw}/Menage/s02_me_sen_2021.dta", nogen  keep(matched)
 	gen hhid=grappe*100+menage 
+	
 	gen alfa_french=s02q01__1==1 & s02q02__1==1
-	keep if s01q00a == 1 /*The problem is that this variable is not the same as 
-	lien in ehcv,_individu.dta, I can't find a way to identify hh head in raw data*/
+	keep if s01q02 == 1 /*Now is the hh head!*/
 	keep hhid alfa_french
 	label var alfa_french "read and write french"
 save "${swdTemp}/french_temp.dta", replace

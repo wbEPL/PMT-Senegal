@@ -173,7 +173,8 @@ gen hhid=grappe*100+menage
 		(4    = 3 "Petrol lamp (Lampe petrol)")  ///
 		(5    = 4 "Rechargeable lamp(pile solaire)") ///
 		(6    = 5 "Wood others (Paraffine, bois, planche)") ///
-		(7    = 6 "Other"), ///
+		(7    = 6 "Other") ///
+		(missing =7 "Mising"), ///
 	gen (c_lighting)
 	label var c_lighting "lighting (rec of s11q37)"
 	
@@ -224,21 +225,21 @@ gen hhid=grappe*100+menage
 **# First and second choice of fuel for kitchen--------------
 	fre s11q52__1 s11q52__2 s11q52__3 s11q52__4 s11q52__5 s11q52__6 s11q52__7 s11q52__8
 	gen c_fuelfirst = .
-	gen c_fuelsecond = .
+	*gen c_fuelsecond = .
 
 	forvalues i = 1/8 {
 		replace c_fuelfirst = `i' if s11q52__`i' == 1
-		replace c_fuelsecond = `i' if s11q52__`i' == 2
+		*replace c_fuelsecond = `i' if s11q52__`i' == 2
 	}
 
 	label define fuel 1 "Collected wood" 2 "Bought wood" 3 "Charcoal" 4 "Gas" 5 "Electricity" 6 "Oil" 7 "Animal waste" 8 "Other"
 	label val c_fuelfirst fuel
-	label val c_fuelsecond fuel
+	*label val c_fuelsecond fuel
 	label var c_fuelfirst "First choice of fuel for kitchen (s11q52__*)"
-	label var c_fuelsecond "Second choice of fuel for kitchen (s11q52__*)"
+	*label var c_fuelsecond "Second choice of fuel for kitchen (s11q52__*)"
 
 	tab c_fuelfirst s11q52__1 
-	tab c_fuelsecond s11q52__1
+	*tab c_fuelsecond s11q52__1
 	*Second fuel source is misisng for 48% of sample, so only recode and use c_fuelfirst
 	
 **## Recode first fuel choice ----
@@ -257,7 +258,7 @@ gen hhid=grappe*100+menage
 	label var c_garbage "Garbage disposal (rec of s11q53)"
 
 **# toilet -----------------------------
-	fre s11q54
+/* 	fre s11q54
 	recode 	s11q54 ///
 		(11 =1  		"In nauture (Aucune toilette (dans la nature)") ///
 		(1 2 3 4 = 2  	"W.C. connected")  ///
@@ -267,22 +268,24 @@ gen hhid=grappe*100+menage
 		(9 10 12 = 6 	"Other"), ///
 	gen (c_toilet_rur)
 	label var c_toilet_rur "Toilet rural  (rec of s11q54)"
-	
+*/	
 	recode 	s11q54 ///
 		(1 2 3 4 = 1  	"W.C. connected")  ///
 		(6  8 = 2 		"Covered latrines (ECOSAN: dalles, couvertes couvertes)")  ///
 		(5 = 3 			"Improved ventilated latrine (VIP: dalles, ventillees)") ///
 		(7  = 4 		"Uncovered latrines (SANPLAT: dalles, non couvertes)")  ///
-		(9 10 11 12 = 5 "In nauture (Aucune toilette)"), ///
-	gen (c_toilet_urb)
-	label var c_toilet_urb "Toilet urban (rec of s11q54)"
+		(9 10 11 12 = 5 "Other:Fosse rudimentaire, publiques, dans la nature, Autre)"), ///
+	gen (c_toilet)
+	label var c_toilet "Toilet  (rec of s11q54)"
+	
+
 	
 	
 	recode 	s11q54 ///
 		(1 2 3 4 = 1  	"W.C. connected")  ///
 		(6 7 8 = 2 		"Covered latrines (ECOSAN,SANPLAT: dalles, couvertes & non couvertes)")  ///
 		(5 = 3 			"Improved ventilated latrine (VIP: dalles, ventillees)") ///
-		(9 10 11 12 = 4 "In nauture (Aucune toilette)"), ///
+		(9 10 11 12 = 4 "Other and nauture (Aucune toilette)"), ///
 	gen (c_s_toilet_urb_rur)
 	label var c_s_toilet_urb_rur "Toilet urb & rur simplified (rec of s11q54)"
 	
@@ -294,7 +297,8 @@ gen hhid=grappe*100+menage
 		(1 = 1  "Sewer") ///
 		(2 3= 2 "Septic or Watertight tank")  ///
 		(4 = 3 "Simple pit") ///
-		(5 6 7 = 4 "Compost, Street/Yard/Gutter/Nature, Other"), ///
+		(5 6 7 . = 4 "Compost, Street/Yard/Gutter/Nature, Other"), /// missing data if households that go to public restroom or nature. I test using a univariate regression to group the coefficients
+		///
 	gen (c_waste)
 	label var c_waste "Waste disposal (s11q57)"
 
