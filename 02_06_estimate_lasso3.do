@@ -17,7 +17,7 @@ lasso linear lpcexp logsize oadr yadr c_rooms_pc ///
 			a_moped a_radio a_car a_fan a_tv ad_hotwater a_cellphone a_boat a_homephone a_computer a_ac ar_carts a_fridge  ///
 			l_horses_n l_goats_n l_sheep_n l_poultry_n l_bovines_n ///
 			i.region ///
-			if milieu == 2 & sample == 1
+			if milieu == 2 & sample == 1,  rseed(124578)
 			
 estimates store rural3
 cvplot
@@ -68,7 +68,7 @@ lasso linear lpcexp logsize yadr alfa_french c_rooms_pc ///
 			a_car a_computer a_fridge a_stove a_fan a_tv a_radio a_homephone ar_tractor a_iron ///
 			l_donkeys_n l_horses_n l_pigs_n ///
 			i.region ///
-			if milieu == 1 & sample == 1
+			if milieu == 1 & sample == 1,  rseed(124578)
 			
 estimates store urban3
 cvplot

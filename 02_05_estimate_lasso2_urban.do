@@ -13,24 +13,17 @@ capture drop yhat qhat qreal
 keep if milieu == 1
 **# Run lasso regresion, save results chosen lambda
 
-lasso linear lpcexp $demo $asset_num $asset_rur_num $dwell $livest_all_num if milieu == 1 & sample == 1
+lasso linear lpcexp $demo $asset_num $asset_rur_num $dwell $livest_all_num if milieu == 1 & sample == 1, rseed(124578)
 estimates store urban2
 cvplot
 graph save "${swdResults}/graphs/cvplot_urban2", replace
 lassocoef urban1 urban2
-lassogof urban1 urban2, over(sample) postselection
+lassogof urban1 urban2 if milieu == 1, over(sample) postselection
 
 *Show selected covariates
 scalar ncovariates = wordcount(e(post_sel_vars))-1
-dis "amount of covariates is: " 
-dis ncovariates
-dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
-						For now I'll do it by hand but if it can be done programatically better*/
 
-
-						
 * run ols with selected covariates and pop weights
-
 * writing categorical variables
 local list "`e(post_sel_vars)'"
 dis "`list'"
@@ -41,13 +34,10 @@ foreach c in $categorical_v { // categorical_v is variables that are categorical
 
 local test_y =substr("`list'", 1, 6) // eliminating the 
 assert  "`test_y'" == "lpcexp"
-
-
 reg `list' ///
 	[aw=hhweight] if milieu == 1 & sample == 1, r
 local list ""
 estimates store urban2_ols
-
 
 lassogof urban2 urban2_ols if milieu == 1, over(sample) postselection
 
