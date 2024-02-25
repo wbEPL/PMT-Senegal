@@ -56,7 +56,7 @@ reg lpcexp logsize yadr alfa_french c_rooms_pc ///
 			[aweight = hhweight] if milieu == 1, r
 predict yhat if milieu == 1, xb
 local covariates = subinstr("`e(cmdline)'", "regress lpcexp", "", .)
-local covariates = subinstr("`covariates'", "[aweight = hhweight] if milieu == 2, r", "", .)
+local covariates = subinstr("`covariates'", "[aweight = hhweight] if milieu == 1, r", "", .)
 scalar ncovariates = wordcount("`covariates'")
 local covariates ""
 
