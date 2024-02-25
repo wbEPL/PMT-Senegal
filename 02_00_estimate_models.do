@@ -12,6 +12,12 @@
 *	Reviewer: TBD
 *	Last Reviewed: TBD
 
+*Number of models: 
+1. OLS with PMT covariates
+2. LASSO 1: all covs, categories simplified  (Diff lambdas)
+3. LASSO 2: all covs  categories not simplified  (Diff lambdas)
+4. LASSO 3: PMT covs, not simplified  (optimal lambda)
+
 *------------------------------------------------------------------------------- */
 
 **# INIT ----------------------

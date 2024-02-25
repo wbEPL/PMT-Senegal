@@ -22,7 +22,11 @@ reg lpcexp logsize oadr yadr c_rooms_pc ///
 			[aweight = hhweight] if milieu == 2, r
 
 predict yhat if milieu == 2, xb
-scalar ncovariates = wordcount(e(cmdline))-10 /* THIS ONLY WORKS IF YOU DO NOT CHANGE THE SPACES AMONG THE DIFFERENT PARTS ON THE REG COMMAND, for example if you erase the space between aweight = that will change the count*/
+local covariates = subinstr("`e(cmdline)'", "regress lpcexp", "", .)
+local covariates = subinstr("`covariates'", "[aweight = hhweight] if milieu == 2, r", "", .)
+scalar ncovariates = wordcount("`covariates'")
+local covariates ""
+
 estimates store ols_rural
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
@@ -30,7 +34,9 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 
 outreg2 using "${swdResults}/rural_coefficients.xls", replace ctitle("OLS") label
-estiaccu_measures
+
+*estiaccu_measures
+estiaccu_measures_ch
 save_measures "accuracy2015vs2021.xlsx" "Accuracy" "TRUE"
 save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy" "TRUE"
 save_lambdmeasu "accuracies_OLS.xlsx" "Rural"
@@ -43,20 +49,26 @@ keep if milieu == 1
 
 capture drop yhat qhat qreal
 reg lpcexp logsize yadr alfa_french c_rooms_pc ///
-			i.c_floor i.c_lighting i.c_toilet i.c_walls ///
+			i.c_floor i.c_lighting i.c_toilet i.c_roof ///
 			a_car a_computer a_fridge a_stove a_fan a_tv a_radio a_homephone ar_tractor a_iron ///
 			l_donkeys_n l_horses_n l_pigs_n ///
 			i.region ///
 			[aweight = hhweight] if milieu == 1, r
-predict yhat, xb
+predict yhat if milieu == 1, xb
+local covariates = subinstr("`e(cmdline)'", "regress lpcexp", "", .)
+local covariates = subinstr("`covariates'", "[aweight = hhweight] if milieu == 2, r", "", .)
+scalar ncovariates = wordcount("`covariates'")
+local covariates ""
+
 estimates store ols_urban
-scalar ncovariates = wordcount(e(cmdline))-10 /* THIS ONLY WORKS IF YOU DO NOT CHANGE THE SPACES AMONG THE DIFFERENT PARTS ON THE REG COMMAND, for example if you erase the space between aweight = that will change the count*/
+
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 
 outreg2 using "${swdResults}/urban_coefficients.xls", replace ctitle("Urban OLS") label
-estiaccu_measures
+*estiaccu_measures
+estiaccu_measures_ch
 save_measures "accuracy2015vs2021.xlsx" "Accuracy" "FALSE"
 save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy" "FALSE"
 save_lambdmeasu "accuracies_OLS.xlsx" "Urban"

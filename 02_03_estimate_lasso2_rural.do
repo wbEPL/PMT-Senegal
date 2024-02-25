@@ -69,7 +69,8 @@ quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 lassogof rural2 rural2_ols if milieu == 2, over(sample) postselection
 
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 2-lambda CV") label
-estiaccu_measures
+*estiaccu_measures
+estiaccu_measures_ch
 save_measures "accuracy2015vs2021.xlsx" "Accuracy Lasso 2" "TRUE"
 save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy Lasso 2" "TRUE"
 save_lambdmeasu "accuracies_rural2.xlsx" "Lambda CV"
@@ -112,7 +113,8 @@ quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 lassogof rural2 rural2_ols rural2_lam02_ols if milieu == 2, over(sample) postselection
 
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 2-lambda 0.02") label
-estiaccu_measures
+*estiaccu_measures
+estiaccu_measures_ch
 save_lambdmeasu "accuracies_rural2.xlsx" "Lambda 0.02"
 
 **## Lambda 0.035
@@ -151,7 +153,8 @@ quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 lassogof rural2 rural2_ols rural2_lam02_ols rural2_lam03_ols if milieu == 2, over(sample) postselection
 
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 2-lambda 0.035") label
-estiaccu_measures
+*estiaccu_measures
+estiaccu_measures_ch
 save_lambdmeasu "accuracies_rural2.xlsx" "Lambda 0.035"
 
 **## Lambda 0.05
@@ -190,5 +193,6 @@ quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 lassogof rural2 rural2_ols rural2_lam02_ols rural2_lam03_ols rural2_lam05_ols if milieu == 2, over(sample) postselection
 
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 2-lambda 0.05") label
-estiaccu_measures
+*estiaccu_measures
+estiaccu_measures_ch
 save_lambdmeasu "accuracies_rural2.xlsx" "Lambda 0.05"

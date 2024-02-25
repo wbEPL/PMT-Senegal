@@ -58,7 +58,8 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda CV")
-estiaccu_measures
+*estiaccu_measures
+estiaccu_measures_ch
 save_measures "accuracy2015vs2021.xlsx" "Accuracy Lasso 2" "FALSE"
 save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy Lasso 2" "FALSE"
 save_lambdmeasu "accuracies_urban2.xlsx" "Lambda CV"
@@ -105,7 +106,8 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda 0.04")
-estiaccu_measures
+*estiaccu_measures
+estiaccu_measures_ch
 save_lambdmeasu "accuracies_urban2.xlsx" "Lambda 0.04"
 
 **## Lambda 0.06
@@ -150,7 +152,8 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda 0.06")
-estiaccu_measures
+*estiaccu_measures
+estiaccu_measures_ch
 save_lambdmeasu "accuracies_urban2.xlsx" "Lambda 0.06"
 
 **## Lambda 0.08
@@ -196,5 +199,6 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda 0.08")
-estiaccu_measures
+*estiaccu_measures
+estiaccu_measures_ch
 save_lambdmeasu "accuracies_urban2.xlsx" "Lambda 0.08"

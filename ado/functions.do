@@ -9,6 +9,78 @@
 
 *------------------------------------------------------------------------------- */
 
+
+capture program drop estiaccu_measures_ch
+program define estiaccu_measures_ch
+	 
+	foreach t in 20 25 30 50 75 {
+		capture drop poor_real_`t' poor_hat_`t' correct_`t' undercovered_`t' leaked_`t'
+
+		* identify poor people in data and in model
+		gen poor_real_`t' = qreal < `t' 
+		gen poor_hat_`t' = qhat < `t' 
+		
+		
+		* identify accurate individual
+		gen correct_`t' = poor_real_`t' == poor_hat_`t'
+		
+		* identify undercovered individual
+		gen undercovered_`t' = (poor_real_`t' == 1 & poor_hat_`t' == 0) 
+		
+		* identify leaked individual
+		gen leaked_`t' = (poor_real_`t' == 0 & poor_hat_`t' == 1)
+		
+		* measures on all data -----
+		* total accuracy
+		qui mean correct_`t' [aw=hhweight*hhsize] 
+		scalar mean_correct_`t' =  el(r(table),1,1)
+		
+		* Poverty accuracy
+		qui mean correct_`t' [aw=hhweight*hhsize] if poor_real_`t' == 1
+		scalar mean_poverty_`t' =  el(r(table),1,1)
+
+		* Non-poverty accuracy
+		qui mean correct_`t' [aw=hhweight*hhsize] if poor_real_`t' == 0
+		scalar mean_non_poverty_`t' =  el(r(table),1,1)
+		
+		* exclusion error
+		qui mean undercovered_`t' [aw=hhweight*hhsize] if poor_real_`t' == 1 
+		scalar mean_undercoverage_`t' =  el(r(table),1,1)
+
+		* inclusion error
+		qui mean leaked_`t' [aw=hhweight*hhsize]  if  poor_hat_`t' == 1
+		scalar mean_leakeage_`t' =  el(r(table),1,1)
+		
+		* measures on testing data -----
+		* total accuracy
+		qui mean correct_`t' [aw=hhweight*hhsize] if sample == 2
+		scalar mean_correct_`t'_te =  el(r(table),1,1)
+		
+		* Poverty accuracy
+		qui mean correct_`t' [aw=hhweight*hhsize] if poor_real_`t' == 1 & sample == 2
+		scalar mean_poverty_`t'_te =  el(r(table),1,1)
+
+		* Non-poverty accuracy
+		qui mean correct_`t' [aw=hhweight*hhsize] if poor_real_`t' == 0 & sample == 2
+		scalar mean_non_poverty_`t'_te =  el(r(table),1,1)
+		
+		* exclusion error
+		qui mean undercovered_`t' [aw=hhweight*hhsize] if poor_real_`t' == 1 & sample == 2
+		scalar mean_undercoverage_`t'_te =  el(r(table),1,1)
+
+		* inclusion error
+		qui mean leaked_`t' [aw=hhweight*hhsize]  if  poor_hat_`t' == 1 & sample == 2
+		scalar mean_leakeage_`t'_te =  el(r(table),1,1)
+	}
+	
+	
+
+end
+
+
+
+
+
 **# FN to estimate accuracy measures for 20, 25, 30, 50 and 75 percentiles poverty line
 * Arg: No arguments
 * Input: quantiles called qhat and qreal to have been estimated. 
@@ -295,7 +367,7 @@ program define save_lambdmeasu
 	local i = 1
 	foreach t in 20 25 30 50 75{
 		local l: word `i' of `col'
-		qui putexcel `l'2 = mean_correct_`t'_te*100, nformat("#.00")
+		qui putexcel `l'2 = mean_correct_`t'*100, nformat("#.00")
 		local ++i
 	}
 
@@ -303,7 +375,7 @@ program define save_lambdmeasu
 	local i = 1
 	foreach t in 20 25 30 50 75{
 		local l: word `i' of `col'
-		qui putexcel `l'3 = mean_poverty_`t'_te*100, nformat("#.00")
+		qui putexcel `l'3 = mean_poverty_`t'*100, nformat("#.00")
 		local ++i
 	}
 
@@ -311,7 +383,7 @@ program define save_lambdmeasu
 	local i = 1
 	foreach t in 20 25 30 50 75{
 		local l: word `i' of `col'
-		qui putexcel `l'4 = mean_non_poverty_`t'_te*100, nformat("#.00")
+		qui putexcel `l'4 = mean_non_poverty_`t'*100, nformat("#.00")
 		local ++i
 	}
 
@@ -319,7 +391,7 @@ program define save_lambdmeasu
 	local i = 1
 	foreach t in 20 25 30 50 75{
 		local l: word `i' of `col'
-		qui putexcel `l'5 = mean_undercoverage_`t'_te*100, nformat("#.00")
+		qui putexcel `l'5 = mean_undercoverage_`t'*100, nformat("#.00")
 		local ++i
 	}
 
@@ -327,7 +399,7 @@ program define save_lambdmeasu
 	local i = 1
 	foreach t in 20 25 30 50 75{
 		local l: word `i' of `col'
-		qui putexcel `l'6 = mean_leakeage_`t'_te*100, nformat("#.00")
+		qui putexcel `l'6 = mean_leakeage_`t'*100, nformat("#.00")
 		local ++i
 	}
 	

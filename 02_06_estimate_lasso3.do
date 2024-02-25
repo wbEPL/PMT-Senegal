@@ -16,13 +16,14 @@ lasso linear lpcexp logsize oadr yadr c_rooms_pc ///
 			i.c_floor i.c_water_dry i.c_lighting i.c_walls i.c_toilet /// is equivalent to use toilet or toilet_rur
 			a_moped a_radio a_car a_fan a_tv ad_hotwater a_cellphone a_boat a_homephone a_computer a_ac ar_carts a_fridge  ///
 			l_horses_n l_goats_n l_sheep_n l_poultry_n l_bovines_n ///
-			i.region if milieu == 2 & sample == 1
+			i.region ///
+			if milieu == 2 & sample == 1
+			
 estimates store rural3
 cvplot
 graph save "${swdResults}/graphs/cvplot_rural3", replace
 lassocoef rural3
 lassogof rural3, over(sample) postselection
-
 
 *Show selected covariates
 dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
@@ -54,18 +55,21 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 
-estiaccu_measures
+*estiaccu_measures
+estiaccu_measures_ch
 save_measures "accuracy2015vs2021.xlsx" "Accuracy Lasso 3" "TRUE"
 save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy Lasso 3" "TRUE"
 
 **## Lasso 3 urban, same covariates as OLS 2015 ------------------
 capture drop yhat qhat qreal
 
-lasso linear lpcexp logsize c_rooms_pc yadr alfa_french ///
-			i.c_floor i.c_lighting i.c_toilet i.c_walls /// same c_toilet_urb as c_toilet if conditional to miieu 
+lasso linear lpcexp logsize yadr alfa_french c_rooms_pc ///
+			i.c_floor i.c_lighting i.c_toilet i.c_roof ///
 			a_car a_computer a_fridge a_stove a_fan a_tv a_radio a_homephone ar_tractor a_iron ///
 			l_donkeys_n l_horses_n l_pigs_n ///
-			i.region if milieu == 1 & sample == 1
+			i.region ///
+			if milieu == 1 & sample == 1
+			
 estimates store urban3
 cvplot
 graph save "${swdResults}/graphs/cvplot_urban3", replace
@@ -103,6 +107,7 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 
-estiaccu_measures
+*estiaccu_measures
+estiaccu_measures_ch
 save_measures "accuracy2015vs2021.xlsx" "Accuracy Lasso 3" "FALSE"
 save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy Lasso 3" "FALSE"

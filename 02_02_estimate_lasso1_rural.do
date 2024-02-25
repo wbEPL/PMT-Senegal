@@ -60,7 +60,8 @@ quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 lassogof rural1 rural1_ols if milieu == 2, over(sample) postselection
 
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda CV") label
-estiaccu_measures
+*estiaccu_measures
+estiaccu_measures_ch
 save_measures "accuracy2015vs2021.xlsx" "Accuracy Lasso 1" "TRUE"
 save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy Lasso 1" "TRUE"
 save_lambdmeasu "accuracies_rural1.xlsx" "Lambda CV"
@@ -104,7 +105,8 @@ quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 lassogof rural1 rural1_ols rural1_lam01_ols if milieu == 2, over(sample) postselection
 
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda 0.01") label
-estiaccu_measures
+*estiaccu_measures
+estiaccu_measures_ch
 save_lambdmeasu "accuracies_rural1.xlsx" "Lambda 0.01"
 
 **## Lambda 0.03
@@ -144,7 +146,8 @@ quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 lassogof rural1 rural1_ols rural1_lam01_ols rural1_lam03_ols if milieu == 2, over(sample) postselection
 
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda 0.03") label
-estiaccu_measures
+*estiaccu_measures
+estiaccu_measures_ch
 save_lambdmeasu "accuracies_rural1.xlsx" "Lambda 0.03"
 
 **## Lambda 0.05
@@ -182,8 +185,6 @@ reg lpcexp logsize yadr i.region a_living a_cupboard a_carpet a_charcoaliron ///
 			i.c_fuelfirst_r c_toilet ///
 	[aw=hhweight*hhsize] if milieu == 2 & sample == 1, r
 */
-	 
-	
 	
 predict yhat  if milieu == 2, xb 
 
@@ -193,7 +194,8 @@ quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 lassogof rural1 rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols if milieu == 2, over(sample) postselection
 
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda 0.05") label
-estiaccu_measures
+*estiaccu_measures
+estiaccu_measures_ch
 save_lambdmeasu "accuracies_rural1.xlsx" "Lambda 0.05"
 
 esttab rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols
