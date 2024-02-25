@@ -58,6 +58,7 @@ foreach c of local commands {
 	}
 }
 
+run "$gitrepo/ado/functions.do"
 
 
 * Parameters 
@@ -94,6 +95,9 @@ global livest_all_num "l_bovines_n l_sheep_n l_goats_n l_camels_n l_horses_n l_d
 	include "$scripts/01_00_createData.do"
 
 // Running models 
+	
+	use "${swdFinal}/data4model_2021.dta", clear // temporal for development pourposes  
+
 	include "$scripts/02_00_estimate_models.do"
 
 

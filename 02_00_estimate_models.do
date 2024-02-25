@@ -17,19 +17,14 @@
 **# INIT ----------------------
 use "${swdFinal}/data4model_2021.dta", clear
 
-**## Add accurate measure function
-include "$scripts/02_00a_create_accuracy_function.do"
-
-
 **## split sample
 
-splitsample, generate(sample) split(0.7 0.3)
+splitsample, generate(sample) split(0.8 0.2)
 label define sample 1 "Training" 2 "Testing"
 label values sample sample
 
 **# OLS same as 2015 covariates ---
 include "$scripts/02_01_estimate_ols.do"
-
 
 tempfile cleaned_dataset
 save `cleaned_dataset', replace 

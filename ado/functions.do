@@ -29,6 +29,8 @@
 *		- mean_leaked_*: percentage of leaked individuals (inclusion error) for * line
 
 
+
+
 capture program drop estiaccu_measures
 program define estiaccu_measures
 	 
@@ -40,7 +42,7 @@ program define estiaccu_measures
 		
 		qui mean lpcexp [aw=hhweight*hhsize] if qreal == `t' 
 		scalar mean_lpcexp =  el(r(table),1,1)
-		gen poor_hat_`t' = yhat < mean_lpcexp /*TODO: Think if this is the best way? This is where we estimate poors*/
+		gen poor_hat_`t' = yhat < mean_lpcexp  /*TODO: Think if this is the best way? This is where we estimate poors*/
 		
 		* identify accurate individual
 		gen correct_`t' = poor_real_`t' == poor_hat_`t'
@@ -53,6 +55,7 @@ program define estiaccu_measures
 		gen leaked_`t' = 0
 		replace leaked_`t' = 1 if poor_real_`t' == 0 & poor_hat_`t' == 1
 		
+		* measures on all data -----
 		* total accuracy
 		qui mean correct_`t' [aw=hhweight*hhsize] 
 		scalar mean_correct_`t' =  el(r(table),1,1)
@@ -131,7 +134,7 @@ program define save_measures
 	
 	*total accuracy
 	local i = 1
-	foreach t in 20 25 30 50 75{
+	foreach t in 20 25 30 50 75 {
 		local l: word `i' of `col'
 		qui putexcel `l'4 = mean_correct_`t'*100, nformat("#.00")
 		local ++i
@@ -139,7 +142,7 @@ program define save_measures
 
 	*poverty accuracy
 	local i = 1
-	foreach t in 20 25 30 50 75{
+	foreach t in 20 25 30 50 75 {
 		local l: word `i' of `col'
 		qui putexcel `l'5 = mean_poverty_`t'*100, nformat("#.00")
 		local ++i
@@ -147,7 +150,7 @@ program define save_measures
 
 	*non-poverty accuracy
 	local i = 1
-	foreach t in 20 25 30 50 75{
+	foreach t in 20 25 30 50 75 {
 		local l: word `i' of `col'
 		qui putexcel `l'6 = mean_non_poverty_`t'*100, nformat("#.00")
 		local ++i
@@ -155,7 +158,7 @@ program define save_measures
 
 	*undercoverage
 	local i = 1
-	foreach t in 20 25 30 50 75{
+	foreach t in 20 25 30 50 75 {
 		local l: word `i' of `col'
 		qui putexcel `l'7 = mean_undercoverage_`t'*100, nformat("#.00")
 		local ++i
@@ -163,7 +166,7 @@ program define save_measures
 
 	*leakeage
 	local i = 1
-	foreach t in 20 25 30 50 75{
+	foreach t in 20 25 30 50 75 {
 		local l: word `i' of `col'
 		qui putexcel `l'8 = mean_leakeage_`t'*100, nformat("#.00")
 		local ++i
@@ -205,7 +208,7 @@ program define save_measures_test
 	
 	*total accuracy
 	local i = 1
-	foreach t in 20 25 30 50 75{
+	foreach t in 20 25 30 50 75 {
 		local l: word `i' of `col'
 		qui putexcel `l'4 = mean_correct_`t'_te*100, nformat("#.00")
 		local ++i
@@ -213,7 +216,7 @@ program define save_measures_test
 
 	*poverty accuracy
 	local i = 1
-	foreach t in 20 25 30 50 75{
+	foreach t in 20 25 30 50 75 {
 		local l: word `i' of `col'
 		qui putexcel `l'5 = mean_poverty_`t'_te*100, nformat("#.00")
 		local ++i
@@ -221,7 +224,7 @@ program define save_measures_test
 
 	*non-poverty accuracy
 	local i = 1
-	foreach t in 20 25 30 50 75{
+	foreach t in 20 25 30 50 75 {
 		local l: word `i' of `col'
 		qui putexcel `l'6 = mean_non_poverty_`t'_te*100, nformat("#.00")
 		local ++i
@@ -229,7 +232,7 @@ program define save_measures_test
 
 	*undercoverage
 	local i = 1
-	foreach t in 20 25 30 50 75{
+	foreach t in 20 25 30 50 75 {
 		local l: word `i' of `col'
 		qui putexcel `l'7 = mean_undercoverage_`t'_te*100, nformat("#.00")
 		local ++i

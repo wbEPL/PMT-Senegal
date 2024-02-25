@@ -1,17 +1,19 @@
 /* ------------------------------------------------------------------------------			
 *			
-*	This .do file estimates ols models with the same covariates 
-*	ONLY works inside 02_estimate_models.do
+*	This .do file estimates ols models with the same covariates of the orginal PMT
 *	Author: Gabriel N. Camargo-Toledo gcamargotoledo@worldbank.org
 *	Last edited: 16 February 2024
-*	Reviewer: TBD
-*	Last Reviewed: TBD
+*	
+*	Modified: 
+*	Now the entire sample is limited 
+*	Out of sample prediction MSE and R-squared and Maybe poverty accuracy or leakeage 50%
 
 *------------------------------------------------------------------------------- */
 
 
 **## Rural -----
-
+preserve 
+keep if milieu == 2
 reg lpcexp logsize oadr yadr c_rooms_pc ///
 			i.c_floor i.c_water_dry i.c_lighting i.c_walls i.c_toilet ///
 			a_moped a_radio a_car a_fan a_tv ad_hotwater a_cellphone a_boat a_homephone a_computer a_ac ar_carts a_fridge  ///
@@ -19,7 +21,7 @@ reg lpcexp logsize oadr yadr c_rooms_pc ///
 			i.region ///
 			[aweight = hhweight] if milieu == 2, r
 
-predict yhat, xb
+predict yhat if milieu == 2, xb
 scalar ncovariates = wordcount(e(cmdline))-10 /* THIS ONLY WORKS IF YOU DO NOT CHANGE THE SPACES AMONG THE DIFFERENT PARTS ON THE REG COMMAND, for example if you erase the space between aweight = that will change the count*/
 estimates store ols_rural
 
@@ -33,7 +35,11 @@ save_measures "accuracy2015vs2021.xlsx" "Accuracy" "TRUE"
 save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy" "TRUE"
 save_lambdmeasu "accuracies_OLS.xlsx" "Rural"
 
+restore 
+
 **## Urban -----
+preserve 
+keep if milieu == 1
 
 capture drop yhat qhat qreal
 reg lpcexp logsize yadr alfa_french c_rooms_pc ///
@@ -54,3 +60,5 @@ estiaccu_measures
 save_measures "accuracy2015vs2021.xlsx" "Accuracy" "FALSE"
 save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy" "FALSE"
 save_lambdmeasu "accuracies_OLS.xlsx" "Urban"
+
+restore 
