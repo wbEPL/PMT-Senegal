@@ -83,13 +83,13 @@ forvalues i = 2(2)20 {
 
 qui putexcel A2 = "Ols as 2015"
 qui putexcel A4 = "Lasso 1, lambda CV"
-qui putexcel A6 = "Lasso 1, lambda 0.01"
-qui putexcel A8 = "Lasso 1, lambda 0.03"
-qui putexcel A10 = "Lasso 1, lambda 0.05"
+qui putexcel A6 = "Lasso 1, lambda 0.025"
+qui putexcel A8 = "Lasso 1, lambda 0.05"
+qui putexcel A10 = "Lasso 1, lambda 0.08"
 qui putexcel A12 = "Lasso 2, lambda CV"
-qui putexcel A14 = "Lasso 2, lambda 0.02"
-qui putexcel A16 = "Lasso 2, lambda 0.035"
-qui putexcel A18 = "Lasso 2, lambda 0.05"
+qui putexcel A14 = "Lasso 2, lambda 0.04"
+qui putexcel A16 = "Lasso 2, lambda 0.06"
+qui putexcel A18 = "Lasso 2, lambda 0.08"
 qui putexcel A20 = "Lasso 3, lambda CV"
 
 putexcel save

@@ -96,7 +96,7 @@ lassogof urban1 urban1_ols urban1_lam_025_ols if milieu == 1, over(sample) posts
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda 0.025")
 *estiaccu_measures
 estiaccu_measures_ch
-save_lambdmeasu "accuracies_urban1.xlsx" "Lambda 0.025"
+save_lambdmeasu "accuracies_urban1.xlsx" "Lambda 1"
 
 **## Lambda 0.05
 capture drop yhat qhat qreal
@@ -136,7 +136,7 @@ lassogof urban1 urban1_ols urban1_lam_025_ols urban1_lam_05_ols if milieu == 1, 
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda 0.05")
 *estiaccu_measures
 estiaccu_measures_ch
-save_lambdmeasu "accuracies_urban1.xlsx" "Lambda 0.05"
+save_lambdmeasu "accuracies_urban1.xlsx" "Lambda 2"
 
 **## Lambda 0.08
 capture drop yhat qhat qreal
@@ -175,4 +175,4 @@ lassogof urban1 urban1_ols urban1_lam_025_ols urban1_lam_05_ols urban1_lam_08_ol
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda 0.08")
 *estiaccu_measures
 estiaccu_measures_ch
-save_lambdmeasu "accuracies_urban1.xlsx" "Lambda 0.08"
+save_lambdmeasu "accuracies_urban1.xlsx" "Lambda 3"

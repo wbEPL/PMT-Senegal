@@ -107,7 +107,7 @@ lassogof rural1 rural1_ols rural1_lam01_ols if milieu == 2, over(sample) postsel
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda 0.01") label
 *estiaccu_measures
 estiaccu_measures_ch
-save_lambdmeasu "accuracies_rural1.xlsx" "Lambda 0.01"
+save_lambdmeasu "accuracies_rural1.xlsx" "Lambda 1"
 
 **## Lambda 0.03
 capture drop yhat qhat qreal
@@ -148,7 +148,7 @@ lassogof rural1 rural1_ols rural1_lam01_ols rural1_lam03_ols if milieu == 2, ove
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda 0.03") label
 *estiaccu_measures
 estiaccu_measures_ch
-save_lambdmeasu "accuracies_rural1.xlsx" "Lambda 0.03"
+save_lambdmeasu "accuracies_rural1.xlsx" "Lambda 2"
 
 **## Lambda 0.05
 capture drop yhat qhat qreal
@@ -196,6 +196,6 @@ lassogof rural1 rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols if
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda 0.05") label
 *estiaccu_measures
 estiaccu_measures_ch
-save_lambdmeasu "accuracies_rural1.xlsx" "Lambda 0.05"
+save_lambdmeasu "accuracies_rural1.xlsx" "Lambda 3"
 
 esttab rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols

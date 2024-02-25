@@ -108,7 +108,7 @@ quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda 0.04")
 *estiaccu_measures
 estiaccu_measures_ch
-save_lambdmeasu "accuracies_urban2.xlsx" "Lambda 0.04"
+save_lambdmeasu "accuracies_urban2.xlsx" "Lambda 1"
 
 **## Lambda 0.06
 capture drop yhat qhat qreal
@@ -154,7 +154,7 @@ quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda 0.06")
 *estiaccu_measures
 estiaccu_measures_ch
-save_lambdmeasu "accuracies_urban2.xlsx" "Lambda 0.06"
+save_lambdmeasu "accuracies_urban2.xlsx" "Lambda 2"
 
 **## Lambda 0.08
 capture drop yhat qhat qreal
@@ -201,4 +201,4 @@ quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda 0.08")
 *estiaccu_measures
 estiaccu_measures_ch
-save_lambdmeasu "accuracies_urban2.xlsx" "Lambda 0.08"
+save_lambdmeasu "accuracies_urban2.xlsx" "Lambda 3"
