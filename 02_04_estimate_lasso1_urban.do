@@ -1,12 +1,10 @@
 /* ------------------------------------------------------------------------------			
-*			
 *	This .do file estimates lasso urban model 1, all cov as dum
 *	ONLY works inside 02_estimate_models.do
 *	Author: Gabriel N. Camargo-Toledo gcamargotoledo@worldbank.org
 *	Last edited: 16 February 2024
 *	Reviewer: TBD
 *	Last Reviewed: TBD
-
 *------------------------------------------------------------------------------- */
 
 capture drop yhat qhat qreal
@@ -14,11 +12,13 @@ keep if milieu == 1
 **# Run lasso regresion, save results chosen lambda
 
 lasso linear lpcexp $demo $asset_dum $asset_rur_dum $dwell $livest_all_dum if milieu == 1 & sample == 1, rseed(124578)
+local id_opt=`e(ID_sel)'
 estimates store urban1
 cvplot
 graph save "${swdResults}/graphs/cvplot_urban1", replace
 lassocoef urban1
-lassogof urban1, over(sample) postselection
+lassogof urban1 if milieu == 1, over(sample) postselection
+
 
 *Show selected covariates
 dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
@@ -40,7 +40,7 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 1 & sample == 1, r
+	[aw=hhweight] if milieu == 1 , r //& sample == 1
 local list ""
 
 estimates store urban1_ols
@@ -53,6 +53,15 @@ quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 lassogof urban1 urban1_ols if milieu == 1, over(sample) postselection
 
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda CV")
+
+*temporal 
+
+*gen t=qhat>25 if qreal<25
+*sum t [aw=hhweight*hhsize]
+*end temporal 
+
+
+
 *estiaccu_measures
 estiaccu_measures_ch
 save_measures "accuracy2015vs2021.xlsx" "Accuracy Lasso 1" "FALSE"
@@ -62,7 +71,10 @@ save_lambdmeasu "accuracies_urban1.xlsx" "Lambda CV"
 **## Lambda 0.025
 capture drop yhat qhat qreal
 estimates restore urban1
-lassoselect lambda = 0.025
+
+local id_opt=`id_opt'-10
+lassoselect id=`id_opt'
+*lassoselect lambda = 0.025
 cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 dis "amount of covariates is: " 
@@ -81,7 +93,7 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 1 & sample == 1, r
+	[aw=hhweight] if milieu == 1 , r //& sample == 1
 local list ""
 
 estimates store urban1_lam_025_ols
@@ -101,7 +113,9 @@ save_lambdmeasu "accuracies_urban1.xlsx" "Lambda 1"
 **## Lambda 0.05
 capture drop yhat qhat qreal
 estimates restore urban1
-lassoselect lambda = 0.05
+local id_opt=`id_opt'-10
+lassoselect id=`id_opt' // a model 5 steps early than the previous one
+*lassoselect lambda = 0.05
 cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 dis "amount of covariates is: " 
@@ -121,7 +135,7 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 1 & sample == 1, r
+	[aw=hhweight] if milieu == 1 , r //& sample == 1
 local list ""
 	
 estimates store urban1_lam_05_ols
@@ -141,7 +155,9 @@ save_lambdmeasu "accuracies_urban1.xlsx" "Lambda 2"
 **## Lambda 0.08
 capture drop yhat qhat qreal
 estimates restore urban1
-lassoselect lambda = 0.08
+local id_opt=`id_opt'-10
+lassoselect id=`id_opt' // a model 5 steps early than the previous one
+*lassoselect lambda = 0.08
 cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 dis "amount of covariates is: " 
@@ -161,7 +177,7 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 1 & sample == 1, r
+	[aw=hhweight] if milieu == 1 , r // & sample == 1
 local list ""	
 estimates store urban1_lam_08_ols
 

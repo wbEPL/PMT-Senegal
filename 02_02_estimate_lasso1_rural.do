@@ -1,21 +1,16 @@
 /* ------------------------------------------------------------------------------			
-*			
 *	This .do file estimates lasso rural model 1, all cov as dum
 *	ONLY works inside 02_estimate_models.do
 *	Author: Gabriel N. Camargo-Toledo gcamargotoledo@worldbank.org
 *	Last edited: 16 February 2024
 *	Reviewer: TBD
 *	Last Reviewed: TBD
-
 *------------------------------------------------------------------------------- */
 
-capture drop yhat qhat qreal
-
- 
 /* Rural model */
-
-
+capture drop yhat qhat qreal
 keep if milieu == 2
+
 **# Run lasso regresion, save results chosen lambda
 lasso linear lpcexp $demo $asset_dum $asset_rur_dum $dwell $livest_all_dum if milieu == 2 & sample == 1, rseed(124578)
 estimates store rural1
@@ -46,7 +41,7 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 2 & sample == 1, r // I see the logic for indicators being a weighted average by population but much less standard the regression *hhsize
+	[aw=hhweight] if milieu == 2, r // & sample == 1 // I see the logic for indicators being a weighted average by population but much less standard the regression *hhsize
 local list "" // being sure to clear the local list 
 
 estimates store rural1_ols
@@ -92,7 +87,7 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 2 & sample == 1, r
+	[aw=hhweight] if milieu == 2, r // & sample == 1
 local list "" 	
 estimates store rural1_lam01_ols
 
@@ -133,7 +128,7 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 2 & sample == 1, r
+	[aw=hhweight] if milieu == 2, r // & sample == 1
 local list "" 
 estimates store rural1_lam03_ols
 
@@ -174,7 +169,7 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-[aw=hhweight] if milieu == 2 & sample == 1, r
+[aw=hhweight] if milieu == 2 , r // & sample == 1
 local list "" 
 estimates store rural1_lam05_ols
 

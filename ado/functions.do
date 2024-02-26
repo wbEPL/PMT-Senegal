@@ -365,7 +365,7 @@ program define save_lambdmeasu
 
 	*total accuracy
 	local i = 1
-	foreach t in 20 25 30 50 75{
+	foreach t in 20 25 30 50 75 {
 		local l: word `i' of `col'
 		qui putexcel `l'2 = mean_correct_`t'*100, nformat("#.00")
 		local ++i
@@ -373,7 +373,7 @@ program define save_lambdmeasu
 
 	*poverty accuracy
 	local i = 1
-	foreach t in 20 25 30 50 75{
+	foreach t in 20 25 30 50 75 {
 		local l: word `i' of `col'
 		qui putexcel `l'3 = mean_poverty_`t'*100, nformat("#.00")
 		local ++i
@@ -381,7 +381,7 @@ program define save_lambdmeasu
 
 	*non-poverty accuracy
 	local i = 1
-	foreach t in 20 25 30 50 75{
+	foreach t in 20 25 30 50 75 { 
 		local l: word `i' of `col'
 		qui putexcel `l'4 = mean_non_poverty_`t'*100, nformat("#.00")
 		local ++i
@@ -389,7 +389,7 @@ program define save_lambdmeasu
 
 	*undercoverage
 	local i = 1
-	foreach t in 20 25 30 50 75{
+	foreach t in 20 25 30 50 75 {
 		local l: word `i' of `col'
 		qui putexcel `l'5 = mean_undercoverage_`t'*100, nformat("#.00")
 		local ++i
@@ -397,7 +397,7 @@ program define save_lambdmeasu
 
 	*leakeage
 	local i = 1
-	foreach t in 20 25 30 50 75{
+	foreach t in 20 25 30 50 75 { 
 		local l: word `i' of `col'
 		qui putexcel `l'6 = mean_leakeage_`t'*100, nformat("#.00")
 		local ++i

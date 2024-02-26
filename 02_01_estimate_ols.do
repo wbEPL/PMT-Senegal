@@ -14,7 +14,8 @@
 **## Rural -----
 preserve 
 keep if milieu == 2
-reg lpcexp logsize oadr yadr c_rooms_pc ///
+reg lpcexp ///
+			logsize oadr yadr c_rooms_pc ///
 			i.c_floor i.c_water_dry i.c_lighting i.c_walls i.c_toilet ///
 			a_moped a_radio a_car a_fan a_tv ad_hotwater a_cellphone a_boat a_homephone a_computer a_ac ar_carts a_fridge  ///
 			l_horses_n l_goats_n l_sheep_n l_poultry_n l_bovines_n ///
@@ -48,7 +49,8 @@ preserve
 keep if milieu == 1
 
 capture drop yhat qhat qreal
-reg lpcexp logsize yadr alfa_french c_rooms_pc ///
+reg lpcexp ///
+			logsize yadr alfa_french c_rooms_pc ///
 			i.c_floor i.c_lighting i.c_toilet i.c_roof ///
 			a_car a_computer a_fridge a_stove a_fan a_tv a_radio a_homephone ar_tractor a_iron ///
 			l_donkeys_n l_horses_n l_pigs_n ///

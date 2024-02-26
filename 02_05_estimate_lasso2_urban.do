@@ -1,12 +1,10 @@
 /* ------------------------------------------------------------------------------			
-*			
 *	This .do file estimates lasso urban model 2, all cov as NUM
 *	ONLY works inside 02_estimate_models.do
 *	Author: Gabriel N. Camargo-Toledo gcamargotoledo@worldbank.org
 *	Last edited: 16 February 2024
 *	Reviewer: TBD
 *	Last Reviewed: TBD
-
 *------------------------------------------------------------------------------- */
 
 capture drop yhat qhat qreal
@@ -14,6 +12,7 @@ keep if milieu == 1
 **# Run lasso regresion, save results chosen lambda
 
 lasso linear lpcexp $demo $asset_num $asset_rur_num $dwell $livest_all_num if milieu == 1 & sample == 1, rseed(124578)
+local id_opt=`e(ID_sel)'
 estimates store urban2
 cvplot
 graph save "${swdResults}/graphs/cvplot_urban2", replace
@@ -35,7 +34,7 @@ foreach c in $categorical_v { // categorical_v is variables that are categorical
 local test_y =substr("`list'", 1, 6) // eliminating the 
 assert  "`test_y'" == "lpcexp"
 reg `list' ///
-	[aw=hhweight] if milieu == 1 & sample == 1, r
+	[aw=hhweight] if milieu == 1 , r // & sample == 1 because the overfitting problem is for model selection not coefficient estimation 
 local list ""
 estimates store urban2_ols
 
@@ -57,7 +56,10 @@ save_lambdmeasu "accuracies_urban2.xlsx" "Lambda CV"
 **## Lambda 0.04
 capture drop yhat qhat qreal
 estimates restore urban2
-lassoselect lambda = 0.04
+
+local id_opt=`id_opt'-10
+lassoselect id=`id_opt'
+*lassoselect lambda = 0.04
 cvplot
 
 *Show selected covariates
@@ -82,7 +84,7 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 1 & sample == 1, r
+	[aw=hhweight] if milieu == 1 , r
 local list ""
 estimates store urban2_lam04_ols
 
@@ -103,7 +105,10 @@ save_lambdmeasu "accuracies_urban2.xlsx" "Lambda 1"
 **## Lambda 0.06
 capture drop yhat qhat qreal
 estimates restore urban2
-lassoselect lambda = 0.06
+
+local id_opt=`id_opt'-10
+lassoselect id=`id_opt'
+*lassoselect lambda = 0.06
 cvplot
 
 *Show selected covariates
@@ -128,7 +133,7 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 1 & sample == 1, r
+	[aw=hhweight] if milieu == 1, r // // & sample == 1 because the overfitting problem is for model selection not coefficient estimation
 local list ""
 estimates store urban2_lam06_ols
 
@@ -149,7 +154,10 @@ save_lambdmeasu "accuracies_urban2.xlsx" "Lambda 2"
 **## Lambda 0.08
 capture drop yhat qhat qreal
 estimates restore urban2
-lassoselect lambda = 0.08
+
+local id_opt=`id_opt'-10
+lassoselect id=`id_opt'
+*lassoselect lambda = 0.08
 cvplot
 
 *Show selected covariates
@@ -174,7 +182,7 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 1 & sample == 1, r
+	[aw=hhweight] if milieu == 1, r  // & sample == 1 because the overfitting problem is for model selection not coefficient estimation
 local list ""
 
 estimates store urban2_lam08_ols
