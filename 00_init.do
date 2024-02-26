@@ -103,12 +103,6 @@ global livest_all_num "l_bovines_n l_sheep_n l_goats_n l_camels_n l_horses_n l_d
 
 // Running models 
 	
-	 *use "${swdFinal}/data4model_2021.dta", clear // temporal for development pourposes  
-	 *
-	 *splitsample, generate(sample) split(0.8 0.2)
-	 *label define sample 1 "Training" 2 "Testing"
-	 *label values sample sample
-
 	include "$scripts/02_00_estimate_models.do"
 
 

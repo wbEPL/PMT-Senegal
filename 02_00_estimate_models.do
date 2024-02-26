@@ -47,18 +47,14 @@ use `cleaned_dataset', replace
 include "$scripts/02_03_estimate_lasso2_rural.do"
 
 
-
-	
-	use "${swdFinal}/data4model_2021.dta", clear // temporal for development pourposes  
-	
-	splitsample, generate(sample) split(0.8 0.2)  rseed(12345)  
-	label define sample 1 "Training" 2 "Testing"
-	label values sample sample
-
-	tempfile cleaned_dataset
-	save `cleaned_dataset', replace 
-
-
+	 *use "${swdFinal}/data4model_2021.dta", clear // temporal for development pourposes  
+	 *
+	 *splitsample, generate(sample) split(0.8 0.2)  rseed(12345)  
+	 *label define sample 1 "Training" 2 "Testing"
+	 *label values sample sample
+	 *
+	 *tempfile cleaned_dataset
+	 *save `cleaned_dataset', replace 
 
 **## Lasso 1 urban, assets as dummy ------------------
 use `cleaned_dataset', replace

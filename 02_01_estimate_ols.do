@@ -52,7 +52,7 @@ capture drop yhat qhat qreal
 reg lpcexp ///
 			logsize yadr alfa_french c_rooms_pc ///
 			i.c_floor i.c_lighting i.c_toilet i.c_roof ///
-			a_car a_computer a_fridge a_stove a_fan a_tv a_radio a_homephone ar_tractor a_iron ///
+			a_car a_computer a_fridge a_stove a_fan a_tv a_radio a_homephone ar_tractor  a_iron  /// 
 			l_donkeys_n l_horses_n l_pigs_n ///
 			i.region ///
 			[aweight = hhweight] if milieu == 1, r
