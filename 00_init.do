@@ -58,6 +58,7 @@ foreach c of local commands {
 	}
 }
 
+* Add created functions for workplace
 run "$gitrepo/ado/functions.do"
 
 

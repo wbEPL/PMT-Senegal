@@ -8,7 +8,7 @@
 *	Open points that need to be addressed:
 * 		- is there a way to automate the inclusion of selected lasso vars  in ols?
 *	Author: Gabriel N. Camargo-Toledo gcamargotoledo@worldbank.org
-*	Last edited: 16 February2024
+*	Last edited: 16 February 2024
 *	Reviewer: TBD
 *	Last Reviewed: TBD
 
@@ -21,9 +21,30 @@
 *------------------------------------------------------------------------------- */
 
 **# INIT ----------------------
+
+**## create vars description excel accuracies export -----
+
+clear
+input str30 cols str50 description str100 values
+"Measure" "Accuracy measure" "Total accuracy, Poverty accuracy, Non-poverty accuracy, Undercoverage (exclusion error), Leakage (inclusion error)"
+"Quantile" "Quantile used to estimate the measure" "20 25 30 50 75"
+"Model" "Model on which the accuracy is based" "OLS, Lasso"
+"Version" "Version of the model" "2021, 1,2,3"
+"Place" "Location of source data" "Urban, Rural"
+"Poverty_measure" "Is it fixed poverty line or fixed poverty rate" "Fixed line, Fixed rate"
+"Number_of_vars" "Number of survey questions needed to estimate the model" "Positive integer values"
+"Lambda" "Lambda used for lasso model" "NA, cross-validation lamdba, other decimal values"
+"Sample" "Sample used to estimate accuracy measure" "Full, Testing"
+"Value" "Estimated accuracy measures" "Values"
+end
+
+export excel "${swdResults}/accuracies.xlsx", replace sheet("vars") firstrow(variables)
+
+**## Data ---------------
+
 use "${swdFinal}/data4model_2021.dta", clear
 
-**## split sample
+**## split sample ---------
 
 splitsample, generate(sample) split(0.8 0.2)  rseed(12345)  
 label define sample 1 "Training" 2 "Testing"
@@ -33,28 +54,16 @@ tempfile cleaned_dataset
 save `cleaned_dataset', replace 
 
 **# OLS same as 2015 covariates ---
-include "$scripts/02_01_estimate_ols.do"
-
-
+include "$scripts/02_01_estimate_ols.do" /*This will replace the accuracies.dta file, so if you run this you need to re run the other models to save the accuracies*/
 
 **## Lasso 1 rural, assets and livestock as dummy, include all livestock separately --------------
-use `cleaned_dataset', replace
+use `cleaned_dataset', replace 
 
 include "$scripts/02_02_estimate_lasso1_rural.do"
 
 **## Lasso 2 rural, assets and livestock as number --------------
 use `cleaned_dataset', replace
 include "$scripts/02_03_estimate_lasso2_rural.do"
-
-
-	 *use "${swdFinal}/data4model_2021.dta", clear // temporal for development pourposes  
-	 *
-	 *splitsample, generate(sample) split(0.8 0.2)  rseed(12345)  
-	 *label define sample 1 "Training" 2 "Testing"
-	 *label values sample sample
-	 *
-	 *tempfile cleaned_dataset
-	 *save `cleaned_dataset', replace 
 
 **## Lasso 1 urban, assets as dummy ------------------
 use `cleaned_dataset', replace

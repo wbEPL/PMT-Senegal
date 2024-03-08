@@ -10,6 +10,24 @@
 *------------------------------------------------------------------------------- */
 
 
+**# FN to estimate accuracy measures for 20, 25, 30, 50 and 75 percentiles fixed poverty rate
+* Arg: No arguments
+* Input: quantiles called qhat and qreal to have been estimated. 
+*       - qhat from a predicted income 
+*		- qreal from actual income 
+* Generates variables:
+*		- poor_real_*: individual actually poor for * line
+*		- poor_hat_*: individual predicted as poor for * line
+*		- correct_*: correctly predicted individual for * line
+*		- undercovered_*: undercovered individual for * line
+*		- leaked_*: leaked individual for * line
+* Generates scalars:
+*		- mean_lpcexp: mean income
+*		- mean_correct_*: percentage of correctly identified individuals (total accuracy) for * line
+*		- mean_poverty_*: percentage of correctly identified poor individuals (poverty accuracy) for * line
+*		- mean_non_poverty_*: percentage of correctly identified non-poor individuals (non-poverty accuracy) for * line
+*		- mean_undercovered_*: percentage of undercovered individuals (exclusion error) for * line
+*		- mean_leaked_*: percentage of leaked individuals (inclusion error) for * line
 capture program drop estiaccu_measures_ch
 program define estiaccu_measures_ch
 	 
@@ -80,8 +98,7 @@ end
 
 
 
-
-**# FN to estimate accuracy measures for 20, 25, 30, 50 and 75 percentiles poverty line
+**# FN to estimate accuracy measures for 20, 25, 30, 50 and 75 percentiles fixed poverty line
 * Arg: No arguments
 * Input: quantiles called qhat and qreal to have been estimated. 
 *       - qhat from a predicted income 
@@ -414,4 +431,106 @@ program define save_lambdmeasu
 	qui putexcel A7 = "Num. covariates", bold italic
 	
 	qui putexcel save
+end
+
+**# FN to estimate accuracy measures for 20, 25, 30, 50 and 75 percentiles fixed poverty rate
+* Arg: 
+*		- estimate: if line estimates fixed poverty line accuracies, if rate estimates fixed poverty rate accuracies
+* Input: quantiles called qhat and qreal to have been estimated.
+*       - qhat from a predicted income 
+*		- qreal from actual income 
+*		- scalar ncovariates
+*       - local version
+*		- local model
+*		- local lambda
+*		- local place
+*		- 
+* Generates variables:
+*		- poor_real: individual actually poor for * line
+*		- poor_hat: individual predicted as poor for * line
+*		- correct: correctly predicted individual for * line
+*		- undercovered: undercovered individual for * line
+*		- leaked: leaked individual for * line
+* Generates scalars:
+*		- mean_lpcexp: mean income
+*		- mean_correct_*: percentage of correctly identified individuals (total accuracy) for * line
+*		- mean_poverty_*: percentage of correctly identified poor individuals (poverty accuracy) for * line
+*		- mean_non_poverty_*: percentage of correctly identified non-poor individuals (non-poverty accuracy) for * line
+*		- mean_undercovered_*: percentage of undercovered individuals (exclusion error) for * line
+*		- mean_leaked_*: percentage of leaked individuals (inclusion error) for * line
+
+capture program drop estimate_accuracy
+program define estimate_accuracy
+	args estimate
+
+	foreach t in 20 25 30 50 75 {
+		capture drop poor_real_`t' poor_hat_`t' correct_`t' undercovered_`t' leaked_`t'
+		capture drop poor_real_`t'_te poor_hat_`t'_te correct_`t'_te undercovered_`t'_te leaked_`t'_te
+		
+		if "`estimate'" == "line" {
+			gen poor_real_`t' = qreal < `t' 
+			gen poor_hat_`t' = qhat < `t' 
+		}
+		else if "`estimate'" == "rate" {
+			gen poor_real_`t' = qreal < `t' 
+			qui mean lpcexp [aw=hhweight*hhsize] if qreal == `t' 
+			scalar mean_lpcexp =  el(r(table),1,1)
+			gen poor_hat_`t' = yhat < mean_lpcexp
+		}
+		else {
+			di as err "argument estimate has to be either 'line' for fixed poverty line or 'rate' for fixed poverty rate"
+		}
+		
+		* identify accurate individual
+		gen correct_`t' = poor_real_`t' == poor_hat_`t'
+		
+		* identify undercovered individual
+		gen undercovered_`t' = (poor_real_`t' == 1 & poor_hat_`t' == 0) 
+		
+		* identify leaked individual
+		gen leaked_`t' = (poor_real_`t' == 0 & poor_hat_`t' == 1)
+		
+		* measures on all data -----
+		* total accuracy
+		qui mean correct_`t' [aw=hhweight*hhsize] 
+		scalar mean_correct_`t' =  el(r(table),1,1)
+		
+		* Poverty accuracy
+		qui mean correct_`t' [aw=hhweight*hhsize] if poor_real_`t' == 1
+		scalar mean_poverty_`t' =  el(r(table),1,1)
+
+		* Non-poverty accuracy
+		qui mean correct_`t' [aw=hhweight*hhsize] if poor_real_`t' == 0
+		scalar mean_non_poverty_`t' =  el(r(table),1,1)
+		
+		* exclusion error
+		qui mean undercovered_`t' [aw=hhweight*hhsize] if poor_real_`t' == 1 
+		scalar mean_undercoverage_`t' =  el(r(table),1,1)
+
+		* inclusion error
+		qui mean leaked_`t' [aw=hhweight*hhsize]  if  poor_hat_`t' == 1
+		scalar mean_leakeage_`t' =  el(r(table),1,1)
+		
+		* measures on testing data -----
+		* total accuracy
+		qui mean correct_`t' [aw=hhweight*hhsize] if sample == 2
+		scalar mean_correct_`t'_te =  el(r(table),1,1)
+		
+		* Poverty accuracy
+		qui mean correct_`t' [aw=hhweight*hhsize] if poor_real_`t' == 1 & sample == 2
+		scalar mean_poverty_`t'_te =  el(r(table),1,1)
+
+		* Non-poverty accuracy
+		qui mean correct_`t' [aw=hhweight*hhsize] if poor_real_`t' == 0 & sample == 2
+		scalar mean_non_poverty_`t'_te =  el(r(table),1,1)
+		
+		* exclusion error
+		qui mean undercovered_`t' [aw=hhweight*hhsize] if poor_real_`t' == 1 & sample == 2
+		scalar mean_undercoverage_`t'_te =  el(r(table),1,1)
+
+		* inclusion error
+		qui mean leaked_`t' [aw=hhweight*hhsize]  if  poor_hat_`t' == 1 & sample == 2
+		scalar mean_leakeage_`t'_te =  el(r(table),1,1)
+	}
+
 end
