@@ -63,16 +63,79 @@ outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lam
 
 
 *estiaccu_measures
-estiaccu_measures_ch
-save_measures "accuracy2015vs2021.xlsx" "Accuracy Lasso 1" "FALSE"
-save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy Lasso 1" "FALSE"
-save_lambdmeasu "accuracies_urban1.xlsx" "Lambda CV"
+*estiaccu_measures_ch
+*save_measures "accuracy2015vs2021.xlsx" "Accuracy Lasso 1" "FALSE"
+*save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy Lasso 1" "FALSE"
+*save_lambdmeasu "accuracies_urban1.xlsx" "Lambda CV"
 
-**## Lambda 0.025
+**## estimate_accuracy fixed rate ---
+estimate_accuracy "rate"
+
+**### save accuracies ----
+tempfile tf_postfile1 
+tempname tn1
+postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+
+local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed rate") ("Cross-validation selected lambda") 
+
+foreach t in 20 25 30 50 75 {
+	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+}
+
+	
+postclose `tn1' 
+preserve
+use `tf_postfile1', clear
+append using "${swdResults}\accuracies.dta"
+duplicates report
+save "${swdResults}\accuracies.dta", replace
+restore 
+
+**## estimate_accuracy fixed line ---
+estimate_accuracy "line"
+
+**### save accuracies ----
+tempfile tf_postfile1 
+tempname tn1
+postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+
+local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed line") ("Cross-validation selected lambda") 
+
+foreach t in 20 25 30 50 75 {
+	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+}
+
+postclose `tn1' 
+preserve
+use `tf_postfile1', clear
+append using "${swdResults}\accuracies.dta"
+duplicates report
+save "${swdResults}\accuracies.dta", replace
+restore 
+
+**# Lambda -10
 capture drop yhat qhat qreal
 estimates restore urban1
 
-local id_opt=`id_opt'-10
+local id_opt=e(ID_sel)-10
 lassoselect id=`id_opt'
 *lassoselect lambda = 0.025
 cvplot
@@ -105,16 +168,80 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 lassogof urban1 urban1_ols urban1_lam_025_ols if milieu == 1, over(sample) postselection
 
-outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda 0.025")
+outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda -10 steps")
 *estiaccu_measures
-estiaccu_measures_ch
-save_lambdmeasu "accuracies_urban1.xlsx" "Lambda 1"
+*estiaccu_measures_ch
+*save_lambdmeasu "accuracies_urban1.xlsx" "Lambda 1"
 
-**## Lambda 0.05
+
+**## estimate_accuracy fixed rate ---
+estimate_accuracy "rate"
+
+**### save accuracies ----
+tempfile tf_postfile1 
+tempname tn1
+postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+
+local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed rate") ("lambda -10 steps") 
+
+foreach t in 20 25 30 50 75 {
+	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+}
+
+	
+postclose `tn1' 
+preserve
+use `tf_postfile1', clear
+append using "${swdResults}\accuracies.dta"
+duplicates report
+save "${swdResults}\accuracies.dta", replace
+restore 
+
+**## estimate_accuracy fixed line ---
+estimate_accuracy "line"
+
+**### save accuracies ----
+tempfile tf_postfile1 
+tempname tn1
+postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+
+local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed line") ("lambda -10 steps") 
+
+foreach t in 20 25 30 50 75 {
+	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+}
+
+postclose `tn1' 
+preserve
+use `tf_postfile1', clear
+append using "${swdResults}\accuracies.dta"
+duplicates report
+save "${swdResults}\accuracies.dta", replace
+restore 
+
+**# Lambda -20
 capture drop yhat qhat qreal
 estimates restore urban1
 local id_opt=`id_opt'-10
-lassoselect id=`id_opt' // a model 5 steps early than the previous one
+lassoselect id=`id_opt' // a model 10 steps early than the previous one
 *lassoselect lambda = 0.05
 cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
@@ -147,16 +274,75 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 lassogof urban1 urban1_ols urban1_lam_025_ols urban1_lam_05_ols if milieu == 1, over(sample) postselection
 
-outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda 0.05")
-*estiaccu_measures
-estiaccu_measures_ch
-save_lambdmeasu "accuracies_urban1.xlsx" "Lambda 2"
+outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda -20")
 
-**## Lambda 0.08
+**## estimate_accuracy fixed rate ---
+estimate_accuracy "rate"
+
+**### save accuracies ----
+tempfile tf_postfile1 
+tempname tn1
+postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+
+local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed rate") ("lambda -20 steps") 
+
+foreach t in 20 25 30 50 75 {
+	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+}
+
+	
+postclose `tn1' 
+preserve
+use `tf_postfile1', clear
+append using "${swdResults}\accuracies.dta"
+duplicates report
+save "${swdResults}\accuracies.dta", replace
+restore 
+
+**## estimate_accuracy fixed line ---
+estimate_accuracy "line"
+
+**### save accuracies ----
+tempfile tf_postfile1 
+tempname tn1
+postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+
+local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed line") ("lambda -20 steps") 
+
+foreach t in 20 25 30 50 75 {
+	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+}
+
+postclose `tn1' 
+preserve
+use `tf_postfile1', clear
+append using "${swdResults}\accuracies.dta"
+duplicates report
+save "${swdResults}\accuracies.dta", replace
+restore 
+**# Lambda -30
 capture drop yhat qhat qreal
 estimates restore urban1
 local id_opt=`id_opt'-10
-lassoselect id=`id_opt' // a model 5 steps early than the previous one
+lassoselect id=`id_opt' // a model 10 steps early than the previous one
 *lassoselect lambda = 0.08
 cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
@@ -188,7 +374,67 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 lassogof urban1 urban1_ols urban1_lam_025_ols urban1_lam_05_ols urban1_lam_08_ols if milieu == 1, over(sample) postselection
 
-outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda 0.08")
-*estiaccu_measures
-estiaccu_measures_ch
-save_lambdmeasu "accuracies_urban1.xlsx" "Lambda 3"
+outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda -30")
+
+**## estimate_accuracy fixed rate ---
+estimate_accuracy "rate"
+
+**### save accuracies ----
+tempfile tf_postfile1 
+tempname tn1
+postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+
+local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed rate") ("lambda -30 steps") 
+
+foreach t in 20 25 30 50 75 {
+	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+}
+
+	
+postclose `tn1' 
+preserve
+use `tf_postfile1', clear
+append using "${swdResults}\accuracies.dta"
+duplicates report
+save "${swdResults}\accuracies.dta", replace
+restore 
+
+**## estimate_accuracy fixed line ---
+estimate_accuracy "line"
+
+**### save accuracies ----
+tempfile tf_postfile1 
+tempname tn1
+postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+
+local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed line") ("lambda -30 steps") 
+
+foreach t in 20 25 30 50 75 {
+	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+}
+
+postclose `tn1' 
+preserve
+use `tf_postfile1', clear
+append using "${swdResults}\accuracies.dta"
+duplicates report
+save "${swdResults}\accuracies.dta", replace
+restore 

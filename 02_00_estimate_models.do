@@ -77,7 +77,6 @@ include "$scripts/02_05_estimate_lasso2_urban.do"
 use `cleaned_dataset', replace
 include "$scripts/02_06_estimate_lasso3.do"
 
-
 **# Goodness of fit rural
 use `cleaned_dataset', replace
 include "$scripts/02_07_goodness_fit.do"
