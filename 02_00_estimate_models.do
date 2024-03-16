@@ -8,7 +8,7 @@
 *	Open points that need to be addressed:
 * 		- is there a way to automate the inclusion of selected lasso vars  in ols?
 *	Author: Gabriel N. Camargo-Toledo gcamargotoledo@worldbank.org
-*	Last edited: 16 February 2024
+*	Last edited: 15 Ma2024
 *	Reviewer: TBD
 *	Last Reviewed: TBD
 
@@ -76,6 +76,11 @@ include "$scripts/02_05_estimate_lasso2_urban.do"
 **## Lasso 3 urban and rural, start same covariates 2015, do not move lambdas--------------
 use `cleaned_dataset', replace
 include "$scripts/02_06_estimate_lasso3.do"
+
+**# Export accuracies to excel
+use "${swdResults}\accuracies.dta", replace
+export excel "${swdResults}/accuracies.xlsx", sheet("Results", replace) firstrow(variables)
+
 
 **# Goodness of fit rural
 use `cleaned_dataset', replace

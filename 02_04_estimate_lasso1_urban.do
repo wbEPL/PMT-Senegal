@@ -74,23 +74,22 @@ estimate_accuracy "rate"
 **### save accuracies ----
 tempfile tf_postfile1 
 tempname tn1
-postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed rate") ("Cross-validation selected lambda") 
+local common (ncovariates)  ("Lasso") ("1") ("Urban") ("Fixed rate") ("Cross-validation selected lambda") 
 
 foreach t in 20 25 30 50 75 {
-	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
-	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
-	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
-	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
-	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
-	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
-	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
-	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Testing")  (mean_leakeage_`t'_te)
 }
-
 	
 postclose `tn1' 
 preserve
@@ -106,21 +105,21 @@ estimate_accuracy "line"
 **### save accuracies ----
 tempfile tf_postfile1 
 tempname tn1
-postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed line") ("Cross-validation selected lambda") 
+local common (ncovariates)  ("Lasso") ("1") ("Urban") ("Fixed line") ("Cross-validation selected lambda") 
 
 foreach t in 20 25 30 50 75 {
-	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
-	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
-	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
-	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
-	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
-	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
-	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
-	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Testing")  (mean_leakeage_`t'_te)
 }
 
 postclose `tn1' 
@@ -180,21 +179,21 @@ estimate_accuracy "rate"
 **### save accuracies ----
 tempfile tf_postfile1 
 tempname tn1
-postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed rate") ("lambda -10 steps") 
+local common (ncovariates)  ("Lasso") ("1") ("Urban") ("Fixed rate") ("lambda -10 steps") 
 
 foreach t in 20 25 30 50 75 {
-	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
-	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
-	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
-	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
-	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
-	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
-	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
-	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Testing")  (mean_leakeage_`t'_te)
 }
 
 	
@@ -212,21 +211,21 @@ estimate_accuracy "line"
 **### save accuracies ----
 tempfile tf_postfile1 
 tempname tn1
-postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed line") ("lambda -10 steps") 
+local common (ncovariates)  ("Lasso") ("1") ("Urban") ("Fixed line") ("lambda -10 steps") 
 
 foreach t in 20 25 30 50 75 {
-	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
-	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
-	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
-	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
-	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
-	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
-	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
-	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Testing")  (mean_leakeage_`t'_te)
 }
 
 postclose `tn1' 
@@ -282,23 +281,22 @@ estimate_accuracy "rate"
 **### save accuracies ----
 tempfile tf_postfile1 
 tempname tn1
-postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed rate") ("lambda -20 steps") 
+local common (ncovariates)  ("Lasso") ("1") ("Urban") ("Fixed rate") ("lambda -20 steps") 
 
 foreach t in 20 25 30 50 75 {
-	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
-	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
-	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
-	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
-	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
-	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
-	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
-	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Testing")  (mean_leakeage_`t'_te)
 }
-
 	
 postclose `tn1' 
 preserve
@@ -314,23 +312,22 @@ estimate_accuracy "line"
 **### save accuracies ----
 tempfile tf_postfile1 
 tempname tn1
-postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed line") ("lambda -20 steps") 
+local common (ncovariates)  ("Lasso") ("1") ("Urban") ("Fixed line") ("lambda -20 steps") 
 
 foreach t in 20 25 30 50 75 {
-	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
-	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
-	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
-	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
-	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
-	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
-	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
-	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Testing")  (mean_leakeage_`t'_te)
 }
-
 postclose `tn1' 
 preserve
 use `tf_postfile1', clear
@@ -382,23 +379,22 @@ estimate_accuracy "rate"
 **### save accuracies ----
 tempfile tf_postfile1 
 tempname tn1
-postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed rate") ("lambda -30 steps") 
+local common (ncovariates)  ("Lasso") ("1") ("Urban") ("Fixed rate") ("lambda -30 steps") 
 
 foreach t in 20 25 30 50 75 {
-	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
-	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
-	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
-	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
-	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
-	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
-	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
-	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Testing")  (mean_leakeage_`t'_te)
 }
-
 	
 postclose `tn1' 
 preserve
@@ -414,21 +410,20 @@ estimate_accuracy "line"
 **### save accuracies ----
 tempfile tf_postfile1 
 tempname tn1
-postfile `tn1' str50 Measure float Number_of_vars str50(Quantile Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
+postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates) ("`t'") ("Lasso") ("1") ("Urban") ("Fixed line") ("lambda -30 steps") 
-
+local common (ncovariates)  ("Lasso") ("1") ("Urban") ("Fixed line") ("lambda -30 steps") 
 foreach t in 20 25 30 50 75 {
-	post `tn1' ("Total accuracy") `common' ("Full")  (mean_correct_`t')
-	post `tn1' ("Poverty accuracy") `common' ("Full")  (mean_poverty_`t')
-	post `tn1' ("Non-poverty accuracy") `common' ("Full")  (mean_non_poverty_`t')
-	post `tn1' ("Exclusion error (undercoverage)") `common' ("Full")  (mean_undercoverage_`t')
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Full")  (mean_leakeage_`t')
-	post `tn1' ("Total accuracy") `common' ("Testing")  (mean_correct_`t'_te)
-	post `tn1' ("Poverty accuracy") `common' ("Testing")  (mean_poverty_`t'_te)
-	post `tn1' ("Non-poverty accuracy") `common' ("Testing")  (mean_non_poverty_`t'_te)
-	post `tn1' ("Exclusion error (undercoverage)")  `common' ("Testing")  (mean_undercoverage_`t'_te)
-	post `tn1' ("Inclusion error (leakeage)") `common' ("Testing")  (mean_leakeage_`t'_te)
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Full")  (mean_poverty_`t')
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Full")  (mean_non_poverty_`t')
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'") `common' ("Full")  (mean_undercoverage_`t')
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Full")  (mean_leakeage_`t')
+	post `tn1' ("Total accuracy") ("`t'") `common' ("Testing")  (mean_correct_`t'_te)
+	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Testing")  (mean_poverty_`t'_te)
+	post `tn1' ("Non-poverty accuracy") ("`t'") `common' ("Testing")  (mean_non_poverty_`t'_te)
+	post `tn1' ("Exclusion error (undercoverage)") ("`t'")  `common' ("Testing")  (mean_undercoverage_`t'_te)
+	post `tn1' ("Inclusion error (leakeage)") ("`t'") `common' ("Testing")  (mean_leakeage_`t'_te)
 }
 
 postclose `tn1' 
