@@ -12,7 +12,7 @@ capture drop yhat qhat qreal
 keep if milieu == 2
 
 **# Run lasso regresion, save results chosen lambda
-lasso linear lpcexp $demo $asset_dum $asset_rur_dum $dwell $livest_all_dum if milieu == 2 & sample == 1, rseed(124578)
+lasso linear lpcexp  (i.region) $demo $asset_dum $asset_rur_dum $dwell $livest_all_dum if milieu == 2 & sample == 1, rseed(124578)
 estimates store rural1
 cvplot
 graph save "${swdResults}/graphs/cvplot_rural1", replace

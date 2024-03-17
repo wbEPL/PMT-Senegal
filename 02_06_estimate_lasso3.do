@@ -21,11 +21,17 @@ lasso linear lpcexp (i.region) ///
 			l_horses_n l_goats_n l_sheep_n l_poultry_n l_bovines_n ///
 			if milieu == 2 & sample == 1,  rseed(124578)
 
+lassoknots, all
+lassoselect id=26 // selecting by inspecting the MSE
+cvplot
+
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 			
 estimates store rural3
 cvplot
 graph save "${swdResults}/graphs/cvplot_rural3", replace
+graph export "${swdResults}/graphs/cvplot_rural3.png", replace 
+
 lassocoef rural3
 lassogof rural3, over(sample) postselection
 
@@ -133,11 +139,20 @@ lasso linear lpcexp (i.region) ///
 			l_donkeys_n l_horses_n l_pigs_n ///
 			if milieu == 1 & sample == 1,  rseed(124578)
 
+
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 						
 estimates store urban3
+
+lassoselect id=18 // a model 5 steps early than the 
+
 cvplot
 graph save "${swdResults}/graphs/cvplot_urban3", replace
+graph export "${swdResults}/graphs/cvplot_urban3.png", replace 
+ 
+scalar ncovariates = wordcount(e(post_sel_vars))-1
+estimates store urban3
+
 lassocoef urban3
 lassogof urban3, over(sample) postselection
 

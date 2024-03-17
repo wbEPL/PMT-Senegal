@@ -12,7 +12,7 @@ capture drop yhat qhat qreal
 keep if milieu == 2
 
 **# Run lasso regresion, save results chosen lambda
-lasso linear lpcexp $demo $asset_num $asset_rur_num $dwell $livest_all_num if milieu == 2 & sample == 1, rseed(124578)
+lasso linear lpcexp  (i.region) $demo $asset_num $asset_rur_num $dwell $livest_all_num if milieu == 2 & sample == 1, rseed(124578)
 estimates store rural2
 cvplot
 graph save "${swdResults}/graphs/cvplot_rural2", replace
@@ -41,7 +41,6 @@ estimates store rural2_ols
 predict yhat if milieu == 2, xb 
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
-
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 lassogof rural2 rural2_ols if milieu == 2, over(sample) postselection
 

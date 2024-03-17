@@ -83,6 +83,5 @@ export excel "${swdResults}/accuracies.xlsx", sheet("Results", replace) firstrow
 
 
 **# Goodness of fit rural
-use `cleaned_dataset', replace
-include "$scripts/02_07_goodness_fit.do"
-
+*use `cleaned_dataset', replace
+*include "$scripts/02_07_goodness_fit.do"

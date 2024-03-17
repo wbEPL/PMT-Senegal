@@ -34,7 +34,6 @@ else if (inlist("${suser}","wb419055")) {
 
 	global gitrepo "C:\Users\wb419055\OneDrive - WBG\West Africa\Senegal\Senegal_tool\Projects\03_PMT\git_PMT-Senegal"
 	global project "C:/Users/wb419055/OneDrive - WBG/West Africa/Senegal/Senegal_tool/Projects/03_PMT"
-	
 	global data_library  "C:/Users/wb419055/OneDrive - WBG/West Africa/Senegal/data/EHCVM" 
 }
 
@@ -64,15 +63,13 @@ run "$gitrepo/ado/functions.do"
 
 * Parameters 
 
-
-
 **# Lassos ------------------------
 **### globals of categorical variables 
 global categorical_v "region c_typehousing c_numberofrooms_c c_housingocup c_businessindwe c_walls c_roof c_floor c_connectowater c_water_dry c_water_rainy c_connectoelec c_lighting c_landline c_connectedtoint c_internettype c_connectedtotv c_fuelfirst_r c_garbage c_toilet"
 
 
 **### globals of variables livestock as dummy
-global demo "logsize oadr yadr c_rooms_pc alfa_french i.region"
+global demo "logsize oadr yadr c_rooms_pc alfa_french " // excluded i.region because I added it as an always selected variables
 
 global dwell "i.c_typehousing c_numberofrooms_c i.c_housingocup i.c_businessindwe i.c_walls i.c_roof i.c_floor i.c_connectowater i.c_water_dry i.c_water_rainy i.c_connectoelec i.c_lighting i.c_landline i.c_connectedtoint i.c_internettype i.c_connectedtotv i.c_fuelfirst_r i.c_garbage i.c_toilet"
 
@@ -82,6 +79,7 @@ global dwell "i.c_typehousing c_numberofrooms_c i.c_housingocup i.c_businessindw
 
 **### Farm assets 
 global asset_rur_dum "ar_tractor ar_sprayer ar_tiller ar_multicultiva ar_plough ar_axe_pickaxe ar_hoe_daba_hill ar_machete ar_asinine_hoe ar_seed_drill ar_harrow ar_plou_anima ar_carts ar_beehives ar_rice_husker ar_corn_sheller ar_thresher ar_motor_pump ar_hand_pump ar_scale ar_bund_mach ar_straw_chop ar_drinker_fee ar_mower ar_mill ar_fertili_spre ar_milk_machi ar_incubator ar_motor_canoe ar_no_motor_can ar_gill_net ar_seine ar_sparrowhawk ar_hook_longli ar_harpoon ar_others"
+
 
 global asset_rur_num "ar_tractor_n ar_sprayer_n ar_tiller_n ar_multicultiva_n ar_plough_n ar_axe_pickaxe_n ar_hoe_daba_hill_n ar_machete_n ar_asinine_hoe_n ar_seed_drill_n ar_harrow_n ar_plou_anima_n ar_carts_n ar_beehives_n ar_rice_husker_n ar_corn_sheller_n ar_thresher_n ar_motor_pump_n ar_hand_pump_n ar_scale_n ar_bund_mach_n ar_straw_chop_n ar_drinker_fee_n ar_mower_n ar_mill_n ar_fertili_spre_n ar_milk_machi_n ar_incubator_n ar_motor_canoe_n ar_no_motor_can_n ar_gill_net_n ar_seine_n ar_sparrowhawk_n ar_hook_longli_n ar_harpoon_n ar_others_n"
 
