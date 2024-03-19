@@ -327,10 +327,10 @@ append using "${swdResults}\accuracies.dta"
 duplicates report
 save "${swdResults}\accuracies.dta", replace
 restore 
-**# Lambda -30
+**# Lambda -25
 capture drop yhat qhat qreal
 estimates restore urban1
-local id_opt=`id_opt'-10
+local id_opt=`id_opt'-5
 lassoselect id=`id_opt' // a model 10 steps early than the previous one
 *lassoselect lambda = 0.08
 cvplot
@@ -373,7 +373,7 @@ tempfile tf_postfile1
 tempname tn1
 postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates)  ("Lasso") ("1") ("Urban") ("Fixed rate") ("lambda -30 steps") 
+local common (ncovariates)  ("Lasso") ("1") ("Urban") ("Fixed rate") ("lambda -25 steps") 
 
 foreach t in 20 25 30 50 75 {
 	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')
@@ -404,7 +404,7 @@ tempfile tf_postfile1
 tempname tn1
 postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates)  ("Lasso") ("1") ("Urban") ("Fixed line") ("lambda -30 steps") 
+local common (ncovariates)  ("Lasso") ("1") ("Urban") ("Fixed line") ("lambda -25 steps") 
 foreach t in 20 25 30 50 75 {
 	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')
 	post `tn1' ("Poverty accuracy") ("`t'") `common' ("Full")  (mean_poverty_`t')

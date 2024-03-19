@@ -321,10 +321,10 @@ duplicates report
 save "${swdResults}\accuracies.dta", replace
 restore 
 
-**# Lambda -30 steps
+**# Lambda -25 steps
 capture drop yhat qhat qreal
 estimates restore rural2
-local id_opt=`id_opt'-10
+local id_opt=`id_opt'-5
 lassoselect id=`id_opt' // a model 10 steps early than the previous one
 cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
@@ -357,7 +357,7 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 lassogof rural2 rural2_ols rural2_lam02_ols rural2_lam03_ols rural2_lam05_ols if milieu == 2, over(sample) postselection
 
-outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 2-lambda -30 steps") label
+outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 2-lambda -25 steps") label
 *estiaccu_measures
 *estiaccu_measures_ch
 *save_lambdmeasu "accuracies_rural2.xlsx" "Lambda 3"
@@ -370,7 +370,7 @@ tempfile tf_postfile1
 tempname tn1
 postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates) ("Lasso") ("2") ("Rural") ("Fixed rate") ("lambda -30 steps") 
+local common (ncovariates) ("Lasso") ("2") ("Rural") ("Fixed rate") ("lambda -25 steps") 
 
 foreach t in 20 25 30 50 75 {
 	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')
@@ -402,7 +402,7 @@ tempfile tf_postfile1
 tempname tn1
 postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates) ("Lasso") ("2") ("Rural") ("Fixed line") ("lambda -30 steps") 
+local common (ncovariates) ("Lasso") ("2") ("Rural") ("Fixed line") ("lambda -25 steps") 
 
 foreach t in 20 25 30 50 75 {
 	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')

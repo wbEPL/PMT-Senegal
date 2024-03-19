@@ -243,6 +243,5 @@ postclose `tn1'
 preserve
 use `tf_postfile1', clear
 append using "${swdResults}\accuracies.dta"
-duplicates report
 save "${swdResults}\accuracies.dta", replace
 restore 

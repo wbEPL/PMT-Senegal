@@ -332,11 +332,11 @@ restore
 
 
 
-**# Lambda -30 steps
+**# Lambda -25 steps
 capture drop yhat qhat qreal
 estimates restore urban2
 
-local id_opt=`id_opt'-10
+local id_opt=`id_opt'-5
 lassoselect id=`id_opt'
 *lassoselect lambda = 0.08
 cvplot
@@ -377,7 +377,7 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 
-outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda -30 steps")
+outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda -25 steps")
 
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"
@@ -387,7 +387,7 @@ tempfile tf_postfile1
 tempname tn1
 postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates)  ("Lasso") ("2") ("Urban") ("Fixed rate") ("lambda -30 steps") 
+local common (ncovariates)  ("Lasso") ("2") ("Urban") ("Fixed rate") ("lambda -25 steps") 
 
 foreach t in 20 25 30 50 75 {
 	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')
@@ -419,7 +419,7 @@ tempfile tf_postfile1
 tempname tn1
 postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates)  ("Lasso") ("2") ("Urban") ("Fixed line") ("lambda -30 steps") 
+local common (ncovariates)  ("Lasso") ("2") ("Urban") ("Fixed line") ("lambda -25 steps") 
 
 foreach t in 20 25 30 50 75 {
 	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')

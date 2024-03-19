@@ -38,7 +38,7 @@ input str30 cols str50 description str100 values
 "Value" "Estimated accuracy measures" "Values"
 end
 
-export excel "${swdResults}/accuracies.xlsx", replace sheet("vars") firstrow(variables)
+export excel "${swdResults}/accuracies.xlsx",  sheet("vars", replace) firstrow(variables)
 
 **## Data ---------------
 
