@@ -14,8 +14,8 @@ keep if milieu == 1
 lasso linear lpcexp  (i.region) $demo $asset_num $asset_rur_num $dwell $livest_all_num if milieu == 1 & sample == 1, rseed(124578)
 local id_opt=`e(ID_sel)'
 estimates store urban2
-cvplot
-graph save "${swdResults}/graphs/cvplot_urban2", replace
+*cvplot
+*graph save "${swdResults}/graphs/*cvplot_urban2", replace
 lassocoef urban1 urban2
 lassogof urban1 urban2 if milieu == 1, over(sample) postselection
 
@@ -34,19 +34,23 @@ foreach c in $categorical_v { // categorical_v is variables that are categorical
 local test_y =substr("`list'", 1, 6) // eliminating the 
 assert  "`test_y'" == "lpcexp"
 reg `list' ///
+	[aw=hhweight] if milieu == 1 & sample == 1, r 
+predict yhat if milieu == 1, xb
+
+reg `list' ///
 	[aw=hhweight] if milieu == 1 , r // & sample == 1 because the overfitting problem is for model selection not coefficient estimation 
-local list ""
+
 estimates store urban2_ols
+outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda CV")
+local list ""
 
 lassogof urban2 urban2_ols if milieu == 1, over(sample) postselection
 
-predict yhat if milieu == 1, xb
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 
-outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda CV")
 
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"
@@ -118,11 +122,10 @@ estimates restore urban2
 local id_opt=e(ID_sel)-10
 lassoselect id=`id_opt'
 *lassoselect lambda = 0.04
-cvplot
+*cvplot
 
 *Show selected covariates
-dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
-						For now I'll do it by hand but if it can be done programatically better*/
+dis e(post_sel_vars) 
 
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 dis "amount of covariates is: " 
@@ -142,20 +145,25 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
+	[aw=hhweight] if milieu == 1 & sample==1, r
+predict yhat if milieu == 1, xb
+
+reg `list' ///
 	[aw=hhweight] if milieu == 1 , r
 local list ""
+
 estimates store urban2_lam04_ols
+outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda -10 steps")
+local list ""
 
 
 lassogof urban2 urban2_ols urban2_lam04_ols if milieu == 1, over(sample) postselection
 
-predict yhat if milieu == 1, xb
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 
-outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda -10 steps")
 
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"
@@ -228,11 +236,10 @@ estimates restore urban2
 local id_opt=`id_opt'-10
 lassoselect id=`id_opt'
 *lassoselect lambda = 0.06
-cvplot
+*cvplot
 
 *Show selected covariates
-dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
-						For now I'll do it by hand but if it can be done programatically better*/
+dis e(post_sel_vars) 
 
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 dis "amount of covariates is: " 
@@ -252,20 +259,23 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 1, r // // & sample == 1 because the overfitting problem is for model selection not coefficient estimation
-local list ""
-estimates store urban2_lam06_ols
+	[aw=hhweight] if milieu == 1 & sample == 1, r // // & sample == 1 because the overfitting problem is for model selection not coefficient estimation
+predict yhat if milieu == 1, xb
 
+
+reg `list' ///
+	[aw=hhweight] if milieu == 1, r // // & sample == 1 because the overfitting problem is for model selection not coefficient estimation
+estimates store urban2_lam06_ols
+outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda -20 steps")
+local list ""
 
 lassogof urban2 urban2_ols urban2_lam04_ols urban2_lam06_ols if milieu == 1, over(sample) postselection
 
-predict yhat if milieu == 1, xb
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 
-outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda -20 steps")
 
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"
@@ -339,11 +349,10 @@ estimates restore urban2
 local id_opt=`id_opt'-5
 lassoselect id=`id_opt'
 *lassoselect lambda = 0.08
-cvplot
+*cvplot
 
 *Show selected covariates
-dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
-						For now I'll do it by hand but if it can be done programatically better*/
+dis e(post_sel_vars) 
 
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 				dis "amount of covariates is: " 
@@ -363,21 +372,25 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
+	[aw=hhweight] if milieu == 1 & sample == 1 , r  // & sample == 1 because the overfitting problem is for model selection not coefficient estimation
+predict yhat if milieu == 1, xb
+
+reg `list' ///
 	[aw=hhweight] if milieu == 1, r  // & sample == 1 because the overfitting problem is for model selection not coefficient estimation
 local list ""
 
 estimates store urban2_lam08_ols
+outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda -25 steps")
+local list ""
 
 
 lassogof urban2 urban2_ols urban2_lam04_ols urban2_lam06_ols urban2_lam08_ols if milieu == 1, over(sample) postselection
 
-predict yhat if milieu == 1, xb
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 
-outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda -25 steps")
 
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"

@@ -60,23 +60,27 @@ foreach c of local commands {
 run "$gitrepo/ado/functions.do"
 
 
-* Parameters 
+* PMT model urban 
+
+global PMT_rural "dem_logsize dem_oadr dem_yadr c_rooms_pc i.c_floor i.c_water_dry i.c_lighting i.c_walls i.c_toilet 	a_moped a_radio a_car a_fan a_tv ad_hotwater a_cellphone a_boat a_homephone a_computer a_ac ar_carts a_fridge l_horses_n l_goats_n l_sheep_n l_poultry_n l_bovines_n 	i.region "
+
+global PMT_urban "dem_logsize dem_yadr dem_alfa_french c_rooms_pc i.c_floor i.c_lighting i.c_toilet i.c_roof a_car a_computer a_fridge a_stove a_fan a_tv a_radio a_homephone ar_tractor  a_iron  l_donkeys_n l_horses_n l_pigs_n "
+
 
 **# Lassos ------------------------
 **### globals of categorical variables 
-global categorical_v "region c_typehousing c_numberofrooms_c c_housingocup c_businessindwe c_walls c_roof c_floor c_connectowater c_water_dry c_water_rainy c_connectoelec c_lighting c_landline c_connectedtoint c_internettype c_connectedtotv c_fuelfirst_r c_garbage c_toilet"
 
+global categorical_v "region c_typehousing c_numberofrooms_c c_housingocup c_businessindwe c_walls c_roof c_floor c_connectowater c_water_dry c_water_rainy c_connectoelec c_lighting c_landline c_connectedtoint c_internettype c_connectedtotv c_fuelfirst_r c_garbage c_toilet dem_hgender dem_hethnie dem_halfa  dem_hhandig  dem_hage dem_hmstat dem_heduc dem_hactiv7j dem_hactiv12m"
 
 **### globals of variables livestock as dummy
-global demo "logsize oadr yadr c_rooms_pc alfa_french " // excluded i.region because I added it as an always selected variables
+global demo "dem_alfa_french dem_oadr dem_yadr dem_working_age dem_emp_rate dem_gender_rate dem_logadults i.dem_hgender i.dem_hethnie i.dem_halfa i.dem_hhandig dem_logsize i.dem_hage i.dem_hmstat i.dem_heduc i.dem_hactiv7j i.dem_hactiv12m dem_branch dem_hcsp" // 
 
-global dwell "i.c_typehousing c_numberofrooms_c i.c_housingocup i.c_businessindwe i.c_walls i.c_roof i.c_floor i.c_connectowater i.c_water_dry i.c_water_rainy i.c_connectoelec i.c_lighting i.c_landline i.c_connectedtoint i.c_internettype i.c_connectedtotv i.c_fuelfirst_r i.c_garbage i.c_toilet"
+global dwell "c_rooms_pc i.c_typehousing c_numberofrooms_c i.c_housingocup i.c_businessindwe i.c_walls i.c_roof i.c_floor i.c_connectowater i.c_water_dry i.c_water_rainy i.c_connectoelec i.c_lighting i.c_landline i.c_connectedtoint i.c_internettype i.c_connectedtotv i.c_fuelfirst_r i.c_garbage i.c_toilet"
 
 *-----------------------------------------------------------------*
 **### 	Globals of variables assets and livestock as number   ###**
 *-----------------------------------------------------------------*
 
-**### Household head variables 
 
 **### Farm assets 
 global asset_rur_dum "ar_tractor ar_sprayer ar_tiller ar_multicultiva ar_plough ar_axe_pickaxe ar_hoe_daba_hill ar_machete ar_asinine_hoe ar_seed_drill ar_harrow ar_plou_anima ar_carts ar_beehives ar_rice_husker ar_corn_sheller ar_thresher ar_motor_pump ar_hand_pump ar_scale ar_bund_mach ar_straw_chop ar_drinker_fee ar_mower ar_mill ar_fertili_spre ar_milk_machi ar_incubator ar_motor_canoe ar_no_motor_can ar_gill_net ar_seine ar_sparrowhawk ar_hook_longli ar_harpoon ar_others"
@@ -100,8 +104,7 @@ global livest_all_num "l_bovines_n l_sheep_n l_goats_n l_camels_n l_horses_n l_d
 	include "$scripts/01_00_createData.do"
 
 // Running models 
-	
-	include "$scripts/02_00_estimate_models.do"
+	qui: include "$scripts/02_00_estimate_models.do"
 
 
 

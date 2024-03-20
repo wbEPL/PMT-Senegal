@@ -67,19 +67,21 @@ run "$scripts/01_01_dwelling_data.do"
 ********************************************************
 **# Assets  -------------
 ********************************************************
+
 run "$scripts/01_02_assets_data.do"
 
 
 ********************************************************
 ** Livestock  -------------
 ********************************************************
+
 run "$scripts/01_03_livestock_data.do"
 
 ********************************************************
 ** Demographics and welfare
 ********************************************************
 
-run "$scripts/01_04_demog_welfare_data.do"
+include "$scripts/01_04_demog_welfare_data.do"
 
 **# Merge data -----
 
@@ -93,9 +95,9 @@ merge 1:1 hhid using "${swdTemp}/dwelling_temp.dta", nogen
 
 merge 1:1 hhid using "${swdTemp}/household_livestock.dta", nogen 
 
-merge 1:1 hhid using "${swdTemp}/welfare_temp.dta", nogen 
 
-merge 1:1 hhid using "${swdTemp}/educ_temp.dta", nogen 
+merge 1:1 hhid using "${swdTemp}/individual_temp.dta", nogen 
+merge 1:1 hhid using "${swdTemp}/hhead_dta.dta", nogen 
 
 merge 1:1 hhid using "${swdTemp}/french_temp.dta", nogen // 839 households withouth hh head info 
 

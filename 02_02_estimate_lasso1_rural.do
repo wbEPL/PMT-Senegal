@@ -14,16 +14,15 @@ keep if milieu == 2
 **# Run lasso regresion, save results chosen lambda
 lasso linear lpcexp  (i.region) $demo $asset_dum $asset_rur_dum $dwell $livest_all_dum if milieu == 2 & sample == 1, rseed(124578)
 estimates store rural1
-cvplot
-graph save "${swdResults}/graphs/cvplot_rural1", replace
+*cvplot
+*graph save "${swdResults}/graphs/*cvplot_rural1", replace
 *show selected coefs
 lassocoef rural1
 *show model goodness of fit
 lassogof rural1 if milieu == 2, over(sample) postselection
 
 *Show selected covariates
-dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
-						For now I'll do it by hand but if it can be done programatically better*/
+dis e(post_sel_vars) 
 
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 * run ols with selected covariates and pop weights
@@ -42,19 +41,22 @@ assert  "`test_y'" == "lpcexp"
 
 reg `list' ///
 	[aw=hhweight] if milieu == 2 & sample == 1 , r // I see the logic for indicators being a weighted average by population but much less standard the regression *hhsize
-local list "" // being sure to clear the local list 
-
-estimates store rural1_ols
-	
 predict yhat  if milieu == 2, xb 
+
+reg `list' [aw=hhweight] /// 
+	 if milieu == 2 , r // I see the logic for indicators being a weighted average by population but much less standard the regression *hhsize
+estimates store rural1_ols
+outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda CV") label
+lassogof rural1 rural1_ols if milieu == 2, over(sample) postselection
+
+local list "" // being sure to clear the local list 
+	
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 
-lassogof rural1 rural1_ols if milieu == 2, over(sample) postselection
 
-outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda CV") label
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"
 
@@ -126,7 +128,7 @@ local id_opt=e(ID_sel)-10
 
 
 lassoselect id=`id_opt' // a model 10 steps early than the previous one
-cvplot
+*cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 dis "amount of covariates is: " 
 dis ncovariates
@@ -149,18 +151,20 @@ assert  "`test_y'" == "lpcexp"
 
 reg `list' ///
 	[aw=hhweight] if milieu == 2 & sample == 1, r // 
-local list "" 	
-estimates store rural1_lam01_ols
-
-	
 predict yhat  if milieu == 2, xb 
+
+reg `list' ///
+	[aw=hhweight] if milieu == 2, r // 
+estimates store rural1_lam01_ols
+outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda -10 steps") label
+
+local list "" 	
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 lassogof rural1 rural1_ols rural1_lam01_ols if milieu == 2, over(sample) postselection
 
-outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda -10 steps") label
 
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"
@@ -231,7 +235,7 @@ capture drop yhat qhat qreal
 estimates restore rural1
 local id_opt=`id_opt'-10
 lassoselect id=`id_opt' // a model 10 steps early than the previous one
-cvplot
+*cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 dis "amount of covariates is: " 
 dis ncovariates
@@ -251,19 +255,23 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 2, r // & sample == 1
-local list "" 
-estimates store rural1_lam03_ols
-
-	
+	[aw=hhweight] if milieu == 2 & sample == 1, r // 
 predict yhat  if milieu == 2, xb 
+
+
+reg `list' ///
+	[aw=hhweight] if milieu == 2 , r // 
+
+estimates store rural1_lam03_ols
+outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda -20 steps") label
+
+local list "" 
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 lassogof rural1 rural1_ols rural1_lam01_ols rural1_lam03_ols if milieu == 2, over(sample) postselection
 
-outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda -20 steps") label
 
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"
@@ -337,7 +345,7 @@ capture drop yhat qhat qreal
 estimates restore rural1
 local id_opt=`id_opt'-5
 lassoselect id=`id_opt' // a model 10 steps early than the previous one
-cvplot
+*cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 dis "amount of covariates is: " 
 dis ncovariates
@@ -357,26 +365,22 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-[aw=hhweight] if milieu == 2 , r // & sample == 1
-local list "" 
-estimates store rural1_lam05_ols
-
-/* @gabriel, I have few different covariates here. We need to check here why with your code. 
-reg lpcexp logsize yadr i.region a_living a_cupboard a_carpet a_charcoaliron ///
-			a_gastank a_fridge a_freezer a_fan a_tv a_satellite a_car i.c_walls ///
-			i.c_roof c_connectoelec i.c_lighting c_connectedtoint c_connectedtotv ///
-			i.c_fuelfirst_r c_toilet ///
-	[aw=hhweight*hhsize] if milieu == 2 & sample == 1, r
-*/
-	
+[aw=hhweight] if milieu == 2 & sample == 1, r // 
 predict yhat  if milieu == 2, xb 
 
+reg `list' ///
+[aw=hhweight] if milieu == 2, r // 
+
+estimates store rural1_lam05_ols
+outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda -25 steps") label
+
+local list "" 
+	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 lassogof rural1 rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols if milieu == 2, over(sample) postselection
 
-outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda -25 steps") label
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"
 

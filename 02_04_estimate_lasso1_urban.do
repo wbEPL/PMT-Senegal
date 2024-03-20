@@ -14,15 +14,14 @@ keep if milieu == 1
 lasso linear lpcexp  (i.region) $demo $asset_dum $asset_rur_dum $dwell $livest_all_dum if milieu == 1 & sample == 1, rseed(124578)
 local id_opt=`e(ID_sel)'
 estimates store urban1
-cvplot
-graph save "${swdResults}/graphs/cvplot_urban1", replace
+*cvplot
+*graph save "${swdResults}/graphs/*cvplot_urban1", replace
 lassocoef urban1
 lassogof urban1 if milieu == 1, over(sample) postselection
 
 
 *Show selected covariates
-dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
-						For now I'll do it by hand but if it can be done programatically better*/
+dis e(post_sel_vars) 
 
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 
@@ -40,19 +39,23 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 1 , r //& sample == 1
-local list ""
-
-estimates store urban1_ols
+	[aw=hhweight] if milieu == 1 & sample == 1, r //& sample == 1
 
 predict yhat if milieu == 1, xb 
+
+
+reg `list' ///
+	[aw=hhweight] if milieu == 1 , r //
+
+estimates store urban1_ols
+outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda CV")
+local list ""
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 lassogof urban1 urban1_ols if milieu == 1, over(sample) postselection
 
-outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda CV")
 
 *estiaccu_measures
 *estiaccu_measures_ch
@@ -129,7 +132,7 @@ estimates restore urban1
 local id_opt=e(ID_sel)-10
 lassoselect id=`id_opt'
 *lassoselect lambda = 0.025
-cvplot
+*cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 dis "amount of covariates is: " 
 dis ncovariates
@@ -147,19 +150,23 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 1 , r //& sample == 1
+	[aw=hhweight] if milieu == 1 & sample == 1, r //& sample == 1
+predict yhat if milieu == 1, xb 
+
+
+reg `list' ///
+	[aw=hhweight] if milieu == 1, r //& sample == 1
+estimates store urban1_lam_025_ols
+outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda -10 steps")
 local list ""
 
-estimates store urban1_lam_025_ols
-
-predict yhat if milieu == 1, xb 
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 lassogof urban1 urban1_ols urban1_lam_025_ols if milieu == 1, over(sample) postselection
 
-outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda -10 steps")
+
 *estiaccu_measures
 *estiaccu_measures_ch
 *save_lambdmeasu "accuracies_urban1.xlsx" "Lambda 1"
@@ -234,7 +241,7 @@ estimates restore urban1
 local id_opt=`id_opt'-10
 lassoselect id=`id_opt' // a model 10 steps early than the previous one
 *lassoselect lambda = 0.05
-cvplot
+*cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 dis "amount of covariates is: " 
 dis ncovariates
@@ -253,19 +260,23 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 1 , r //& sample == 1
-local list ""
-	
-estimates store urban1_lam_05_ols
+	[aw=hhweight] if milieu == 1 & sample == 1, r //& sample == 1
 
 predict yhat if milieu == 1, xb 
+
+reg `list' ///
+	[aw=hhweight] if milieu == 1 , r //& sample == 1
+	
+estimates store urban1_lam_05_ols
+outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda -20")
+local list ""
+
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 lassogof urban1 urban1_ols urban1_lam_025_ols urban1_lam_05_ols if milieu == 1, over(sample) postselection
 
-outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda -20")
 
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"
@@ -333,7 +344,7 @@ estimates restore urban1
 local id_opt=`id_opt'-5
 lassoselect id=`id_opt' // a model 10 steps early than the previous one
 *lassoselect lambda = 0.08
-cvplot
+*cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 dis "amount of covariates is: " 
 dis ncovariates
@@ -352,18 +363,22 @@ assert  "`test_y'" == "lpcexp"
 
 
 reg `list' ///
-	[aw=hhweight] if milieu == 1 , r // & sample == 1
-local list ""	
-estimates store urban1_lam_08_ols
-
+	[aw=hhweight] if milieu == 1 & sample == 1, r // & sample == 1
 predict yhat if milieu == 1, xb 
+
+reg `list' ///
+	[aw=hhweight] if milieu == 1, r // & sample == 1
+
+estimates store urban1_lam_08_ols
+outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda -30")
+local list ""	
+
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
 lassogof urban1 urban1_ols urban1_lam_025_ols urban1_lam_05_ols urban1_lam_08_ols if milieu == 1, over(sample) postselection
 
-outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda -30")
 
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"
