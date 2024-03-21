@@ -27,7 +27,7 @@ estimates store rural3
 *graph save "${swdResults}/graphs/*cvplot_rural3", replace
 *graph export "${swdResults}/graphs/*cvplot_rural3.png", replace 
 
-lassocoef rural3
+*lassocoef rural3
 lassogof rural3, over(sample) postselection
 
 * run ols with selected covariates and pop weights
@@ -146,7 +146,7 @@ lassoselect id=18 // a model 5 steps early than the
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 estimates store urban3
 
-lassocoef urban3
+*lassocoef urban3
 lassogof urban3, over(sample) postselection
 
 

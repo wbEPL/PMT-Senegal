@@ -128,6 +128,8 @@ local id_opt=e(ID_sel)-10
 
 
 lassoselect id=`id_opt' // a model 10 steps early than the previous one
+
+
 *cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 dis "amount of covariates is: " 

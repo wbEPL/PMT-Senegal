@@ -18,6 +18,16 @@ lassogof ols_rural /// ols 2021
 		rural2_ols rural2_lam02_ols rural2_lam03_ols rural2_lam05_ols /// model 2
 		rural3_ols if milieu == 2, over(sample)
 
+
+* ols_rural rural1
+
+* est restore rural3
+* esttab , r2
+* mat a= r(stats)
+* mat list a
+*lassogof rural3 if milieu == 2, postselection
+
+
 matrix list r(table)
 qui putexcel C2 = matrix(r(table))
 

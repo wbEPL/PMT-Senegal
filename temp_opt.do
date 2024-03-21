@@ -14,56 +14,36 @@ keep if milieu == 2
 **# Run lasso regresion, save results chosen lambda
 lasso linear lpcexp  (i.region) $cov_set1  if milieu == 2 & sample == 1, rseed(124578)
 estimates store rural1
+
 *cvplot
 *graph save "${swdResults}/graphs/*cvplot_rural1", replace
 *show selected coefs
-lassocoef rural1
 *show model goodness of fit
-lassogof rural1 if milieu == 2, over(sample) postselection
 
-*Show selected covariates
-dis e(post_sel_vars) 
-
-scalar ncovariates = wordcount(e(post_sel_vars))-1
-* run ols with selected covariates and pop weights
-
-* writing categorical variables
+* Run ols with selected covariates and pop weights
 local list "`e(post_sel_vars)'"
-dis "`list'"
+scalar ncovariates = wordcount(e(post_sel_vars))-1
 
 foreach c in $categorical_v { // categorical_v is variables that are categorical 
 	local list = subinstr("`list'", "`c'", "i.`c'", 1)
 }
 
-local test_y =substr("`list'", 1, 6) // eliminating the 
-assert  "`test_y'" == "lpcexp"
-
-
-reg `list' ///
-	[aw=hhweight] if milieu == 2 & sample == 1 , r // I see the logic for indicators being a weighted average by population but much less standard the regression *hhsize
+*Training sample calibrate the model to predict PMT
+reg `list' [aw=hhweight] if milieu == 2 & sample == 1 , r 
 predict yhat  if milieu == 2, xb 
 
-reg `list' [aw=hhweight] /// 
-	 if milieu == 2 , r // I see the logic for indicators being a weighted average by population but much less standard the regression *hhsize
+*Full sample to save the model
+reg `list' [aw=hhweight] if milieu == 2 , r 
+local list "" 
 estimates store rural1_ols
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda CV") label
-lassogof rural1 rural1_ols if milieu == 2, over(sample) postselection
-
-local list "" // being sure to clear the local list 
 	
 
-quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
-
-quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
-
-
 **## estimate_accuracy fixed rate ---
-estimate_accuracy "rate"
+quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
+quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
+estimate_accuracy "rate" 
 
-**### save accuracies ----
-tempfile tf_postfile1 
-tempname tn1
-postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
 local common (ncovariates) ("Lasso") ("1") ("Rural") ("Fixed rate") ("Cross-validation selected lambda") 
 
@@ -128,6 +108,8 @@ local id_opt=e(ID_sel)-10
 
 
 lassoselect id=`id_opt' // a model 10 steps early than the previous one
+
+
 *cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 dis "amount of covariates is: " 
