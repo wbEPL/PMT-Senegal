@@ -7,13 +7,12 @@
 *	Last Reviewed: TBD
 *------------------------------------------------------------------------------- */
 * TODO: - Incluir R-squared y GOF statistics OUT OF SAMPLE, revisar quantiles
-
 /* Rural model */
 capture drop yhat qhat qreal
 keep if milieu == 2
 
 **# Run lasso regresion, save results chosen lambda
-lasso linear lpcexp  (i.region) $demo $asset_dum $asset_rur_dum $dwell $livest_all_dum if milieu == 2 & sample == 1, rseed(124578)
+lasso linear lpcexp  (i.region) $cov_set1  if milieu == 2 & sample == 1, rseed(124578)
 estimates store rural1
 *cvplot
 *graph save "${swdResults}/graphs/*cvplot_rural1", replace
@@ -23,8 +22,7 @@ lassocoef rural1
 lassogof rural1 if milieu == 2, over(sample) postselection
 
 *Show selected covariates
-dis e(post_sel_vars) /*This doesn't show if the variable is categorical or not. 
-						For now I'll do it by hand but if it can be done programatically better*/
+dis e(post_sel_vars) 
 
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 * run ols with selected covariates and pop weights
@@ -45,10 +43,11 @@ reg `list' ///
 	[aw=hhweight] if milieu == 2 & sample == 1 , r // I see the logic for indicators being a weighted average by population but much less standard the regression *hhsize
 predict yhat  if milieu == 2, xb 
 
-reg `list' ///
-	[aw=hhweight] if milieu == 2 , r // I see the logic for indicators being a weighted average by population but much less standard the regression *hhsize
+reg `list' [aw=hhweight] /// 
+	 if milieu == 2 , r // I see the logic for indicators being a weighted average by population but much less standard the regression *hhsize
 estimates store rural1_ols
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda CV") label
+lassogof rural1 rural1_ols if milieu == 2, over(sample) postselection
 
 local list "" // being sure to clear the local list 
 	
@@ -57,7 +56,6 @@ quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
 
-lassogof rural1 rural1_ols if milieu == 2, over(sample) postselection
 
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"

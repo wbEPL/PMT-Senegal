@@ -11,7 +11,7 @@ capture drop yhat qhat qreal
 keep if milieu == 1
 **# Run lasso regresion, save results chosen lambda
 
-lasso linear lpcexp  (i.region) $demo $asset_dum $asset_rur_dum $dwell $livest_all_dum if milieu == 1 & sample == 1, rseed(124578)
+lasso linear lpcexp  (i.region) $cov_set1  if milieu == 1 & sample == 1, rseed(124578)
 local id_opt=`e(ID_sel)'
 estimates store urban1
 *cvplot

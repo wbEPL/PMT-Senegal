@@ -12,6 +12,7 @@
 
 **# Goodness of fit rural
 qui putexcel set "$swdResults/goodness.xlsx", modify sheet("Rural")
+
 lassogof ols_rural /// ols 2021
 		rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols /// model 1
 		rural2_ols rural2_lam02_ols rural2_lam03_ols rural2_lam05_ols /// model 2

@@ -467,11 +467,11 @@ program define estimate_accuracy
 		capture drop poor_real_`t' poor_hat_`t' correct_`t' undercovered_`t' leaked_`t'
 		capture drop poor_real_`t'_te poor_hat_`t'_te correct_`t'_te undercovered_`t'_te leaked_`t'_te
 		
-		if "`estimate'" == "line" {
+		if "`estimate'" == "rate" {
 			gen poor_real_`t' = qreal < `t' 
 			gen poor_hat_`t' = qhat < `t' 
 		}
-		else if "`estimate'" == "rate" {
+		else if "`estimate'" == "line" {
 			gen poor_real_`t' = qreal < `t' 
 			qui mean lpcexp [aw=hhweight*hhsize] if qreal == `t' 
 			scalar mean_lpcexp =  el(r(table),1,1)

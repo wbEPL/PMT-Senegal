@@ -77,11 +77,13 @@ include "$scripts/02_05_estimate_lasso2_urban.do"
 use `cleaned_dataset', replace
 include "$scripts/02_06_estimate_lasso3.do"
 
+
 **# Export accuracies to excel
 use "${swdResults}\accuracies.dta", replace
+replace value=100*value
 export excel "${swdResults}/accuracies.xlsx", sheet("Results", replace) firstrow(variables)
 
 
 **# Goodness of fit rural
-*use `cleaned_dataset', replace
-*include "$scripts/02_07_goodness_fit.do"
+use `cleaned_dataset', replace
+include "$scripts/02_07_goodness_fit.do"
