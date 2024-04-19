@@ -1,3 +1,5 @@
+/* Rural model */
+**p = 0.05
 capture drop yhat qhat qreal
 estimates restore rural1_swift
 keep if milieu == 2
@@ -9,7 +11,6 @@ gen popweight = hhsize*hhweight
 gen pauvre = (pcexp <= zref)
 svyset [pw=popweight], strata(milieu)
 set seed 0123456
-
 
 * Stepwise 
 local pe = 0.05
