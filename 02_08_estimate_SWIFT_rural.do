@@ -1,4 +1,5 @@
-
+capture drop yhat qhat qreal
+estimates restore rural1_swift
 keep if milieu == 2
 splitsample, generate(sample) split(0.8 0.2)  rseed(12345)  
 label define sample 1 "Training" 2 "Testing"
@@ -36,7 +37,6 @@ reg lpcexp `list3' [aw=hhweight] if milieu == 2, r
 estimates store rural1_swift
 outreg2 using "$results/rural_coefficients.xls", append ctitle("SWIFT-PLUS1") label
 	
-
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
