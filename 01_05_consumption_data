@@ -1,4 +1,4 @@
-use  "C:\Users\WB541524\OneDrive - WBG\Desktop\Senegal_PMT\s07b_me_sen_2021.dta" , clear
+use  use "${swdDatain}/s07b_me_sen_2021.dta", clear 
 
 gen hhid=grappe*100+menage 
 
