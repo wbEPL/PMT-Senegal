@@ -42,10 +42,5 @@ gen sugar = (sugar1>0)
 
 keep hhid cereal meat fish milk oil fruit vegetable legume sugar
 
-save "C:\Users\WB541524\OneDrive - WBG\Desktop\Senegal_PMT\household_consumption.dta", replace
+save "${swdTemp}/consumption.dta", replace
 
-merge 1:1 hhid using "C:\Users\WB541524\OneDrive - WBG\Desktop\data4model_2021.dta" 
-
-keep if _merge == 3
-
-save "C:\Users\WB541524\OneDrive - WBG\Desktop\Senegal_PMT\data4model_ver2.dta", replace
