@@ -78,6 +78,12 @@ run "$scripts/01_02_assets_data.do"
 run "$scripts/01_03_livestock_data.do"
 
 ********************************************************
+** Consumption  -------------
+********************************************************
+
+run "$scripts/01_05_consumption_data.do"
+
+********************************************************
 ** Demographics and welfare
 ********************************************************
 
@@ -100,6 +106,8 @@ merge 1:1 hhid using "${swdTemp}/individual_temp.dta", nogen
 merge 1:1 hhid using "${swdTemp}/hhead_dta.dta", nogen 
 
 merge 1:1 hhid using "${swdTemp}/french_temp.dta", nogen // 839 households withouth hh head info 
+
+merge 1:1 hhid using "${swdTemp}/consupmption.dta", nogen 
 
 gen lpcexp=ln(pcexp)
 replace c_rooms_pc=c_rooms_pc/hhsize
