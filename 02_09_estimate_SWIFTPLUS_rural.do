@@ -355,7 +355,7 @@ reg lpcexp `list3' [aw=hhweight] if milieu == 2  & sample == 1, r
 predict yhat3 if milieu == 2, xb 
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2, r 
-estimates store rural1_swift
+estimates store rural2_swift
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("SWIFT-PLUS4") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
