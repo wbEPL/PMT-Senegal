@@ -141,7 +141,7 @@ reg lpcexp `list3' [aw=hhweight] if milieu == 2  & sample == 1, r
 predict yhat3 if milieu == 2, xb 
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2, r 
-estimates store rural1_swift
+estimates store rural2_swift
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("SWIFT-PLUS2") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
@@ -248,7 +248,7 @@ reg lpcexp `list3' [aw=hhweight] if milieu == 2  & sample == 1, r
 predict yhat3 if milieu == 2, xb 
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2, r 
-estimates store rural1_swift
+estimates store rural2_swift
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("SWIFT-PLUS3") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
@@ -428,7 +428,7 @@ restore
 
 **p = 0.00001
 capture drop yhat qhat qreal
-estimates restore rural1_swift
+estimates restore rural2_swift
 keep if milieu == 2
 splitsample, generate(sample) split(0.8 0.2)  rseed(12345)  
 label define sample 1 "Training" 2 "Testing"
@@ -462,7 +462,7 @@ reg lpcexp `list3' [aw=hhweight] if milieu == 2  & sample == 1, r
 predict yhat3 if milieu == 2, xb 
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2, r 
-estimates store rural1_swift
+estimates store rural2_swift
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("SWIFT5") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
@@ -535,7 +535,7 @@ restore
 
 **p = 0.000001
 capture drop yhat qhat qreal
-estimates restore rural1_swift
+estimates restore rural2_swift
 keep if milieu == 2
 splitsample, generate(sample) split(0.8 0.2)  rseed(12345)  
 label define sample 1 "Training" 2 "Testing"
@@ -569,7 +569,7 @@ reg lpcexp `list3' [aw=hhweight] if milieu == 2  & sample == 1, r
 predict yhat3 if milieu == 2, xb 
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2, r 
-estimates store rural1_swift
+estimates store rural2_swift
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("SWIFT-PLUS6") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
