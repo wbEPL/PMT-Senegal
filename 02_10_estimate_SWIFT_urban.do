@@ -141,7 +141,7 @@ reg lpcexp `list3' [aw=hhweight] if milieu == 2  & sample == 1, r
 predict yhat3 if milieu == 2, xb 
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2, r 
-estimates store rural1_swift
+estimates store urban1_swift
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("SWIFT2") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
@@ -248,7 +248,7 @@ reg lpcexp `list3' [aw=hhweight] if milieu == 1  & sample == 1, r
 predict yhat3 if milieu == 1, xb 
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 1, r 
-estimates store rural1_swift
+estimates store urban1_swift
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("SWIFT3") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
@@ -355,7 +355,7 @@ reg lpcexp `list3' [aw=hhweight] if milieu == 1  & sample == 1, r
 predict yhat3 if milieu == 2, xb 
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 1, r 
-estimates store rural1_swift
+estimates store urban1_swift
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("SWIFT4") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
@@ -462,7 +462,7 @@ reg lpcexp `list3' [aw=hhweight] if milieu == 1  & sample == 1, r
 predict yhat3 if milieu == 2, xb 
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 1, r 
-estimates store rural1_swift
+estimates store urban1_swift
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("SWIFT5") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
@@ -569,7 +569,7 @@ reg lpcexp `list3' [aw=hhweight] if milieu == 1  & sample == 1, r
 predict yhat3 if milieu == 2, xb 
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 1, r 
-estimates store rural1_swift
+estimates store urban1_swift
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("SWIFT6") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1, gen(qhat) n(100)
