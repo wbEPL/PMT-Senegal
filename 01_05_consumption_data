@@ -42,5 +42,15 @@ gen sugar = (sugar1>0)
 
 keep hhid cereal meat fish milk oil fruit vegetable legume sugar
 
+label var cereal "consumed cereal"
+label var meat "consumed meat"
+label var fish "consumed fish"
+label var milk "consumed milk"
+label var oil "consumed oil"
+label var fruit "consumed fruit"
+label var vegetable "consumed vegetable"
+label var legume "consumed legume"
+label var sugar "consumed sugar"
+
 save "${swdTemp}/consumption.dta", replace
 
