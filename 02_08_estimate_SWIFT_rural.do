@@ -35,7 +35,7 @@ predict yhat3 if milieu == 2, xb
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2, r 
 estimates store rural1_swift
-outreg2 using "$results/rural_coefficients.xls", append ctitle("SWIFT1") label
+outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("SWIFT1") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
@@ -69,9 +69,9 @@ foreach t in 20 25 30 50 75 {
 postclose `tn1' 
 preserve
 use `tf_postfile1', clear
-append using "$results/accuracies.dta"
+append using "${swdResults}\accuracies.dta"
 duplicates report
-save "$results/accuracies.dta", replace
+save "${swdResults}\accuracies.dta", replace
 restore 
 
 **## estimate_accuracy fixed line ---
@@ -100,9 +100,9 @@ foreach t in 20 25 30 50 75 {
 postclose `tn1' 
 preserve
 use `tf_postfile1', clear
-append using "$results/accuracies.dta"
+append using "${swdResults}\accuracies.dta"
 duplicates report
-save "$results/accuracies.dta", replace
+save "${swdResults}\accuracies.dta", replace
 restore 
 
 **p = 0.01
@@ -142,7 +142,7 @@ predict yhat3 if milieu == 2, xb
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2, r 
 estimates store rural1_swift
-outreg2 using "$results/rural_coefficients.xls", append ctitle("SWIFT2") label
+outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("SWIFT2") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
@@ -176,9 +176,9 @@ foreach t in 20 25 30 50 75 {
 postclose `tn1' 
 preserve
 use `tf_postfile1', clear
-append using "$results/accuracies.dta"
+append using "${swdResults}\accuracies.dta"
 duplicates report
-save "$results/accuracies.dta", replace
+save "${swdResults}\accuracies.dta", replace
 restore 
 
 **## estimate_accuracy fixed line ---
@@ -207,9 +207,9 @@ foreach t in 20 25 30 50 75 {
 postclose `tn1' 
 preserve
 use `tf_postfile1', clear
-append using "$results/accuracies.dta"
+append using "${swdResults}\accuracies.dta"
 duplicates report
-save "$results/accuracies.dta", replace
+save "${swdResults}\accuracies.dta", replace
 restore 
 
 **p = 0.001
@@ -249,7 +249,7 @@ predict yhat3 if milieu == 2, xb
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2, r 
 estimates store rural1_swift
-outreg2 using "$results/rural_coefficients.xls", append ctitle("SWIFT3") label
+outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("SWIFT3") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
@@ -283,9 +283,9 @@ foreach t in 20 25 30 50 75 {
 postclose `tn1' 
 preserve
 use `tf_postfile1', clear
-append using "$results/accuracies.dta"
+append using "${swdResults}\accuracies.dta"
 duplicates report
-save "$results/accuracies.dta", replace
+save "${swdResults}\accuracies.dta", replace
 restore 
 
 **## estimate_accuracy fixed line ---
@@ -314,9 +314,9 @@ foreach t in 20 25 30 50 75 {
 postclose `tn1' 
 preserve
 use `tf_postfile1', clear
-append using "$results/accuracies.dta"
+append using "${swdResults}\accuracies.dta"
 duplicates report
-save "$results/accuracies.dta", replace
+save "${swdResults}\accuracies.dta", replace
 restore 
 
 **p = 0.0001
@@ -356,7 +356,7 @@ predict yhat3 if milieu == 2, xb
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2, r 
 estimates store rural1_swift
-outreg2 using "$results/rural_coefficients.xls", append ctitle("SWIFT4") label
+outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("SWIFT4") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
@@ -390,9 +390,9 @@ foreach t in 20 25 30 50 75 {
 postclose `tn1' 
 preserve
 use `tf_postfile1', clear
-append using "$results/accuracies.dta"
+append using "${swdResults}\accuracies.dta"
 duplicates report
-save "$results/accuracies.dta", replace
+save "${swdResults}\accuracies.dta", replace
 restore 
 
 **## estimate_accuracy fixed line ---
@@ -421,9 +421,9 @@ foreach t in 20 25 30 50 75 {
 postclose `tn1' 
 preserve
 use `tf_postfile1', clear
-append using "$results/accuracies.dta"
+append using "${swdResults}\accuracies.dta"
 duplicates report
-save "$results/accuracies.dta", replace
+save "${swdResults}\accuracies.dta", replace
 restore 
 
 **p = 0.00001
@@ -463,7 +463,7 @@ predict yhat3 if milieu == 2, xb
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2, r 
 estimates store rural1_swift
-outreg2 using "$results/rural_coefficients.xls", append ctitle("SWIFT5") label
+outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("SWIFT5") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
@@ -497,9 +497,9 @@ foreach t in 20 25 30 50 75 {
 postclose `tn1' 
 preserve
 use `tf_postfile1', clear
-append using "$results/accuracies.dta"
+append using "${swdResults}\accuracies.dta"
 duplicates report
-save "$results/accuracies.dta", replace
+save "${swdResults}\accuracies.dta", replace
 restore 
 
 **## estimate_accuracy fixed line ---
@@ -528,9 +528,9 @@ foreach t in 20 25 30 50 75 {
 postclose `tn1' 
 preserve
 use `tf_postfile1', clear
-append using "$results/accuracies.dta"
+append using "${swdResults}\accuracies.dta"
 duplicates report
-save "$results/accuracies.dta", replace
+save "${swdResults}\accuracies.dta", replace
 restore 
 
 **p = 0.000001
@@ -570,7 +570,7 @@ predict yhat3 if milieu == 2, xb
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2, r 
 estimates store rural1_swift
-outreg2 using "$results/rural_coefficients.xls", append ctitle("SWIFT6") label
+outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("SWIFT6") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
@@ -604,9 +604,9 @@ foreach t in 20 25 30 50 75 {
 postclose `tn1' 
 preserve
 use `tf_postfile1', clear
-append using "$results/accuracies.dta"
+append using "${swdResults}\accuracies.dta"
 duplicates report
-save "$results/accuracies.dta", replace
+save "${swdResults}\accuracies.dta", replace
 restore 
 
 **## estimate_accuracy fixed line ---
@@ -635,9 +635,9 @@ foreach t in 20 25 30 50 75 {
 postclose `tn1' 
 preserve
 use `tf_postfile1', clear
-append using "$results/accuracies.dta"
+append using "${swdResults}\accuracies.dta"
 duplicates report
-save "$results/accuracies.dta", replace
+save "${swdResults}\accuracies.dta", replace
 restore 
 
 
