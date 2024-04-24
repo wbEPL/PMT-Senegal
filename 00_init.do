@@ -98,10 +98,13 @@ global asset_dum "a_living a_dining a_bed a_singlemat a_cupboard a_carpet a_iron
 global livest_all_dum "l_bovines l_sheep l_goats l_camels l_horses l_donkeys l_pigs l_rabbits l_chickens l_guinea_fowl l_other_poultry"
 global livest_all_num "l_bovines_n l_sheep_n l_goats_n l_camels_n l_horses_n l_donkeys_n l_pigs_n l_rabbits_n l_chickens_n l_guinea_fowl_n l_other_poultry_n"
 
+**### Consumption 
+global consumption "cereal meat fish milk oil fruit vegetable legume sugar"
 
 **### All covariates 
 global cov_set1 "$demo $dwell $asset_dum $asset_rur_dum  $livest_all_dum"
 global cov_set2 "$demo $dwell $asset_num $asset_rur_num  $livest_all_num"
+global cov_set3 "$demo $dwell $asset_dum $asset_rur_dum  $livest_all_dum $consumption"
 
 **### Dofiles 
 

@@ -17,6 +17,8 @@
 2. LASSO 1: all covs, categories simplified  (Diff lambdas)
 3. LASSO 2: all covs  categories not simplified  (Diff lambdas)
 4. LASSO 3: PMT covs, not simplified  (optimal lambda)
+5. SWIFT: all covs with different p-values
+6. SWIFT-PLUS: all covs + consumption dummies with different p=values
 
 *------------------------------------------------------------------------------- */
 
@@ -76,6 +78,22 @@ include "$scripts/02_05_estimate_lasso2_urban.do"
 **## Lasso 3 urban and rural, start same covariates 2015, do not move lambdas--------------
 use `cleaned_dataset', replace
 include "$scripts/02_06_estimate_lasso3.do"
+
+**## SWIFT rural--------------
+use `cleaned_dataset', replace
+include "$scripts/02_08_estimate_SWIFT_rural.do"
+
+**## SWIFT-PLUS rural--------------
+use `cleaned_dataset', replace
+include "$scripts/02_09_estimate_SWIFTPLUS_rural.do"
+
+**## SWIFT urban--------------
+use `cleaned_dataset', replace
+include "$scripts/02_10_estimate_SWIFT_urban.do"
+
+**## SWIFT-PLUS urban--------------
+use `cleaned_dataset', replace
+include "$scripts/02_11_estimate_SWIFTPLUS_urban.do"
 
 
 **# Export accuracies to excel
