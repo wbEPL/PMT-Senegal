@@ -1,7 +1,7 @@
 * ------------------------------------------------------------------
 *	Authors: Gabriel N. Camargo-Toledo gcamargotoledo@worldbank.org
 *			 Daniel Valderrama dvalderramagonza@worldbank.org
-*	
+*			 Kasuza 
 *	Last edited: 12 January 2024
 * 	Version 2.0 created by Daniel VAlderrama 
 *	Reviewer: TBD
@@ -109,10 +109,10 @@ global cov_set3 "$demo $dwell $asset_dum $asset_rur_dum  $livest_all_dum $consum
 **### Dofiles 
 
 // Cleaning dataset on assets, dwelling characteristics and other 
-	include "$scripts/01_00_createData.do"
+	qui: include "$scripts/01_00_createData.do"
 
 // Running models 
-	qui: include "$scripts/02_00_estimate_models.do"
+	include "$scripts/02_00_estimate_models.do"
 
 
 

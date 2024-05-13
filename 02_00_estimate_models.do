@@ -22,9 +22,9 @@
 
 *------------------------------------------------------------------------------- */
 
-**# INIT ----------------------
+**# INIT 
 
-**## create vars description excel accuracies export -----
+**## create vars description excel accuracies export 
 
 clear
 input str30 cols str50 description str100 values
@@ -42,66 +42,75 @@ end
 
 export excel "${swdResults}/accuracies.xlsx",  sheet("vars", replace) firstrow(variables)
 
-**## Data ---------------
+**## Data 
 
-use "${swdFinal}/data4model_2021.dta", clear
-
-**## split sample ---------
-
-splitsample, generate(sample) split(0.8 0.2)  rseed(12345)  
-label define sample 1 "Training" 2 "Testing"
-label values sample sample
-
-tempfile cleaned_dataset
-save `cleaned_dataset', replace 
+/*
 
 **# OLS same as 2015 covariates ---
-include "$scripts/02_01_estimate_ols.do" /*This will replace the accuracies.dta file, so if you run this you need to re run the other models to save the accuracies*/
+use "${swdFinal}/data4model_2021.dta", clear
+include "$scripts/02_01_estimate_ols.do" // This will replace the accuracies.dta file, so if you run this you need to re run the other models to save the accuracies
+*/
+/*==================================================
+					LASSO models
+====================================================*/
 
-**## Lasso 1 rural, assets and livestock as dummy, include all livestock separately --------------
-use `cleaned_dataset', replace 
-
+/*
+**## Lasso 1 rural, assets and livestock as dummy, include all livestock separately 
+use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_02_estimate_lasso1_rural.do"
 
-**## Lasso 2 rural, assets and livestock as number --------------
-use `cleaned_dataset', replace
+**## Lasso 2 rural, assets and livestock as number 
+use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_03_estimate_lasso2_rural.do"
 
-**## Lasso 1 urban, assets as dummy ------------------
-use `cleaned_dataset', replace
+**## Lasso 1 urban, assets as dummy 
+use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_04_estimate_lasso1_urban.do"
 
-**## Lasso 2 urban, assets and livestock as number --------------
-use `cleaned_dataset', replace
+**## Lasso 2 urban, assets and livestock as number
+use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_05_estimate_lasso2_urban.do"
 
-**## Lasso 3 urban and rural, start same covariates 2015, do not move lambdas--------------
-use `cleaned_dataset', replace
+**## Lasso 3 urban and rural, start same covariates 2015, do not move lambdas 
+use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_06_estimate_lasso3.do"
 
-**## SWIFT rural--------------
-use `cleaned_dataset', replace
+*/
+
+/*==================================================
+					SWIFT models
+====================================================*/
+
+**# Rural
+use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_08_estimate_SWIFT_rural.do"
 
-**## SWIFT-PLUS rural--------------
-use `cleaned_dataset', replace
-include "$scripts/02_09_estimate_SWIFTPLUS_rural.do"
-
-**## SWIFT urban--------------
-use `cleaned_dataset', replace
+**# Urban
+use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_10_estimate_SWIFT_urban.do"
 
-**## SWIFT-PLUS urban--------------
-use `cleaned_dataset', replace
+/*==================================================
+					SWIFT-Plus
+====================================================*/
+
+**# Rural
+use "${swdFinal}/data4model_2021.dta", clear
+include "$scripts/02_09_estimate_SWIFTPLUS_rural.do"
+
+**# Urban
+use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_11_estimate_SWIFTPLUS_urban.do"
 
+/*==================================================
+					Exporting Data
+====================================================*/
 
-**# Export accuracies to excel
+**# Accuracies 
 use "${swdResults}\accuracies.dta", replace
 replace value=100*value
 export excel "${swdResults}/accuracies.xlsx", sheet("Results", replace) firstrow(variables)
 
 
-**# Goodness of fit rural
-use `cleaned_dataset', replace
+**# Goodness of fit 
+use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_07_goodness_fit.do"

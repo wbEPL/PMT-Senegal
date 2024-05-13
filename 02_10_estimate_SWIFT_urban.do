@@ -2,13 +2,14 @@
 **p = 0.05
 capture drop yhat qhat qreal
 keep if milieu == 1
-splitsample, generate(sample) split(0.8 0.2)  rseed(12345)  
-label define sample 1 "Training" 2 "Testing"
-label values sample sample
+*@Kazusa I commented this because in do-file 02-00 we are loading a dataset with sample already defined. There is any reason for adiing here? 
+*splitsample, generate(sample) split(0.8 0.2)  rseed(12345)  
+*label define sample 1 "Training" 2 "Testing"
+*label values sample sample
 
 gen popweight = hhsize*hhweight
 gen pauvre = (pcexp <= zref)
-svyset [pw=popweight], strata(milieu)
+svyset [pw=popweight], strata(region)
 set seed 0123456
 
 * Stepwise 
@@ -115,7 +116,7 @@ label values sample sample
 
 gen popweight = hhsize*hhweight
 gen pauvre = (pcexp <= zref)
-svyset [pw=popweight], strata(milieu)
+svyset [pw=popweight], strata(region)
 set seed 0123456
 
 * Stepwise 
@@ -222,7 +223,7 @@ label values sample sample
 
 gen popweight = hhsize*hhweight
 gen pauvre = (pcexp <= zref)
-svyset [pw=popweight], strata(milieu)
+svyset [pw=popweight], strata(region)
 set seed 0123456
 
 * Stepwise 
@@ -329,7 +330,7 @@ label values sample sample
 
 gen popweight = hhsize*hhweight
 gen pauvre = (pcexp <= zref)
-svyset [pw=popweight], strata(milieu)
+svyset [pw=popweight], strata(region)
 set seed 0123456
 
 * Stepwise 
@@ -436,7 +437,7 @@ label values sample sample
 
 gen popweight = hhsize*hhweight
 gen pauvre = (pcexp <= zref)
-svyset [pw=popweight], strata(milieu)
+svyset [pw=popweight], strata(region)
 set seed 0123456
 
 * Stepwise 
@@ -543,7 +544,7 @@ label values sample sample
 
 gen popweight = hhsize*hhweight
 gen pauvre = (pcexp <= zref)
-svyset [pw=popweight], strata(milieu)
+svyset [pw=popweight], strata(region)
 set seed 0123456
 
 * Stepwise 

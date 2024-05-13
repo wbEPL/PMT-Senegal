@@ -149,7 +149,7 @@ gen hhid=grappe*100+menage
 	
 **# connected to electricity -----------------
 	fre s11q33
-	recode s11q33 (1=1 "Yes, to network") ///
+	recode s11q33 (1=1 "Yes, to the network") ///
 				  (2=2 "Yes to neighbor") ///
 				  (3=3 "Directly connected to pole") ///
 				  (4=4 "Not connected"), ///

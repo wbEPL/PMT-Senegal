@@ -124,7 +124,7 @@ restore
 
  
 **## Lasso 3 urban, same covariates as OLS 2015 ------------------
-use `cleaned_dataset', replace 
+use "${swdFinal}/data4model_2021.dta", clear
 
  
 keep if milieu == 1

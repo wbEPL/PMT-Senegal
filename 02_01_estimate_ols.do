@@ -104,7 +104,7 @@ restore
 
 
 **## Urban -----
-use `cleaned_dataset', replace 
+use "${swdFinal}/data4model_2021.dta", clear
 
 keep if milieu == 1
 

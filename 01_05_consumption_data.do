@@ -1,4 +1,4 @@
-use  use "${swdDatain}/s07b_me_sen_2021.dta", clear 
+use "${swdDataraw}/Menage/s07b_me_sen_2021.dta", clear 
 
 gen hhid=grappe*100+menage 
 
