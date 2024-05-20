@@ -1,11 +1,9 @@
 * ------------------------------------------------------------------
-*	Authors: Gabriel N. Camargo-Toledo gcamargotoledo@worldbank.org
-*			 Daniel Valderrama dvalderramagonza@worldbank.org
-*			 Kasuza 
-*	Last edited: 12 January 2024
+*	Authors:  Daniel Valderrama dvalderramagonza@worldbank.org
+*			  Gabriel N. Camargo-Toledo gcamargotoledo@worldbank.org
+*			  Kasuza 
+*	Last edited: 20 May 2024
 * 	Version 2.0 created by Daniel VAlderrama 
-*	Reviewer: TBD
-*	Last Reviewed: TBD
 *-------------------------------------------------------------------
  
 clear all

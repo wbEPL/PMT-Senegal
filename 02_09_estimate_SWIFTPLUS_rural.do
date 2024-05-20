@@ -545,11 +545,12 @@ keep if milieu == 2
 *splitsample, generate(sample) split(0.8 0.2)  rseed(12345)  
 *label define sample 1 "Training" 2 "Testing"
 *label values sample sample
+*gen popweight = hhsize*hhweight
+*gen pauvre = (pcexp <= zref)
 
-gen popweight = hhsize*hhweight
-gen pauvre = (pcexp <= zref)
-svyset [pw=popweight], strata(region)
-set seed 0123456
+*@Kazusa, do we need to set survey set and the seed (see two lines below) every time we star a new model, or can we just set them up at the very beggining of the swift models?
+*svyset [pw=popweight], strata(region)
+*set seed 0123456
 
 * Stepwise 
 local pe = 0.000001
