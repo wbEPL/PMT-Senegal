@@ -543,7 +543,8 @@ restore
 **p = 0.000001
 capture drop yhat qhat qreal
 estimates restore urban1_swift
-keep if milieu == 2
+keep if milieu == 1
+*keep if milieu == 2 @kazusa, having keep miieu=2 was a typo here. Right? What I wonder is why the model still was running and what was producing, or if I did change this
 
 
 *splitsample, generate(sample) split(0.8 0.2)  rseed(12345)  
@@ -577,7 +578,7 @@ foreach c in $categorical_v { // categorical_v is variables that are categorical
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 1  & sample == 1, r 
 
-predict yhat3 if milieu == 2, xb 
+predict yhat3 if milieu == 1, xb // @Kazusa this had milieu==2 , could you please check if my correction is correct 
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 1, r 
 estimates store urban1_swift

@@ -93,11 +93,11 @@ include "$scripts/02_10_estimate_SWIFT_urban.do"
 					SWIFT-Plus
 ====================================================*/
 
-**# Rural
+**# Rural Checked 
 use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_09_estimate_SWIFTPLUS_rural.do"
 
-**# Urban
+**# Urban ....checking 
 use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_11_estimate_SWIFTPLUS_urban.do"
 

@@ -542,7 +542,7 @@ restore
 **p = 0.000001
 capture drop yhat qhat qreal
 estimates restore urban2_swift
-keep if milieu == 2
+keep if milieu == 1 // @Kasuza why we have here milieu==2?
 *splitsample, generate(sample) split(0.8 0.2)  rseed(12345)  
 *label define sample 1 "Training" 2 "Testing"
 *label values sample sample
@@ -573,7 +573,7 @@ foreach c in $categorical_v { // categorical_v is variables that are categorical
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 1  & sample == 1, r 
 
-predict yhat3 if milieu == 2, xb 
+predict yhat3 if milieu == 1, xb //@kazusa I hcanged here the option for milieu
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 1, r 
 estimates store urban2_swift
