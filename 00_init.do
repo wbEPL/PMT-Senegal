@@ -1,7 +1,7 @@
 * ------------------------------------------------------------------
 *	Authors:  Daniel Valderrama dvalderramagonza@worldbank.org
 *			  Gabriel N. Camargo-Toledo gcamargotoledo@worldbank.org
-*			  Kasuza 
+*			  Kazusa Yoshimura <kyoshimura1@worldbank.org> 
 *	Last edited: 20 May 2024
 * 	Version 2.0 created by Daniel VAlderrama 
 *-------------------------------------------------------------------
