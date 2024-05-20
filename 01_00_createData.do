@@ -118,5 +118,8 @@ splitsample, generate(sample) split(0.8 0.2)  rseed(12345)
 label define sample 1 "Training" 2 "Testing"
 label values sample sample
 
+gen popweight = hhsize*hhweight
+gen pauvre = (pcexp <= zref)
+
 save "${swdFinal}/data4model_2021.dta", replace
 
