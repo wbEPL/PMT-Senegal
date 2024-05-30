@@ -544,19 +544,6 @@ restore
 capture drop yhat qhat qreal
 estimates restore urban1_swift
 keep if milieu == 1
-*keep if milieu == 2 @kazusa, having keep miieu=2 was a typo here. Right? What I wonder is why the model still was running and what was producing, or if I did change this
-
-
-*splitsample, generate(sample) split(0.8 0.2)  rseed(12345)  
-*label define sample 1 "Training" 2 "Testing"
-*label values sample sample
-
-*gen popweight = hhsize*hhweight
-*gen pauvre = (pcexp <= zref)
-
-*@Kazusa, do we need to set survey set and the seed (see two lines below) every time we star a new model, or can we just set them up at the very beggining of the swift models?
-*svyset [pw=popweight], strata(region)
-*set seed 0123456
 
 * Stepwise 
 local pe = 0.000001
@@ -578,7 +565,7 @@ foreach c in $categorical_v { // categorical_v is variables that are categorical
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 1  & sample == 1, r 
 
-predict yhat3 if milieu == 1, xb // @Kazusa this had milieu==2 , could you please check if my correction is correct 
+predict yhat3 if milieu == 1, xb //
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 1, r 
 estimates store urban1_swift
