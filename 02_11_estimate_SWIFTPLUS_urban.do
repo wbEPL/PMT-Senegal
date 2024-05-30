@@ -26,7 +26,7 @@ reg lpcexp `list3' [aw=hhweight] if milieu == 1  & sample == 1, r
 predict yhat3 if milieu == 1, xb 
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 1, r 
-estimates store urban2_swift
+estimates store urban2_swiftplus
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("SWIFT-PLUS1") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
@@ -559,8 +559,8 @@ reg lpcexp `list3' [aw=hhweight] if milieu == 1  & sample == 1, r
 predict yhat3 if milieu == 1, xb //@kazusa I hcanged here the option for milieu
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 1, r 
-estimates store urban2_swift
-outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("SWIFT-PLUS6") label
+estimates store urban2_swiftplus
+outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("SWIFT-PLUS2") label
 	
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1, gen(qhat) n(100)
 
