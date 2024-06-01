@@ -26,7 +26,7 @@ foreach c in $categorical_v { // categorical_v is variables that are categorical
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2  & sample == 1, r 
 
-predict yhat3 if milieu == 2, xb 
+predict yhat if milieu == 2, xb 
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2, r 
 estimates store rural1_swiftplus
@@ -124,7 +124,7 @@ foreach c in $categorical_v { // categorical_v is variables that are categorical
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2  & sample == 1, r 
 
-predict yhat3 if milieu == 2, xb 
+predict yhat if milieu == 2, xb 
 
 reg lpcexp `list3' [aw=hhweight] if milieu == 2, r 
 estimates store rural2_swiftplus
