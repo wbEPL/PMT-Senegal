@@ -14,9 +14,9 @@
 qui putexcel set "$swdResults/goodness.xlsx", modify sheet("Rural")
 
 lassogof ols_rural /// ols 2021
-		rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols rural1_swift rural2_swift rural1_swiftplus rural2_swiftplus/// model 1
+		rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols /// model 1
 		rural2_ols rural2_lam02_ols rural2_lam03_ols rural2_lam05_ols /// model 2
-		rural3_ols if milieu == 2, over(sample)
+		rural3_ols rural1_swift rural2_swift rural1_swiftplus rural2_swiftplus if milieu == 2, over(sample)
 
 
 * ols_rural rural1
@@ -38,14 +38,14 @@ qui putexcel D1 = "R-squared", bold
 qui putexcel E1 = "N-obs", bold
 
 local row = 2
-forvalues i = 1/10 {
+forvalues i = 1/14 {
     qui putexcel B`row' = "Training"
     local row = `row' + 1
     qui putexcel B`row' = "Testing"
     local row = `row' + 1
 }
 
-forvalues i = 2(2)20 {
+forvalues i = 2(2)28 {
 	local j = `i' + 1
     qui putexcel (A`i':A`j'), merge hcenter vcenter
 }
@@ -70,9 +70,9 @@ putexcel save
 **# Goodness of fit urban
 qui putexcel set "$swdResults/goodness.xlsx", modify sheet("Urban")
 lassogof ols_urban /// ols 2021
-		urban1_ols urban1_lam_025_ols urban1_lam_05_ols urban1_lam_08_ols urban1_swift urban2_swift urban1_swiftplus urban2_swiftplus/// model 1
+		urban1_ols urban1_lam_025_ols urban1_lam_05_ols urban1_lam_08_ols /// model 1
 		urban2_ols urban2_lam04_ols urban2_lam06_ols urban2_lam08_ols /// model 2
-		urban3_ols if milieu == 1, over(sample)
+		urban3_ols urban1_swift urban2_swift urban1_swiftplus urban2_swiftplus if milieu == 1, over(sample)
 
 matrix list r(table)
 qui putexcel C2 = matrix(r(table))
@@ -84,14 +84,14 @@ qui putexcel D1 = "R-squared", bold
 qui putexcel E1 = "N-obs", bold
 
 local row = 2
-forvalues i = 1/10 {
+forvalues i = 1/14 {
     qui putexcel B`row' = "Training"
     local row = `row' + 1
     qui putexcel B`row' = "Testing"
     local row = `row' + 1
 }
 
-forvalues i = 2(2)20 {
+forvalues i = 2(2)28 {
 	local j = `i' + 1
     qui putexcel (A`i':A`j'), merge hcenter vcenter
 }
