@@ -60,6 +60,10 @@ qui putexcel A14 = "Lasso 2, lambda 0.02"
 qui putexcel A16 = "Lasso 2, lambda 0.035"
 qui putexcel A18 = "Lasso 2, lambda 0.05"
 qui putexcel A20 = "Lasso 3, lambda CV"
+qui putexcel A22 = "SWIFT1 p = 0.05"
+qui putexcel A24 = "SWIFT2 p = 0.000001"
+qui putexcel A26 = "SWIFTPLUS1 p = 0.05"
+qui putexcel A28 = "SWIFTPLUS2 p = 0.000001"
 
 putexcel save
 
@@ -102,5 +106,9 @@ qui putexcel A14 = "Lasso 2, lambda 0.04"
 qui putexcel A16 = "Lasso 2, lambda 0.06"
 qui putexcel A18 = "Lasso 2, lambda 0.08"
 qui putexcel A20 = "Lasso 3, lambda CV"
+qui putexcel A22 = "SWIFT1 p = 0.05"
+qui putexcel A24 = "SWIFT2 p = 0.000001"
+qui putexcel A26 = "SWIFTPLUS1 p = 0.05"
+qui putexcel A28 = "SWIFTPLUS2 p = 0.000001"
 
 putexcel save
