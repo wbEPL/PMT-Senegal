@@ -2,6 +2,8 @@
 **p = 0.05
 capture drop yhat qhat qreal
 keep if milieu == 2
+svyset [pw=popweight], strata(region) 
+set seed 0123456
 
 * Stepwise 
 local pe = 0.05
