@@ -3,7 +3,6 @@
 capture drop yhat qhat qreal
 keep if milieu == 1
 
-*@Kazusa, do we need to set survey set and the seed (see two lines below) every time we star a new model, or can we just set them up at the very beggining of the swift models?
 svyset [pw=popweight], strata(region)
 set seed 0123456
 
