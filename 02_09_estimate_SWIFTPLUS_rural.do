@@ -143,7 +143,7 @@ tempfile tf_postfile1
 tempname tn1
 postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates) ("SWIFT-PLUS") ("6") ("Rural") ("Fixed rate") ("P=0.000001") 
+local common (ncovariates) ("SWIFT-PLUS") ("2") ("Rural") ("Fixed rate") ("P=0.000001") 
 
 foreach t in 20 25 30 50 75 {
 	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')
@@ -175,7 +175,7 @@ tempfile tf_postfile1
 tempname tn1
 postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure lambda sample) double value using `tf_postfile1', replace
 
-local common (ncovariates) ("SWIFT-PLUS") ("6") ("Rural") ("Fixed line") ("P=0.000001") 
+local common (ncovariates) ("SWIFT-PLUS") ("2") ("Rural") ("Fixed line") ("P=0.000001") 
 
 foreach t in 20 25 30 50 75 {
 	post `tn1' ("Total accuracy")  ("`t'") `common' ("Full")  (mean_correct_`t')
