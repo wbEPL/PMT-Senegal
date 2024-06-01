@@ -3,7 +3,7 @@
 capture drop yhat qhat qreal
 keep if milieu == 2
 
-svyset [pw=popweight], strata(region) //@Kazusa I changed the survey strata to regions. Technically is the combination of region-milieu but here we kept milieu==2 
+svyset [pw=popweight], strata(region) 
 set seed 0123456
 
 * Stepwise 
