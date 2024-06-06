@@ -120,6 +120,7 @@ label values sample sample
 
 gen popweight = hhsize*hhweight
 gen pauvre = (pcexp <= zref)
-
+svyset [pw=popweight], strata(region) 
+set seed 0123456
 save "${swdFinal}/data4model_2021.dta", replace
 
