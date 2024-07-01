@@ -29,8 +29,8 @@ else if (inlist("${suser}","wb545737")) {
 *Daniel
 else if (inlist("${suser}","wb419055")) {
 
-	global gitrepo "C:\Users\wb419055\OneDrive - WBG\West Africa\Senegal\Senegal_tool\Projects\03_PMT\git_PMT-Senegal"
-	global project "C:/Users/wb419055/OneDrive - WBG/West Africa/Senegal/Senegal_tool/Projects/03_PMT"
+	global gitrepo "C:/Users/wb419055/OneDrive - WBG/West Africa/Senegal/5_Projects/03_PMT/scripts/git_PMT-Senegal"
+	global project "C:/Users/wb419055/OneDrive - WBG/West Africa/Senegal/5_Projects/03_PMT"
 	global data_library  "C:/Users/wb419055/OneDrive - WBG/West Africa/Senegal/data/EHCVM" 
 }
 
@@ -94,6 +94,7 @@ global asset_dum "a_living a_dining a_bed a_singlemat a_cupboard a_carpet a_iron
 
 **### Livestock 
 global livest_all_dum "l_bovines l_sheep l_goats l_camels l_horses l_donkeys l_pigs l_rabbits l_chickens l_guinea_fowl l_other_poultry"
+
 global livest_all_num "l_bovines_n l_sheep_n l_goats_n l_camels_n l_horses_n l_donkeys_n l_pigs_n l_rabbits_n l_chickens_n l_guinea_fowl_n l_other_poultry_n"
 
 **### Consumption 
@@ -107,7 +108,7 @@ global cov_set3 "$demo $dwell $asset_dum $asset_rur_dum  $livest_all_dum $consum
 **### Dofiles 
 
 // Cleaning dataset on assets, dwelling characteristics and other 
-	qui: include "$scripts/01_00_createData.do"
+	include "$scripts/01_00_createData.do"
 
 // Running models 
 	include "$scripts/02_00_estimate_models.do"

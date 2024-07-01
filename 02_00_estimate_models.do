@@ -44,17 +44,15 @@ export excel "${swdResults}/accuracies.xlsx",  sheet("vars", replace) firstrow(v
 
 **## Data 
 
-/*
-
 **# OLS same as 2015 covariates ---
 use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_01_estimate_ols.do" // This will replace the accuracies.dta file, so if you run this you need to re run the other models to save the accuracies
-*/
+
 /*==================================================
 					LASSO models
 ====================================================*/
 
-/*
+
 **## Lasso 1 rural, assets and livestock as dummy, include all livestock separately 
 use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_02_estimate_lasso1_rural.do"
@@ -75,7 +73,7 @@ include "$scripts/02_05_estimate_lasso2_urban.do"
 use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_06_estimate_lasso3.do"
 
-*/
+
 
 /*==================================================
 					SWIFT models

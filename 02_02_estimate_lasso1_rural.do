@@ -415,9 +415,12 @@ duplicates report
 save "${swdResults}\accuracies.dta", replace
 restore 
 
-*save_measures "accuracy2015vs2021.xlsx" "Accuracy" "TRUE"
-*save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy" "TRUE"
-*save_lambdmeasu "accuracies_OLS.xlsx" "Rural"
+/*Old form to save files 
+	*save_measures "accuracy2015vs2021.xlsx" "Accuracy" "TRUE"
+	*save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy" "TRUE"
+	*save_lambdmeasu "accuracies_OLS.xlsx" "Rural"
+*/
+
 
 **## estimate_accuracy fixed line ---
 estimate_accuracy "line"
