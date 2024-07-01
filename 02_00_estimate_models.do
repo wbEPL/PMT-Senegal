@@ -78,6 +78,8 @@ include "$scripts/02_06_estimate_lasso3.do"
 /*==================================================
 					SWIFT models
 ====================================================*/
+local SWIFT_l1 "0.805"
+local SWIFT_l2 "0.10"
 
 **# Rural
 use "${swdFinal}/data4model_2021.dta", clear

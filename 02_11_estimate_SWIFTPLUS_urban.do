@@ -3,9 +3,12 @@
 capture drop yhat qhat qreal
 keep if milieu == 1
 
+/*----------------------------**----------------------------
+SWIFT model using P-values = 0.05
+**----------------------------**----------------------------*/
 
 * Stepwise 
-local pe = 0.05
+local pe = `SWIFT_l1'
 local pr = `pe' + .0000001	
 
 stepwise, pr(`pr') pe(`pe'): reg lpcexp  (i.region) $cov_set3 [pw=popweight] if sample == 1 
@@ -43,7 +46,7 @@ tempfile tf_postfile1
 tempname tn1
 postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates) ("SWIFT-PLUS") ("1") ("Urban") ("Fixed rate") ("P=0.05") 
+local common (ncovariates) ("SWIFT-PLUS") ("1") ("Urban") ("Fixed rate") ("P=`SWIFT_l1'") 
 
 foreach t in 20 25 30 50 75 {
 	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')
@@ -75,7 +78,7 @@ tempfile tf_postfile1
 tempname tn1
 postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure lambda sample) double value using `tf_postfile1', replace
 
-local common (ncovariates) ("SWIFT-PLUS") ("1") ("Urban") ("Fixed line") ("P=0.05") 
+local common (ncovariates) ("SWIFT-PLUS") ("1") ("Urban") ("Fixed line") ("P=`SWIFT_l1'") 
 
 foreach t in 20 25 30 50 75 {
 	post `tn1' ("Total accuracy")  ("`t'") `common' ("Full")  (mean_correct_`t')
@@ -98,12 +101,20 @@ duplicates report
 save "${swdResults}\accuracies.dta", replace
 restore 
 
+
+
+
+
+/*----------------------------**----------------------------
+SWIFT model using P-values = 0.000001
+**----------------------------**----------------------------*/
+
 **p = 0.000001
 capture drop yhat qhat qreal
 keep if milieu == 1 
 
 * Stepwise 
-local pe = 0.000001
+local pe = `SWIFT_l2'
 local pr = `pe' + .0000001	
 
 stepwise, pr(`pr') pe(`pe'): reg lpcexp  (i.region) $cov_set3 [pw=popweight] if sample == 1 
@@ -141,7 +152,7 @@ tempfile tf_postfile1
 tempname tn1
 postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure  lambda sample)  double value using `tf_postfile1', replace
 
-local common (ncovariates) ("SWIFT-PLUS") ("2") ("Urban") ("Fixed rate") ("P=0.000001") 
+local common (ncovariates) ("SWIFT-PLUS") ("2") ("Urban") ("Fixed rate") ("P=`SWIFT_l2'") 
 
 foreach t in 20 25 30 50 75 {
 	post `tn1' ("Total accuracy") ("`t'") `common' ("Full")  (mean_correct_`t')
@@ -173,7 +184,7 @@ tempfile tf_postfile1
 tempname tn1
 postfile `tn1' str50(Measure Quantile) float Number_of_vars str50(Model Version Place Poverty_measure lambda sample) double value using `tf_postfile1', replace
 
-local common (ncovariates) ("SWIFT-PLUS") ("2") ("Urban") ("Fixed line") ("P=0.000001") 
+local common (ncovariates) ("SWIFT-PLUS") ("2") ("Urban") ("Fixed line") ("P=`SWIFT_l2'") 
 
 foreach t in 20 25 30 50 75 {
 	post `tn1' ("Total accuracy")  ("`t'") `common' ("Full")  (mean_correct_`t')

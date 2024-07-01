@@ -31,7 +31,7 @@ else if (inlist("${suser}","wb419055")) {
 
 	global gitrepo "C:/Users/wb419055/OneDrive - WBG/West Africa/Senegal/5_Projects/03_PMT/scripts/git_PMT-Senegal"
 	global project "C:/Users/wb419055/OneDrive - WBG/West Africa/Senegal/5_Projects/03_PMT"
-	global data_library  "C:/Users/wb419055/OneDrive - WBG/West Africa/Senegal/data/EHCVM" 
+	global data_library  "C:/Users/wb419055/OneDrive - WBG/West Africa/Senegal/1_data/EHCVM" 
 }
 
 *folder from data library
@@ -99,6 +99,12 @@ global livest_all_num "l_bovines_n l_sheep_n l_goats_n l_camels_n l_horses_n l_d
 
 **### Consumption 
 global consumption "cereal meat fish milk oil fruit vegetable legume sugar"
+
+
+**### Levels of SWIFT models 
+
+local SWIFT_l1 "0.9"
+local SWIFT_l2 "0.5"
 
 **### All covariates 
 global cov_set1 "$demo $dwell $asset_dum $asset_rur_dum  $livest_all_dum"
