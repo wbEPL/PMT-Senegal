@@ -13,10 +13,20 @@
 **# Goodness of fit rural
 qui putexcel set "$swdResults/goodness.xlsx", modify sheet("Rural")
 
+if "`skip'"=="no" {
+
 lassogof ols_rural /// ols 2021
 		rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols /// model 1
 		rural2_ols rural2_lam02_ols rural2_lam03_ols rural2_lam05_ols /// model 2
 		rural3_ols rural1_swift rural2_swift rural1_swiftplus rural2_swiftplus if milieu == 2, over(sample)
+}
+else {
+lassogof ols_rural /// ols 2021
+		rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols /// model 1
+		rural2_ols rural2_lam02_ols rural2_lam03_ols rural2_lam05_ols /// model 2
+		rural3_ols  rural2_swift rural2_swift rural2_swiftplus rural2_swiftplus if milieu == 2, over(sample)
+}
+
 
 
 * ols_rural rural1
@@ -69,11 +79,20 @@ putexcel save
 
 **# Goodness of fit urban
 qui putexcel set "$swdResults/goodness.xlsx", modify sheet("Urban")
+
+if "`skip'"=="no" {
 lassogof ols_urban /// ols 2021
 		urban1_ols urban1_lam_025_ols urban1_lam_05_ols urban1_lam_08_ols /// model 1
 		urban2_ols urban2_lam04_ols urban2_lam06_ols urban2_lam08_ols /// model 2
 		urban3_ols urban1_swift urban2_swift urban1_swiftplus urban2_swiftplus if milieu == 1, over(sample)
+}
+else {
+lassogof ols_urban /// ols 2021
+		urban1_ols urban1_lam_025_ols urban1_lam_05_ols urban1_lam_08_ols /// model 1
+		urban2_ols urban2_lam04_ols urban2_lam06_ols urban2_lam08_ols /// model 2
+		urban3_ols urban2_swift urban2_swift urban2_swiftplus urban2_swiftplus if milieu == 1, over(sample)
 
+}
 matrix list r(table)
 qui putexcel C2 = matrix(r(table))
 

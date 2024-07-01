@@ -103,8 +103,9 @@ global consumption "cereal meat fish milk oil fruit vegetable legume sugar"
 
 **### Levels of SWIFT models 
 
-local SWIFT_l1 "0.9"
-local SWIFT_l2 "0.5"
+local SWIFT_l1 "0.99"
+local SWIFT_l2 "0.99"
+local skip "yes" // Options: yes,  no this skip SWIFT models with 5 percent significance 
 
 **### All covariates 
 global cov_set1 "$demo $dwell $asset_dum $asset_rur_dum  $livest_all_dum"

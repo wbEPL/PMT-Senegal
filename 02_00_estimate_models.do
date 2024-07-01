@@ -78,8 +78,6 @@ include "$scripts/02_06_estimate_lasso3.do"
 /*==================================================
 					SWIFT models
 ====================================================*/
-local SWIFT_l1 "0.805"
-local SWIFT_l2 "0.10"
 
 **# Rural
 use "${swdFinal}/data4model_2021.dta", clear
@@ -93,6 +91,7 @@ include "$scripts/02_10_estimate_SWIFT_urban.do"
 					SWIFT-Plus
 ====================================================*/
 
+
 **# Rural Checked 
 use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_09_estimate_SWIFTPLUS_rural.do"
@@ -100,6 +99,8 @@ include "$scripts/02_09_estimate_SWIFTPLUS_rural.do"
 **# Urban ....checking 
 use "${swdFinal}/data4model_2021.dta", clear
 include "$scripts/02_11_estimate_SWIFTPLUS_urban.do"
+
+
 
 /*==================================================
 					Exporting Data
