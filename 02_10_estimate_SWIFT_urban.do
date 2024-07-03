@@ -7,7 +7,7 @@ keep if milieu == 1
 SWIFT urban model using P-values = 0.05
 **----------------------------**----------------------------*/
 
-if "`skip'"=="no" {
+if "`light_version'"=="no" {
 
 
 	* Stepwise 

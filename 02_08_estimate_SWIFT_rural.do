@@ -7,7 +7,7 @@ capture drop yhat qhat qreal
 SWIFT rural model using P-values = 0.05
 **----------------------------**----------------------------*/
 
-if "`skip'"=="no" {
+if "`light_version'"=="no" {
 
 	
 	

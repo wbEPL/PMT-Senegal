@@ -55,25 +55,27 @@ include "$scripts/02_01_estimate_ols.do" // This will replace the accuracies.dta
 
 **## Lasso 1 rural, assets and livestock as dummy, include all livestock separately 
 use "${swdFinal}/data4model_2021.dta", clear
-include "$scripts/02_02_estimate_lasso1_rural.do"
+ include "$scripts/02_02_estimate_lasso1_rural.do"
 
-**## Lasso 2 rural, assets and livestock as number 
-use "${swdFinal}/data4model_2021.dta", clear
-include "$scripts/02_03_estimate_lasso2_rural.do"
+if "`light_version'"=="no" {
+	**## Lasso 2 rural, assets and livestock as number 
+	use "${swdFinal}/data4model_2021.dta", clear
+	qui: include "$scripts/02_03_estimate_lasso2_rural.do"
+}
 
 **## Lasso 1 urban, assets as dummy 
 use "${swdFinal}/data4model_2021.dta", clear
-include "$scripts/02_04_estimate_lasso1_urban.do"
+qui: include "$scripts/02_04_estimate_lasso1_urban.do"
 
+if "`light_version'"=="no" {
 **## Lasso 2 urban, assets and livestock as number
-use "${swdFinal}/data4model_2021.dta", clear
-include "$scripts/02_05_estimate_lasso2_urban.do"
+	use "${swdFinal}/data4model_2021.dta", clear
+	qui: include "$scripts/02_05_estimate_lasso2_urban.do"
+}
 
 **## Lasso 3 urban and rural, start same covariates 2015, do not move lambdas 
 use "${swdFinal}/data4model_2021.dta", clear
-include "$scripts/02_06_estimate_lasso3.do"
-
-
+qui: include "$scripts/02_06_estimate_lasso3.do"
 
 /*==================================================
 					SWIFT models
@@ -81,26 +83,28 @@ include "$scripts/02_06_estimate_lasso3.do"
 
 **# Rural
 use "${swdFinal}/data4model_2021.dta", clear
-include "$scripts/02_08_estimate_SWIFT_rural.do"
+qui: include "$scripts/02_08_estimate_SWIFT_rural.do"
 
 **# Urban
 use "${swdFinal}/data4model_2021.dta", clear
-include "$scripts/02_10_estimate_SWIFT_urban.do"
+qui: include "$scripts/02_10_estimate_SWIFT_urban.do"
 
 /*==================================================
 					SWIFT-Plus
 ====================================================*/
 
+if "`light_version'"=="no" {
 
-**# Rural Checked 
-use "${swdFinal}/data4model_2021.dta", clear
-include "$scripts/02_09_estimate_SWIFTPLUS_rural.do"
+	**# Rural Checked 
+	use "${swdFinal}/data4model_2021.dta", clear
+	qui: include "$scripts/02_09_estimate_SWIFTPLUS_rural.do"
 
-**# Urban ....checking 
-use "${swdFinal}/data4model_2021.dta", clear
-include "$scripts/02_11_estimate_SWIFTPLUS_urban.do"
+	
+	**# Urban ....checking 
+	use "${swdFinal}/data4model_2021.dta", clear
+	qui: include "$scripts/02_11_estimate_SWIFTPLUS_urban.do"
 
-
+}
 
 /*==================================================
 					Exporting Data
@@ -114,4 +118,12 @@ export excel "${swdResults}/accuracies.xlsx", sheet("Results", replace) firstrow
 
 **# Goodness of fit 
 use "${swdFinal}/data4model_2021.dta", clear
-include "$scripts/02_07_goodness_fit.do"
+
+local light_version "yes" // Options: yes = it will run selected models OLS, LASSO1 and SWIwill run just few models, no will run everything  
+
+if "`light_version'"=="no" { 
+qui: include "$scripts/02_07_goodness_fit.do"
+}
+else {
+qui: include "$scripts/02_07_goodness_fit_light.do"
+}

@@ -55,7 +55,6 @@ estimates store rural3_ols
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 3") label
 
 
-lassogof rural3 rural3_ols, over(sample) postselection
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
@@ -145,9 +144,6 @@ lassoselect id=18 // a model 5 steps early than the
  
 scalar ncovariates = wordcount(e(post_sel_vars))-1
 estimates store urban3
-
-*lassocoef urban3
-lassogof urban3, over(sample) postselection
 
 
 * run ols with selected covariates and pop weights

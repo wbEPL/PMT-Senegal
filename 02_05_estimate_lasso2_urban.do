@@ -44,8 +44,6 @@ estimates store urban2_ols
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda CV")
 local list ""
 
-lassogof urban2 urban2_ols if milieu == 1, over(sample) postselection
-
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
@@ -115,11 +113,19 @@ duplicates report
 save "${swdResults}\accuracies.dta", replace
 restore 
 
-**# Lambda -10 steps
+/*----------------------------**----------------------------
+**# Lambda -10
+**----------------------------**----------------------------*/
+
 capture drop yhat qhat qreal
 estimates restore urban2
 
-local id_opt=e(ID_sel)-10
+local id_initial=e(ID_sel)
+
+if "`light_version'"=="no" {
+
+
+local id_opt=`id_initial'-`step1_lasso' // old code : local id_opt=e(ID_sel)-10
 lassoselect id=`id_opt'
 *lassoselect lambda = 0.04
 *cvplot
@@ -152,12 +158,10 @@ reg `list' ///
 	[aw=hhweight] if milieu == 1 , r
 local list ""
 
-estimates store urban2_lam04_ols
+estimates store urban2_lam01_ols
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda -10 steps")
 local list ""
 
-
-lassogof urban2 urban2_ols urban2_lam04_ols if milieu == 1, over(sample) postselection
 
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
@@ -228,12 +232,19 @@ duplicates report
 save "${swdResults}\accuracies.dta", replace
 restore 
 
+}
 
-**# Lambda -20 steps
+
+/*----------------------------**----------------------------
+**# Lambda -20
+**----------------------------**----------------------------*/
+
+if "`light_version'"=="no" {
+
 capture drop yhat qhat qreal
 estimates restore urban2
 
-local id_opt=`id_opt'-10
+local id_opt=`id_initial'-`step2_lasso' // local id_opt=`id_opt'-10
 lassoselect id=`id_opt'
 *lassoselect lambda = 0.06
 *cvplot
@@ -265,12 +276,9 @@ predict yhat if milieu == 1, xb
 
 reg `list' ///
 	[aw=hhweight] if milieu == 1, r // // & sample == 1 because the overfitting problem is for model selection not coefficient estimation
-estimates store urban2_lam06_ols
+estimates store urban2_lam03_ols
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda -20 steps")
 local list ""
-
-lassogof urban2 urban2_ols urban2_lam04_ols urban2_lam06_ols if milieu == 1, over(sample) postselection
-
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
@@ -340,13 +348,16 @@ duplicates report
 save "${swdResults}\accuracies.dta", replace
 restore 
 
+}
 
-
+/*----------------------------**----------------------------
 **# Lambda -25 steps
+**----------------------------**----------------------------*/
+
 capture drop yhat qhat qreal
 estimates restore urban2
 
-local id_opt=`id_opt'-5
+local id_opt=`id_initial'-`step3_lasso' // old code: local id_opt=`id_opt'-5
 lassoselect id=`id_opt'
 *lassoselect lambda = 0.08
 *cvplot
@@ -379,13 +390,9 @@ reg `list' ///
 	[aw=hhweight] if milieu == 1, r  // & sample == 1 because the overfitting problem is for model selection not coefficient estimation
 local list ""
 
-estimates store urban2_lam08_ols
+estimates store urban2_lam05_ols
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 2-lambda -25 steps")
 local list ""
-
-
-lassogof urban2 urban2_ols urban2_lam04_ols urban2_lam06_ols urban2_lam08_ols if milieu == 1, over(sample) postselection
-
 
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 

@@ -11,31 +11,14 @@
 
 
 **# Goodness of fit rural
-qui putexcel set "$swdResults/goodness.xlsx", modify sheet("Rural")
+qui putexcel set "$swdResults/goodness_m.xlsx",  sheet("Rural", replace) modify
 
-if "`skip'"=="no" {
 
 lassogof ols_rural /// ols 2021
 		rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols /// model 1
-		rural2_ols rural2_lam02_ols rural2_lam03_ols rural2_lam05_ols /// model 2
+		rural2_ols rural2_lam01_ols rural2_lam03_ols rural2_lam05_ols /// model 2
 		rural3_ols rural1_swift rural2_swift rural1_swiftplus rural2_swiftplus if milieu == 2, over(sample)
-}
-else {
-lassogof ols_rural /// ols 2021
-		rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols /// model 1
-		rural2_ols rural2_lam02_ols rural2_lam03_ols rural2_lam05_ols /// model 2
-		rural3_ols  rural2_swift rural2_swift rural2_swiftplus rural2_swiftplus if milieu == 2, over(sample)
-}
 
-
-
-* ols_rural rural1
-
-* est restore rural3
-* esttab , r2
-* mat a= r(stats)
-* mat list a
-*lassogof rural3 if milieu == 2, postselection
 
 
 matrix list r(table)
@@ -60,39 +43,38 @@ forvalues i = 2(2)28 {
     qui putexcel (A`i':A`j'), merge hcenter vcenter
 }
 
-qui putexcel A2 = "Ols as 2015"
-qui putexcel A4 = "Lasso 1, lambda CV"
-qui putexcel A6 = "Lasso 1, lambda 0.01"
-qui putexcel A8 = "Lasso 1, lambda 0.03"
-qui putexcel A10 = "Lasso 1, lambda 0.05"
-qui putexcel A12 = "Lasso 2, lambda CV"
-qui putexcel A14 = "Lasso 2, lambda 0.02"
-qui putexcel A16 = "Lasso 2, lambda 0.035"
-qui putexcel A18 = "Lasso 2, lambda 0.05"
-qui putexcel A20 = "Lasso 3, lambda CV"
-qui putexcel A22 = "SWIFT1 p = 0.05"
-qui putexcel A24 = "SWIFT2 p = 0.000001"
-qui putexcel A26 = "SWIFTPLUS1 p = 0.05"
-qui putexcel A28 = "SWIFTPLUS2 p = 0.000001"
+ putexcel A2 = "Ols as 2015"
+ putexcel A4 = "Lasso 1, lambda CV"
+ putexcel A6 = "Lasso 1, lambda 0.01"
+ putexcel A8 = "Lasso 1, lambda 0.03"
+ putexcel A10 = "Lasso 1, lambda 0.05"
+ putexcel A12 = "Lasso 2, lambda CV"
+ putexcel A14 = "Lasso 2, lambda 0.02"
+ putexcel A16 = "Lasso 2, lambda 0.035"
+ putexcel A18 = "Lasso 2, lambda 0.05"
+ putexcel A20 = "Lasso 3, lambda CV"
+ putexcel A22 = "SWIFT1 p = 0.05"
+ putexcel A24 = "SWIFT2 p = 0.000001"
+ putexcel A26 = "SWIFTPLUS1 p = 0.05"
+ putexcel A28 = "SWIFTPLUS2 p = 0.000001"
 
 putexcel save
+pause
 
+
+
+*-------------------------------------------
 **# Goodness of fit urban
-qui putexcel set "$swdResults/goodness.xlsx", modify sheet("Urban")
+*-------------------------------------------
 
-if "`skip'"=="no" {
+qui putexcel set "$swdResults/goodness_m.xlsx", modify sheet("Urban", replace)
+
 lassogof ols_urban /// ols 2021
-		urban1_ols urban1_lam_025_ols urban1_lam_05_ols urban1_lam_08_ols /// model 1
-		urban2_ols urban2_lam04_ols urban2_lam06_ols urban2_lam08_ols /// model 2
+		urban1_ols urban1_lam01_ols urban1_lam03_ols urban1_lam05_ols /// model 1
+		urban2_ols urban2_lam01_ols urban2_lam03_ols urban2_lam05_ols /// model 2
 		urban3_ols urban1_swift urban2_swift urban1_swiftplus urban2_swiftplus if milieu == 1, over(sample)
-}
-else {
-lassogof ols_urban /// ols 2021
-		urban1_ols urban1_lam_025_ols urban1_lam_05_ols urban1_lam_08_ols /// model 1
-		urban2_ols urban2_lam04_ols urban2_lam06_ols urban2_lam08_ols /// model 2
-		urban3_ols urban2_swift urban2_swift urban2_swiftplus urban2_swiftplus if milieu == 1, over(sample)
 
-}
+
 matrix list r(table)
 qui putexcel C2 = matrix(r(table))
 

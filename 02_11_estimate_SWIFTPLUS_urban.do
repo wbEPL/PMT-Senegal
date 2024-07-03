@@ -8,7 +8,7 @@ SWIFT-PLUS urban model using P-values = 0.05
 **----------------------------**----------------------------*/
 
 
-if "`skip'"=="no" {
+if "`light_version'"=="no" {
 
 
 	local pe = `SWIFT_l1'

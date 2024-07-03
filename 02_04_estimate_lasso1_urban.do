@@ -54,14 +54,6 @@ local list ""
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
-lassogof urban1 urban1_ols if milieu == 1, over(sample) postselection
-
-
-*estiaccu_measures
-*estiaccu_measures_ch
-*save_measures "accuracy2015vs2021.xlsx" "Accuracy Lasso 1" "FALSE"
-*save_measures_test "accuracy2015vs2021_testsample.xlsx" "Accuracy Lasso 1" "FALSE"
-*save_lambdmeasu "accuracies_urban1.xlsx" "Lambda CV"
 
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"
@@ -125,12 +117,21 @@ duplicates report
 save "${swdResults}\accuracies.dta", replace
 restore 
 
+/*----------------------------**----------------------------
 **# Lambda -10
+**----------------------------**----------------------------*/
+
 capture drop yhat qhat qreal
 estimates restore urban1
 
-local id_opt=e(ID_sel)-10
+local id_initial=e(ID_sel)
+
+if "`light_version'"=="no" {
+
+local id_opt=`id_initial'-`step1_lasso'
+
 lassoselect id=`id_opt'
+
 *lassoselect lambda = 0.025
 *cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
@@ -153,10 +154,9 @@ reg `list' ///
 	[aw=hhweight] if milieu == 1 & sample == 1, r //& sample == 1
 predict yhat if milieu == 1, xb 
 
-
 reg `list' ///
 	[aw=hhweight] if milieu == 1, r //& sample == 1
-estimates store urban1_lam_025_ols
+estimates store urban1_lam01_ols 
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda -10 steps")
 local list ""
 
@@ -164,12 +164,6 @@ local list ""
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
-lassogof urban1 urban1_ols urban1_lam_025_ols if milieu == 1, over(sample) postselection
-
-
-*estiaccu_measures
-*estiaccu_measures_ch
-*save_lambdmeasu "accuracies_urban1.xlsx" "Lambda 1"
 
 
 **## estimate_accuracy fixed rate ---
@@ -235,10 +229,18 @@ duplicates report
 save "${swdResults}\accuracies.dta", replace
 restore 
 
+}
+
+
+/*----------------------------**----------------------------
 **# Lambda -20
+**----------------------------**----------------------------*/
+
+if "`light_version'"=="no" {
+
 capture drop yhat qhat qreal
 estimates restore urban1
-local id_opt=`id_opt'-10
+local id_opt=`id_initial'-`step2_lasso'
 lassoselect id=`id_opt' // a model 10 steps early than the previous one
 *lassoselect lambda = 0.05
 *cvplot
@@ -267,7 +269,7 @@ predict yhat if milieu == 1, xb
 reg `list' ///
 	[aw=hhweight] if milieu == 1 , r //& sample == 1
 	
-estimates store urban1_lam_05_ols
+estimates store urban1_lam03_ols
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda -20")
 local list ""
 
@@ -275,8 +277,6 @@ local list ""
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
-lassogof urban1 urban1_ols urban1_lam_025_ols urban1_lam_05_ols if milieu == 1, over(sample) postselection
-
 
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"
@@ -338,10 +338,16 @@ append using "${swdResults}\accuracies.dta"
 duplicates report
 save "${swdResults}\accuracies.dta", replace
 restore 
-**# Lambda -25
+
+}
+
+/*----------------------------**----------------------------
+**# Lambda -25 steps
+**----------------------------**----------------------------*/
+
 capture drop yhat qhat qreal
 estimates restore urban1
-local id_opt=`id_opt'-5
+local id_opt=`id_initial'-`step3_lasso'
 lassoselect id=`id_opt' // a model 10 steps early than the previous one
 *lassoselect lambda = 0.08
 *cvplot
@@ -369,7 +375,7 @@ predict yhat if milieu == 1, xb
 reg `list' ///
 	[aw=hhweight] if milieu == 1, r // & sample == 1
 
-estimates store urban1_lam_08_ols
+estimates store urban1_lam05_ols
 outreg2 using "${swdResults}/urban_coefficients.xls", append ctitle("Lasso 1-lambda -30")
 local list ""	
 
@@ -377,8 +383,6 @@ local list ""
 quantiles yhat [aw=hhweight*hhsize] if milieu == 1 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 1, gen(qreal) n(100)
-lassogof urban1 urban1_ols urban1_lam_025_ols urban1_lam_05_ols urban1_lam_08_ols if milieu == 1, over(sample) postselection
-
 
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"

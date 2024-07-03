@@ -8,6 +8,7 @@
 *------------------------------------------------------------------------------- */
 * TODO: - Incluir R-squared y GOF statistics OUT OF SAMPLE, revisar quantiles
 /* Rural model */
+
 capture drop yhat qhat qreal
 keep if milieu == 2
 
@@ -47,7 +48,6 @@ reg `list' [aw=hhweight] ///
 	 if milieu == 2 , r // I see the logic for indicators being a weighted average by population but much less standard the regression *hhsize
 estimates store rural1_ols
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda CV") label
-lassogof rural1 rural1_ols if milieu == 2, over(sample) postselection
 
 local list "" // being sure to clear the local list 
 	
@@ -120,11 +120,18 @@ duplicates report
 save "${swdResults}\accuracies.dta", replace
 restore 
 
+/*----------------------------**----------------------------
 **# Lambda -10 steps
+**----------------------------**----------------------------*/
+
 capture drop yhat qhat qreal
 estimates restore rural1
 
-local id_opt=e(ID_sel)-10
+local id_initial=e(ID_sel)
+
+if "`light_version'"=="no" {
+
+local id_opt=`id_initial'-`step1_lasso'
 
 
 lassoselect id=`id_opt' // a model 10 steps early than the previous one
@@ -165,7 +172,6 @@ local list ""
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
-lassogof rural1 rural1_ols rural1_lam01_ols if milieu == 2, over(sample) postselection
 
 
 **## estimate_accuracy fixed rate ---
@@ -231,11 +237,19 @@ duplicates report
 save "${swdResults}\accuracies.dta", replace
 restore 
 
+}
 
+/*----------------------------**----------------------------
 **# Lambda -20 steps
+**----------------------------**----------------------------*/
+
+if "`light_version'"=="no" {
+
 capture drop yhat qhat qreal
 estimates restore rural1
-local id_opt=`id_opt'-10
+
+local id_opt=`id_initial'-`step2_lasso'
+
 lassoselect id=`id_opt' // a model 10 steps early than the previous one
 *cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
@@ -272,7 +286,6 @@ local list ""
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
-lassogof rural1 rural1_ols rural1_lam01_ols rural1_lam03_ols if milieu == 2, over(sample) postselection
 
 
 **## estimate_accuracy fixed rate ---
@@ -342,10 +355,17 @@ duplicates report
 save "${swdResults}\accuracies.dta", replace
 restore 
 
+}
+
+/*----------------------------**----------------------------
 **# Lambda -25 steps
+**----------------------------**----------------------------*/
+
 capture drop yhat qhat qreal
 estimates restore rural1
-local id_opt=`id_opt'-5
+local id_opt=`id_initial'-`step3_lasso'
+dis "`id_opt'"
+
 lassoselect id=`id_opt' // a model 10 steps early than the previous one
 *cvplot
 scalar ncovariates = wordcount(e(post_sel_vars))-1
@@ -374,6 +394,7 @@ reg `list' ///
 [aw=hhweight] if milieu == 2, r // 
 
 estimates store rural1_lam05_ols
+
 outreg2 using "${swdResults}/rural_coefficients.xls", append ctitle("Lasso 1-lambda -25 steps") label
 
 local list "" 
@@ -381,7 +402,6 @@ local list ""
 quantiles yhat [aw=hhweight*hhsize] if milieu == 2 , gen(qhat) n(100)
 
 quantiles lpcexp [aw=hhweight*hhsize] if milieu == 2, gen(qreal) n(100)
-lassogof rural1 rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols if milieu == 2, over(sample) postselection
 
 **## estimate_accuracy fixed rate ---
 estimate_accuracy "rate"
@@ -453,4 +473,3 @@ duplicates report
 save "${swdResults}\accuracies.dta", replace
 restore 
 
-esttab rural1_ols rural1_lam01_ols rural1_lam03_ols rural1_lam05_ols
