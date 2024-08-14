@@ -74,6 +74,8 @@ global dwell "c_rooms_pc i.c_typehousing c_numberofrooms_c i.c_housingocup i.c_b
 **### Consumption 
 global consumption "cereal meat fish milk oil fruit vegetable legume sugar"
 
+**### Shock 
+global shock "illness_accident death divorce flood_drought agriculture food_price theft conflict"
 
 **### 	List of variable for which we have a detailed and aggregated version   ###**
 
@@ -126,7 +128,7 @@ global PMT_urban "dem_logsize dem_yadr dem_alfa_french c_rooms_pc i.c_floor i.c_
 global cov_set1 "$demo $dwell $asset_dum $asset_rur_dum  $livest_all_dum" // LASSO1  & SWIFT
 global cov_set2 "$demo $dwell $asset_num $asset_rur_num  $livest_all_num" // LASSO 2 
 global cov_set3 "$demo $dwell $asset_dum $asset_rur_dum  $livest_all_dum $consumption" // Swift plus
-
+global cov_set4 "$demo $dwell $asset_dum $asset_rur_dum  $livest_all_dum $shock" // LASSO1 with shocks
 *-----------------------------------------------------------------*
 **### D. Project trunks 
 *-----------------------------------------------------------------*
