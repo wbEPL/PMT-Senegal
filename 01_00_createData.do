@@ -84,10 +84,18 @@ run "$scripts/01_03_livestock_data.do"
 run "$scripts/01_05_consumption_data.do"
 
 ********************************************************
+** Shock  -------------
+********************************************************
+
+run "$scripts/01_06_shock_data.do"
+
+********************************************************
 ** Demographics and welfare
 ********************************************************
 
 include "$scripts/01_04_demog_welfare_data.do"
+
+
 
 **# Merge data -----
 
@@ -108,6 +116,8 @@ merge 1:1 hhid using "${swdTemp}/hhead_dta.dta", nogen
 merge 1:1 hhid using "${swdTemp}/french_temp.dta", nogen // 839 households withouth hh head info 
 
 merge 1:1 hhid using "${swdTemp}/consumption.dta", nogen 
+
+merge 1:1 hhid using "${swdTemp}/shock.dta", nogen 
 
 gen lpcexp=ln(pcexp)
 replace c_rooms_pc=c_rooms_pc/hhsize
