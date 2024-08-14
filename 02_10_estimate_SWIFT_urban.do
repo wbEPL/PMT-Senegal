@@ -3,6 +3,19 @@
 capture drop yhat qhat qreal
 keep if milieu == 1
 
+local list "$cov_set1"
+dis "`list'"
+
+foreach l in `list' {
+	su `l'  [w = hhweight] /*if  append==0 */
+	if (r(max)==1 & (r(mean)<0.05 | r(mean)>0.95)) local drop `drop' `l'
+	if r(mean)==0 local drop `drop' `l'
+	}
+
+local list: list list - local drop
+
+gl cov_set1_mod2 "`list'" 
+dis "$cov_set1_mod2"
 /*----------------------------**----------------------------
 SWIFT urban model using P-values = 0.05
 **----------------------------**----------------------------*/
@@ -14,7 +27,7 @@ if "`light_version'"=="no" {
 	local pe = `SWIFT_l1'
 	local pr = `pe' + .0000001	
 	
-	stepwise, pr(`pr') pe(`pe'): reg lpcexp  (i.region) $cov_set1 [pw=popweight] if sample == 1 
+	stepwise, pr(`pr') pe(`pe'): reg lpcexp  (i.region) $cov_set1_mod2 [pw=popweight] if sample == 1 
 	matrix X=e(b)
 	matrix X = X[1,1..`e(df_m)']
 	global xvar2: colnames X
@@ -119,7 +132,7 @@ keep if milieu == 1
 local pe = `SWIFT_l2' 
 local pr = `pe' + .0000001	
 
-stepwise, pr(`pr') pe(`pe'): reg lpcexp  (i.region) $cov_set1 [pw=popweight] if sample == 1 
+stepwise, pr(`pr') pe(`pe'): reg lpcexp  (i.region) $cov_set1_mod2 [pw=popweight] if sample == 1 
 matrix X=e(b)
 matrix X = X[1,1..`e(df_m)']
 global xvar2: colnames X
