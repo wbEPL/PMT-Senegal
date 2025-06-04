@@ -1,0 +1,132 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jeremyschneider/Desktop/SEN PMT/log/SEN_PMT_Model_Performance_Rural_fixedpr.log
+  log type:  text
+ opened on:   1 Jun 2025, 16:02:16
+
+. 
+. use "$data/data4model_2021_IMPUTED.dta", clear
+
+. keep if milieu==2 // (milieu: 1=urban, 2=rural)
+(3,922 observations deleted)
+
+. 
+. global weight popweight
+
+. global lnwelfare lpcexp
+
+. global welfare pcexp
+
+. 
+. twoway kdensity lpcexp_pred [aw=$weight] || kdensity lpcexp_pred if b40==1 [aw=$weight], legend(order(1 "All Rural HBS" 2 "Rural HBS in Bottom 40%") size(small)) title("Rural H
+> BS: Distribution of Predicted Log Expenditure (PMT scores)", size(medsmall)) 
+
+. 
+. gen samplesize = _N
+
+. xtile decile = $lnwelfare [aw=$weight], nq(10)
+
+. 
+. gen actual = pcexp
+
+. gen pmt = pcexp_pred
+
+. 
+. * Quintiles of pmt and actual 
+. xtile pmt_quintile = pmt [aw=$weight], nq(5)
+
+. xtile actual_quintile = actual [aw=$weight], nq(5)
+
+. tab actual_quintile pmt_quintile  [aw = $weight]
+
+         5 |
+ quantiles |                  5 quantiles of pmt 
+of actual  |         1          2          3          4          5 |     Total
+-----------+-------------------------------------------------------+----------
+         1 | 378.33432  173.30187  73.335286  17.302514   .0815922 | 642.35557 
+         2 | 173.99635  192.74155  163.18149 91.5033692  16.165399 | 637.58816 
+         3 | 71.355584  169.62746  204.83639  141.98375  51.775888 | 639.57907 
+         4 | 17.828367  73.898155  133.55415  238.80615  175.01378 | 639.10061 
+         5 |         0  28.811503  64.561576  151.58371   394.4198 | 639.37659 
+-----------+-------------------------------------------------------+----------
+     Total | 641.51462  638.38053   639.4689   641.1795  637.45645 |     3,198 
+
+. 
+. 
+. local list "20 25 30 50 75"
+
+. 
+. * Set cutoffs at specified percentiles in list above
+. foreach t of numlist `list' {
+  2.         foreach x of varlist actual pmt {
+  3.                 _pctile `x' [aw=$weight] , p(`t') // here we calculate the percentile value of actual and pmt
+  4.                 cap drop cut_`x'_`t'  poor_`x'_`t' 
+  5.                 g cut_`x'_`t'=r(r1)  // here we define the cutoffs 
+  6.                 g poor_`x'_`t'= (`x'<=cut_`x'_`t')  // here we define everyone who has a score below the cutoff as poor
+  7.         }
+  8. }
+
+. 
+. * Simpler format to calculate targeting perofrmance (if we dont need to calculate standard errors for example)
+. svyset, clear
+
+. 
+.         
+. preserve
+
+. 
+. foreach t of numlist `list' {
+  2. 
+.         qui cap drop poor_pmtpoor_`t' nonpoor_pmtpoor_`t' poor_pmtnonpoor_`t' nonpoor_pmtnonpoor_`t'
+  3.                 
+.         qui g fpoor_pmtpoor_`t'         =       poor_actual_`t' == 1 & poor_pmt_`t'==1 // Household is actually poor and pmt predicted poor
+  4.         qui g fnonpoor_pmtpoor_`t'      =       poor_actual_`t' == 0 & poor_pmt_`t'==1 // Household is not poor but pmt predicted poor
+  5.         qui g fpoor_pmtnonpoor_`t'      =       poor_actual_`t' == 1 & poor_pmt_`t'==0 // Household is actually poor but pmt predicted not poor
+  6.         qui g fnonpoor_pmtnonpoor_`t'=  poor_actual_`t' == 0 & poor_pmt_`t'==0 // Household is not poor and pmt predicted not poor
+  7.         
+.         qui g ftotalaccuracy`t' = ((fpoor_pmtpoor_`t'+fnonpoor_pmtnonpoor_`t')/(fpoor_pmtpoor_`t'+fpoor_pmtnonpoor_`t'+fnonpoor_pmtpoor_`t'+fnonpoor_pmtnonpoor_`t')) // (correc
+> tly predicted poor + correctly pred nonpoor)/ Total sample size
+  8.         qui g fpovertyaccuracy`t'  = (fpoor_pmtpoor_`t'/(fpoor_pmtpoor_`t'+fpoor_pmtnonpoor_`t')) // (correctly predicted poor) / (all poor)
+  9.         qui g fnpovertyaccuracy`t' = (fnonpoor_pmtnonpoor_`t'/(fnonpoor_pmtpoor_`t'+fnonpoor_pmtnonpoor_`t')) // (correctly predicted not poor) / (all non poor)
+ 10.         qui g fundercoverage`t'    = (fpoor_pmtnonpoor_`t'/(fpoor_pmtpoor_`t'+fpoor_pmtnonpoor_`t'))  // (poor but predicted not poor PMT) / (all true poor)
+ 11.         qui g finclusionerror`t'   = (fnonpoor_pmtpoor_`t'/(fpoor_pmtpoor_`t'+fnonpoor_pmtpoor_`t')) // (not poor but PMT predicted poor) / (all PMT pred poor)
+ 12.         
+. }
+
+. 
+. fsum ftotalaccuracy* fpovertyaccuracy* fnpovertyaccuracy* fundercoverage* finclusionerror*  [aw=$weight] 
+
+            Variable |        N     Mean       SD      Min      Max                                                                                                                              
+---------------------+---------------------------------------------
+    ftotalaccuracy20 |     3198     0.84     0.37     0.00     1.00  
+    ftotalaccuracy25 |     3198     0.81     0.39     0.00     1.00  
+    ftotalaccuracy30 |     3198     0.81     0.39     0.00     1.00  
+    ftotalaccuracy50 |     3198     0.76     0.42     0.00     1.00  
+    ftotalaccuracy75 |     3198     0.83     0.38     0.00     1.00  
+  fpovertyaccuracy20 |      537     0.59     0.49     0.00     1.00  
+  fpovertyaccuracy25 |      681     0.62     0.48     0.00     1.00  
+  fpovertyaccuracy30 |      820     0.69     0.46     0.00     1.00  
+  fpovertyaccuracy50 |     1412     0.76     0.42     0.00     1.00  
+  fpovertyaccuracy75 |     2210     0.88     0.32     0.00     1.00  
+ fnpovertyaccuracy20 |     2661     0.90     0.30     0.00     1.00  
+ fnpovertyaccuracy25 |     2517     0.87     0.33     0.00     1.00  
+ fnpovertyaccuracy30 |     2378     0.87     0.34     0.00     1.00  
+ fnpovertyaccuracy50 |     1786     0.76     0.42     0.00     1.00  
+ fnpovertyaccuracy75 |      988     0.65     0.48     0.00     1.00  
+    fundercoverage20 |      537     0.41     0.49     0.00     1.00  
+    fundercoverage25 |      681     0.38     0.48     0.00     1.00  
+    fundercoverage30 |      820     0.31     0.46     0.00     1.00  
+    fundercoverage50 |     1412     0.24     0.42     0.00     1.00  
+    fundercoverage75 |     2210     0.12     0.32     0.00     1.00  
+   finclusionerror20 |      435     0.41     0.49     0.00     1.00  
+   finclusionerror25 |      568     0.38     0.49     0.00     1.00  
+   finclusionerror30 |      710     0.31     0.46     0.00     1.00  
+   finclusionerror50 |     1342     0.24     0.42     0.00     1.00  
+   finclusionerror75 |     2176     0.12     0.32     0.00     1.00  
+
+. 
+. restore
+
+. 
+end of do-file
+

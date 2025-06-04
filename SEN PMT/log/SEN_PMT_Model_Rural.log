@@ -1,0 +1,295 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jeremyschneider/Desktop/SEN PMT/log/SEN_PMT_Model_Rural.log
+  log type:  text
+ opened on:   1 Jun 2025, 14:52:20
+
+. 
+. use "$data/data4model_2021_2.dta", clear
+
+. cap svyset, clear
+
+. keep if milieu==2 // (milieu: 1=urban, 2=rural)
+(3,922 observations deleted)
+
+. 
+. ****************************************************************
+. 
+. global weight popweight
+
+. global lnwelfare lpcexp
+
+. global welfare pcexp
+
+. 
+. ****************************************************************
+. * Set globals for variables available for selection in stepwise 
+. ****************************************************************
+. global headdem  dem_hage dem_hhandig dem_hmale /*dem_heduc_**/ dem_alfa_french dem_hactiv12m /*dem_branch_**/
+
+. global demo     region_* dem_logsize dem_emp_rate dem_gender_rate
+
+. global house    /*c_housingocup_**/ c_numberofrooms_c c_roof_* c_floor_* c_walls_* /*c_fuelfirst_* */ c_toilet_* c_connectedtoint c_connectedtotv c_connectowater c_connectoelec
+> _* c_fuelfirst_3 c_typehousing_1 /*c_typehousing_2*/ c_typehousing_3 /*c_typehousing_4*/ c_lighting_1 c_lighting_2 c_lighting_3 c_lighting_4 c_lighting_5
+
+. global assets   a_computer a_fan /*a_ac*/ a_tv /*a_living*/ a_iron a_charcoaliron a_fridge /*a_car*/ a_stove a_carpet a_gastank a_moped a_satellite a_cupboard
+
+. global production  ar_carts ar_plou_anima /*ar_tractor*/ ar_mill a_camera ar_motor_pump
+
+. global livestock        l_bovines l_goats l_sheep l_poultry l_pigs l_horses l_donkeys l_camels
+
+. 
+. global startingvars $headdem $demo $house $assets $production $livestock
+
+. 
+. sum $startingvars [aw=$weight]
+
+    Variable |     Obs      Weight        Mean   Std. dev.       Min        Max
+-------------+-----------------------------------------------------------------
+    dem_hage |   3,198     9177345     2.72528   .8909117          1          4
+ dem_hhandig |   3,198     9177345    .0682399   .2521966          0          1
+   dem_hmale |   3,198     9177345     .815668   .3878153          0          1
+dem_alfa_f~h |   3,198     9177345    .2120598   .4088309          0          1
+dem_hact~12m |   3,198     9177345    .8868079   .3168771          0          1
+-------------+-----------------------------------------------------------------
+    region_1 |   3,198     9177345    .0156527   .1241473          0          1
+    region_2 |   3,198     9177345    .0393243   .1943959          0          1
+    region_3 |   3,198     9177345    .1778416   .3824391          0          1
+    region_4 |   3,198     9177345    .0608602   .2391111          0          1
+    region_5 |   3,198     9177345    .0740293   .2618594          0          1
+-------------+-----------------------------------------------------------------
+    region_6 |   3,198     9177345    .0830759     .27604          0          1
+    region_7 |   3,198     9177345     .113788   .3176032          0          1
+    region_8 |   3,198     9177345    .0910824   .2877713          0          1
+    region_9 |   3,198     9177345    .0851262    .279113          0          1
+   region_10 |   3,198     9177345    .0656985   .2477931          0          1
+-------------+-----------------------------------------------------------------
+   region_11 |   3,198     9177345    .0602815   .2380449          0          1
+   region_12 |   3,198     9177345    .0676776   .2512311          0          1
+   region_13 |   3,198     9177345    .0157185   .1244036          0          1
+   region_14 |   3,198     9177345    .0498433   .2176551          0          1
+ dem_logsize |   3,198     9177345    2.403349   .5325316          0    3.78419
+-------------+-----------------------------------------------------------------
+dem_emp_rate |   3,198     9177345    .4738916   .2667817          0          1
+dem_gender~e |   3,198     9177345    .5968486   .1841346          0          1
+c_numberof~c |   3,198     9177345    5.073038   1.750957          1          7
+    c_roof_1 |   3,198     9177345    .1528446   .3598939          0          1
+    c_roof_2 |   3,198     9177345    .0744662    .262569          0          1
+-------------+-----------------------------------------------------------------
+    c_roof_3 |   3,198     9177345    .5695879   .4952113          0          1
+    c_roof_4 |   3,198     9177345    .1795164   .3838442          0          1
+    c_roof_5 |   3,198     9177345     .023585   .1517759          0          1
+   c_floor_1 |   3,198     9177345      .54465   .4980803          0          1
+   c_floor_2 |   3,198     9177345    .1536086   .3606295          0          1
+-------------+-----------------------------------------------------------------
+   c_floor_3 |   3,198     9177345    .2884484   .4531116          0          1
+   c_floor_4 |   3,198     9177345    .0132931   .1145447          0          1
+   c_walls_1 |   3,198     9177345    .6939562   .4609202          0          1
+   c_walls_2 |   3,198     9177345    .1547697   .3617416          0          1
+   c_walls_3 |   3,198     9177345    .1321332   .3386885          0          1
+-------------+-----------------------------------------------------------------
+   c_walls_4 |   3,198     9177345    .0191409   .1370416          0          1
+  c_toilet_1 |   3,198     9177345    .3308677   .4705991          0          1
+  c_toilet_2 |   3,198     9177345    .2532956   .4349668          0          1
+  c_toilet_3 |   3,198     9177345    .0724673   .2593006          0          1
+  c_toilet_4 |   3,198     9177345    .0466584    .210939          0          1
+-------------+-----------------------------------------------------------------
+  c_toilet_5 |   3,198     9177345    .2967111   .4568795          0          1
+c_connecte~t |   3,198     9177345    .0211098   .1437729          0          1
+c_connecte~v |   3,198     9177345    .2376952    .425738          0          1
+c_connecto~r |   3,198     9177345    .6070755   .4884767          0          1
+c_connecto~1 |   3,198     9177345     .454847   .4980349          0          1
+-------------+-----------------------------------------------------------------
+c_connecto~2 |   3,198     9177345    .0112287   .1053855          0          1
+c_connecto~3 |   3,198     9177345    .0057018   .0753066          0          1
+c_connecto~4 |   3,198     9177345    .5282224   .4992809          0          1
+c_fuelfirs~3 |   3,198     9177345    .1323911   .3389685          0          1
+c_typehous~1 |   3,198     9177345    .7811834   .4135086          0          1
+-------------+-----------------------------------------------------------------
+c_typehous~3 |   3,198     9177345    .1873348    .390241          0          1
+c_lighting_1 |   3,198     9177345    .4702929   .4991948          0          1
+c_lighting_2 |   3,198     9177345    .2179986    .412951          0          1
+c_lighting_3 |   3,198     9177345    .0043274   .0656509          0          1
+c_lighting_4 |   3,198     9177345    .2877344   .4527774          0          1
+-------------+-----------------------------------------------------------------
+c_lighting_5 |   3,198     9177345    .0076321   .0870416          0          1
+  a_computer |   3,198     9177345     .021225   .1441563          0          1
+       a_fan |   3,198     9177345    .3058655   .4608451          0          1
+        a_tv |   3,198     9177345    .4091531   .4917545          0          1
+      a_iron |   3,198     9177345     .007138   .0841976          0          1
+-------------+-----------------------------------------------------------------
+a_charcoa~on |   3,198     9177345    .4651545   .4988623          0          1
+    a_fridge |   3,198     9177345    .1253572   .3311753          0          1
+     a_stove |   3,198     9177345    .0033543   .0578277          0          1
+    a_carpet |   3,198     9177345    .3121099   .4634269          0          1
+   a_gastank |   3,198     9177345    .4168566   .4931158          0          1
+-------------+-----------------------------------------------------------------
+     a_moped |   3,198     9177345    .1457659   .3529265          0          1
+ a_satellite |   3,198     9177345     .147343    .354503          0          1
+  a_cupboard |   3,198     9177345    .4276497   .4948151          0          1
+    ar_carts |   3,198     9177345      .50956   .4999868          0          1
+ar_plou_an~a |   3,198     9177345    .5417002    .498336          0          1
+-------------+-----------------------------------------------------------------
+     ar_mill |   3,198     9177345    .0021621   .0464553          0          1
+    a_camera |   3,198     9177345           0          0          0          0
+ar_motor_p~p |   3,198     9177345    .0117379   .1077207          0          1
+   l_bovines |   3,198     9177345    .2323858   .4224197          0          1
+     l_goats |   3,198     9177345    .4438307   .4969127          0          1
+-------------+-----------------------------------------------------------------
+     l_sheep |   3,198     9177345    .4908418   .4999943          0          1
+   l_poultry |   3,198     9177345    .4072909   .4914067          0          1
+      l_pigs |   3,198     9177345     .011337   .1058865          0          1
+    l_horses |   3,198     9177345    .2812582   .4496835          0          1
+   l_donkeys |   3,198     9177345    .2817404   .4499178          0          1
+-------------+-----------------------------------------------------------------
+    l_camels |   3,198     9177345    .0012924   .0359322          0          1
+
+. 
+. ****************************************************************
+. * Run stepwise regression
+. ****************************************************************
+. svyset [pw=$weight], strata(region)
+
+Sampling weights: popweight
+             VCE: linearized
+     Single unit: missing
+        Strata 1: region
+ Sampling unit 1: <observations>
+           FPC 1: <zero>
+
+. 
+. stepwise, pr(0.000101) pe(0.0001): reg $lnwelfare $startingvars [pw=$weight]
+note: region_14 omitted because of estimability.
+note: c_roof_5 omitted because of estimability.
+note: c_floor_4 omitted because of estimability.
+note: c_walls_4 omitted because of estimability.
+note: c_toilet_5 omitted because of estimability.
+note: c_connectoelec_4 omitted because of estimability.
+note: o.a_camera omitted because of estimability.
+
+Wald test, begin with full model:
+p = 0.9715 >= 0.0001, removing ar_motor_pump
+p = 0.9033 >= 0.0001, removing region_8
+p = 0.8966 >= 0.0001, removing l_goats
+p = 0.8917 >= 0.0001, removing c_toilet_2
+p = 0.8348 >= 0.0001, removing c_lighting_5
+p = 0.7930 >= 0.0001, removing l_camels
+p = 0.7369 >= 0.0001, removing c_walls_1
+p = 0.7022 >= 0.0001, removing l_horses
+p = 0.6836 >= 0.0001, removing l_donkeys
+p = 0.6492 >= 0.0001, removing dem_hmale
+p = 0.6571 >= 0.0001, removing dem_gender_rate
+p = 0.6481 >= 0.0001, removing c_connectoelec_1
+p = 0.7014 >= 0.0001, removing c_connectoelec_2
+p = 0.4903 >= 0.0001, removing c_toilet_4
+p = 0.4602 >= 0.0001, removing dem_hactiv12m
+p = 0.4176 >= 0.0001, removing c_floor_3
+p = 0.3565 >= 0.0001, removing a_computer
+p = 0.3288 >= 0.0001, removing c_roof_2
+p = 0.3157 >= 0.0001, removing dem_hhandig
+p = 0.3041 >= 0.0001, removing a_iron
+p = 0.2993 >= 0.0001, removing c_typehousing_3
+p = 0.3203 >= 0.0001, removing c_typehousing_1
+p = 0.2325 >= 0.0001, removing region_4
+p = 0.1675 >= 0.0001, removing l_poultry
+p = 0.1202 >= 0.0001, removing region_5
+p = 0.2398 >= 0.0001, removing region_12
+p = 0.2589 >= 0.0001, removing region_10
+p = 0.1197 >= 0.0001, removing c_lighting_4
+p = 0.2634 >= 0.0001, removing c_lighting_3
+p = 0.1153 >= 0.0001, removing a_satellite
+p = 0.1088 >= 0.0001, removing c_toilet_1
+p = 0.2738 >= 0.0001, removing c_toilet_3
+p = 0.1006 >= 0.0001, removing l_pigs
+p = 0.0731 >= 0.0001, removing c_roof_3
+p = 0.3560 >= 0.0001, removing c_roof_4
+p = 0.0469 >= 0.0001, removing a_stove
+p = 0.0357 >= 0.0001, removing c_floor_1
+p = 0.1031 >= 0.0001, removing c_floor_2
+p = 0.0327 >= 0.0001, removing ar_mill
+p = 0.0280 >= 0.0001, removing l_bovines
+p = 0.0288 >= 0.0001, removing ar_plou_anima
+p = 0.0385 >= 0.0001, removing ar_carts
+p = 0.0357 >= 0.0001, removing c_connectoelec_3
+p = 0.0251 >= 0.0001, removing c_lighting_2
+p = 0.0252 >= 0.0001, removing region_1
+p = 0.0162 >= 0.0001, removing c_connectedtotv
+p = 0.0116 >= 0.0001, removing dem_emp_rate
+p = 0.0140 >= 0.0001, removing c_connectowater
+p = 0.0144 >= 0.0001, removing dem_hage
+p = 0.0154 >= 0.0001, removing region_9
+p = 0.0119 >= 0.0001, removing region_2
+p = 0.0121 >= 0.0001, removing dem_alfa_french
+p = 0.0043 >= 0.0001, removing region_3
+p = 0.0301 >= 0.0001, removing c_fuelfirst_3
+p = 0.0009 >= 0.0001, removing c_connectedtoint
+p = 0.0032 >= 0.0001, removing c_walls_3
+p = 0.0016 >= 0.0001, removing region_6
+p = 0.0013 >= 0.0001, removing region_13
+p = 0.0003 >= 0.0001, removing c_walls_2
+p = 0.0000 <  0.0001, adding c_walls_1
+p = 0.0003 >= 0.0001, removing a_gastank
+p = 0.0006 >= 0.0001, removing region_7
+
+Linear regression                               Number of obs     =      3,198
+                                                F(14, 3183)       =     202.71
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.5619
+                                                Root MSE          =     .31616
+
+-----------------------------------------------------------------------------------
+                  |               Robust
+           lpcexp | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+------------------+----------------------------------------------------------------
+             a_tv |   .1077126   .0202808     5.31   0.000     .0679478    .1474774
+         a_fridge |   .1139955   .0247899     4.60   0.000     .0653898    .1626012
+   a_charcoaliron |   .0730993   .0153833     4.75   0.000     .0429372    .1032615
+         c_roof_1 |   .1869716   .0274059     6.82   0.000     .1332365    .2407066
+          a_moped |   .1377402   .0230502     5.98   0.000     .0925454     .182935
+      dem_logsize |  -.6136176   .0185836   -33.02   0.000    -.6500547   -.5771804
+        c_walls_1 |    .069763   .0162931     4.28   0.000      .037817     .101709
+c_numberofrooms_c |   .0457915   .0051685     8.86   0.000     .0356576    .0559254
+            a_fan |   .1026133   .0235973     4.35   0.000     .0563459    .1488807
+         a_carpet |   .0877755   .0165333     5.31   0.000     .0553585    .1201925
+        region_11 |   .1414563   .0301017     4.70   0.000     .0824356     .200477
+     c_lighting_1 |   .1354284   .0205155     6.60   0.000     .0952035    .1756533
+          l_sheep |    .064273   .0148779     4.32   0.000     .0351017    .0934443
+       a_cupboard |   .0950677   .0173626     5.48   0.000     .0610246    .1291108
+            _cons |   13.63715   .0342226   398.48   0.000     13.57005    13.70425
+-----------------------------------------------------------------------------------
+
+. 
+. matrix X = e(b)
+
+. matrix X = X[1,1..`e(df_m)']
+
+. global xvar: colnames X
+
+. fsum $xvar [aw=$weight], label
+
+          Variable |        N     Mean       SD      Min      Max                                                                                                                              
+-------------------+---------------------------------------------
+              a_tv |     3198     0.41     0.49     0.00     1.00  TV set
+          a_fridge |     3198     0.13     0.33     0.00     1.00  Refrigerator
+    a_charcoaliron |     3198     0.47     0.50     0.00     1.00  Charcoal iron
+          c_roof_1 |     3198     0.15     0.36     0.00     1.00  c_roof==Cement slab (Dalle en ciment)
+           a_moped |     3198     0.15     0.35     0.00     1.00  Moped/moped, motorcycle
+       dem_logsize |     3198     2.40     0.53     0.00     3.78  lof of household size
+         c_walls_1 |     3198     0.69     0.46     0.00     1.00  c_walls==Cement and bricks (ciment, beton , pierres, briques cuites)
+ c_numberofrooms_c |     3198     5.07     1.75     1.00     7.00  Number of rooms censored at 11 (rec of s11q02)
+             a_fan |     3198     0.31     0.46     0.00     1.00  Free-standing fan
+          a_carpet |     3198     0.31     0.46     0.00     1.00  Carpet
+         region_11 |     3198     0.06     0.24     0.00     1.00  region==MATAM
+      c_lighting_1 |     3198     0.47     0.50     0.00     1.00  c_lighting==Network and generator (Electricité réseau)
+           l_sheep |     3198     0.49     0.50     0.00     1.00  Sheep
+        a_cupboard |     3198     0.43     0.49     0.00     1.00  Cupboards and other furniture
+
+. fsum dem_logsize hhsize, label
+
+    Variable |        N     Mean       SD      Min      Max                                                                                                                              
+-------------+---------------------------------------------
+ dem_logsize |     3198     2.10     0.59     0.00     3.78  lof of household size
+      hhsize |     3198     9.61     5.51     1.00    44.00  Taille menage
+
+. 
+. capture log close 

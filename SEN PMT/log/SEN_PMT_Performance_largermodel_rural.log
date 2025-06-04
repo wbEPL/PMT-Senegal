@@ -1,0 +1,312 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jeremyschneider/Desktop/SEN PMT/log/SEN_PMT_Performance_largermodel_rural.log
+  log type:  text
+ opened on:   1 Jun 2025, 15:34:14
+
+. 
+. use "$data/data4model_2021_IMPUTED_largermodel.dta", clear
+
+. keep if milieu==2 // (milieu: 1=urban, 2=rural)
+(3,922 observations deleted)
+
+. 
+. global weight popweight
+
+. global lnwelfare lpcexp
+
+. global welfare pcexp
+
+. 
+. twoway kdensity lpcexp_pred [aw=$weight] || kdensity lpcexp_pred if b40==1 [aw=$weight], legend(order(1 "All Rural HBS" 2 "Rural HBS in Bottom 40%") size(small)) title("Rural H
+> BS (Larger Model): Distribution of Predicted Log Expenditure (PMT scores)", size(small)) 
+
+. 
+. gen samplesize = _N
+
+. xtile decile = $lnwelfare [aw=$weight], nq(10)
+
+. 
+. gen actual = pcexp
+
+. gen pmt = pcexp_pred
+
+. 
+. local list "15 18 20 30 37 40"
+
+. 
+. * Set cutoffs at specified percentiles in list above
+. foreach t of numlist `list' {
+  2.         foreach x of varlist actual pmt {
+  3.                 _pctile `x' [aw=$weight] , p(`t') // here we calculate the percentile value of actual and pmt
+  4.                 cap drop cut_`x'_`t'  poor_`x'_`t' 
+  5.                 g cut_`x'_`t'=r(r1)  // here we define the cutoffs 
+  6.                 g poor_`x'_`t'= (`x'<=cut_`x'_`t')  // here we define everyone who has a score below the cutoff as poor
+  7.         }
+  8. }
+
+. 
+. * Simpler format to calculate targeting perofrmance (if we dont need to calculate standard errors for example)
+. svyset, clear
+
+. 
+. foreach truepoor in poor_actual_20 poor_actual_37 {
+  2.         
+.         preserve
+  3. 
+.         foreach t of numlist `list' {
+  4.         
+.                 qui cap drop poor_pmtpoor_`t' nonpoor_pmtpoor_`t' poor_pmtnonpoor_`t' nonpoor_pmtnonpoor_`t'
+  5.                         
+.                 qui g fpoor_pmtpoor_`t'         =       `truepoor' == 1 & poor_pmt_`t'==1 // Household is actually poor and pmt predicted poor
+  6.                 qui g fnonpoor_pmtpoor_`t'      =       `truepoor' == 0 & poor_pmt_`t'==1 // Household is not poor but pmt predicted poor
+  7.                 qui g fpoor_pmtnonpoor_`t'      =       `truepoor' == 1 & poor_pmt_`t'==0 // Household is actually poor but pmt predicted not poor
+  8.                 qui g fnonpoor_pmtnonpoor_`t'=  `truepoor' == 0 & poor_pmt_`t'==0 // Household is not poor and pmt predicted not poor
+  9.                 
+.                 qui g ftotalaccuracy`t' = ((fpoor_pmtpoor_`t'+fnonpoor_pmtnonpoor_`t')/(fpoor_pmtpoor_`t'+fpoor_pmtnonpoor_`t'+fnonpoor_pmtpoor_`t'+fnonpoor_pmtnonpoor_`t')) //
+>  (correctly predicted poor + correctly pred nonpoor)/ Total sample size
+ 10.                 qui g fpovertyaccuracy`t'  = (fpoor_pmtpoor_`t'/(fpoor_pmtpoor_`t'+fpoor_pmtnonpoor_`t')) // (correctly predicted poor) / (all poor)
+ 11.                 qui g fnpovertyaccuracy`t' = (fnonpoor_pmtnonpoor_`t'/(fnonpoor_pmtpoor_`t'+fnonpoor_pmtnonpoor_`t')) // (correctly predicted not poor) / (all non poor)
+ 12.                 qui g fundercoverage`t'    = (fpoor_pmtnonpoor_`t'/(fpoor_pmtpoor_`t'+fpoor_pmtnonpoor_`t'))  // (poor but predicted not poor PMT) / (all true poor)
+ 13.                 qui g finclusionerror`t'   = (fnonpoor_pmtpoor_`t'/(fpoor_pmtpoor_`t'+fnonpoor_pmtpoor_`t')) // (not poor but PMT predicted poor) / (all PMT pred poor)
+ 14.                 
+.         }
+ 15. 
+. 
+.         fsum ftotalaccuracy* fpovertyaccuracy* fnpovertyaccuracy* fundercoverage* finclusionerror*  [aw=$weight] 
+ 16.         
+.         keep fundercoverage* finclusionerror*  $weight
+ 17.         collapse (mean) fundercoverage* finclusionerror*   [pw=$weight] 
+ 18.         
+.         save "$results/SEN2021_SWIFTPMT_targeting_rural_large_performance_`truepoor'.dta",replace
+ 19. 
+.         
+.         restore
+ 20. }
+
+            Variable |        N     Mean       SD      Min      Max                                                                                                                              
+---------------------+---------------------------------------------
+    ftotalaccuracy15 |     3198     0.83     0.37     0.00     1.00  
+    ftotalaccuracy18 |     3198     0.84     0.37     0.00     1.00  
+    ftotalaccuracy20 |     3198     0.84     0.37     0.00     1.00  
+    ftotalaccuracy30 |     3198     0.81     0.39     0.00     1.00  
+    ftotalaccuracy37 |     3198     0.77     0.42     0.00     1.00  
+    ftotalaccuracy40 |     3198     0.75     0.44     0.00     1.00  
+  fpovertyaccuracy15 |      537     0.46     0.50     0.00     1.00  
+  fpovertyaccuracy18 |      537     0.55     0.50     0.00     1.00  
+  fpovertyaccuracy20 |      537     0.59     0.49     0.00     1.00  
+  fpovertyaccuracy30 |      537     0.78     0.42     0.00     1.00  
+  fpovertyaccuracy37 |      537     0.84     0.36     0.00     1.00  
+  fpovertyaccuracy40 |      537     0.86     0.34     0.00     1.00  
+ fnpovertyaccuracy15 |     2661     0.93     0.26     0.00     1.00  
+ fnpovertyaccuracy18 |     2661     0.91     0.28     0.00     1.00  
+ fnpovertyaccuracy20 |     2661     0.90     0.30     0.00     1.00  
+ fnpovertyaccuracy30 |     2661     0.82     0.38     0.00     1.00  
+ fnpovertyaccuracy37 |     2661     0.75     0.43     0.00     1.00  
+ fnpovertyaccuracy40 |     2661     0.72     0.45     0.00     1.00  
+    fundercoverage15 |      537     0.54     0.50     0.00     1.00  
+    fundercoverage18 |      537     0.45     0.50     0.00     1.00  
+    fundercoverage20 |      537     0.41     0.49     0.00     1.00  
+    fundercoverage30 |      537     0.22     0.42     0.00     1.00  
+    fundercoverage37 |      537     0.16     0.36     0.00     1.00  
+    fundercoverage40 |      537     0.14     0.34     0.00     1.00  
+   finclusionerror15 |      322     0.38     0.49     0.00     1.00  
+   finclusionerror18 |      402     0.39     0.49     0.00     1.00  
+   finclusionerror20 |      462     0.41     0.49     0.00     1.00  
+   finclusionerror30 |      755     0.48     0.50     0.00     1.00  
+   finclusionerror37 |      955     0.54     0.50     0.00     1.00  
+   finclusionerror40 |     1036     0.57     0.50     0.00     1.00  
+(file /Users/jeremyschneider/Desktop/SEN PMT/results/SEN2021_SWIFTPMT_targeting_rural_large_performance_poor_actual_20.dta not found)
+file /Users/jeremyschneider/Desktop/SEN PMT/results/SEN2021_SWIFTPMT_targeting_rural_large_performance_poor_actual_20.dta saved
+
+            Variable |        N     Mean       SD      Min      Max                                                                                                                              
+---------------------+---------------------------------------------
+    ftotalaccuracy15 |     3198     0.74     0.44     0.00     1.00  
+    ftotalaccuracy18 |     3198     0.75     0.43     0.00     1.00  
+    ftotalaccuracy20 |     3198     0.76     0.43     0.00     1.00  
+    ftotalaccuracy30 |     3198     0.79     0.41     0.00     1.00  
+    ftotalaccuracy37 |     3198     0.78     0.41     0.00     1.00  
+    ftotalaccuracy40 |     3198     0.78     0.42     0.00     1.00  
+  fpovertyaccuracy15 |     1023     0.35     0.48     0.00     1.00  
+  fpovertyaccuracy18 |     1023     0.41     0.49     0.00     1.00  
+  fpovertyaccuracy20 |     1023     0.45     0.50     0.00     1.00  
+  fpovertyaccuracy30 |     1023     0.63     0.48     0.00     1.00  
+  fpovertyaccuracy37 |     1023     0.71     0.46     0.00     1.00  
+  fpovertyaccuracy40 |     1023     0.74     0.44     0.00     1.00  
+ fnpovertyaccuracy15 |     2175     0.97     0.18     0.00     1.00  
+ fnpovertyaccuracy18 |     2175     0.95     0.21     0.00     1.00  
+ fnpovertyaccuracy20 |     2175     0.94     0.23     0.00     1.00  
+ fnpovertyaccuracy30 |     2175     0.89     0.31     0.00     1.00  
+ fnpovertyaccuracy37 |     2175     0.83     0.38     0.00     1.00  
+ fnpovertyaccuracy40 |     2175     0.80     0.40     0.00     1.00  
+    fundercoverage15 |     1023     0.65     0.48     0.00     1.00  
+    fundercoverage18 |     1023     0.59     0.49     0.00     1.00  
+    fundercoverage20 |     1023     0.55     0.50     0.00     1.00  
+    fundercoverage30 |     1023     0.37     0.48     0.00     1.00  
+    fundercoverage37 |     1023     0.29     0.46     0.00     1.00  
+    fundercoverage40 |     1023     0.26     0.44     0.00     1.00  
+   finclusionerror15 |      322     0.14     0.35     0.00     1.00  
+   finclusionerror18 |      402     0.16     0.37     0.00     1.00  
+   finclusionerror20 |      462     0.18     0.38     0.00     1.00  
+   finclusionerror30 |      755     0.23     0.42     0.00     1.00  
+   finclusionerror37 |      955     0.30     0.46     0.00     1.00  
+   finclusionerror40 |     1036     0.32     0.47     0.00     1.00  
+(file /Users/jeremyschneider/Desktop/SEN PMT/results/SEN2021_SWIFTPMT_targeting_rural_large_performance_poor_actual_37.dta not found)
+file /Users/jeremyschneider/Desktop/SEN PMT/results/SEN2021_SWIFTPMT_targeting_rural_large_performance_poor_actual_37.dta saved
+
+. 
+. 
+. /*
+>         preserve 
+>         keep if _n == 1 
+>         save "$results/SEN2021_SWIFTPMT_targeting_rural_large.dta",replace
+>         restore 
+> 
+> 
+> 
+> 
+> * PMT Coverage by decile -- LEAKAGE
+> preserve 
+>         foreach t in 15 18 20 30 37 40 {        
+>                         
+>                         qui: gen dist_`t' = .
+>                         
+>                         qui: tab decile [aw = $weight] if poor_pmt_`t' == 1,    matcell(table)          
+>                         
+>                         qui: matrix list table          // cette partie du code est le seul moyen d'enregistrer les pourcentages de la commande "tab", et de sauter les déciles 
+> ayant 0 observations qui ne s'affiche pas dans le tableau créé par la commande
+>                         local obs = r(N)                        
+>                         local cat = r(r)
+>                         
+>                         local i = 1
+>                         local j = 0 
+>                         qui: di `cat'
+>                         
+>                          while `i' <= 10 & `j'  <= `cat' {
+>                                         
+>                                         *qui: di "Calculating decile `i' (which is value `j' out of `cat' in the table)"
+> 
+>                                         qui: count if poor_pmt_`t' == 1 & decile == `i'
+>                                         local decile_obs = r(N)
+> 
+> 
+>                                         if `decile_obs' != 0 {
+>                                                 
+>                                                         qui: replace dist_`t' = 100 * (table[`j'+1,1] / `obs') if decile == `i'
+>                                                         local i = `i' + 1       
+>                                                         local j = `j' + 1
+>                                                         qui: di "i:`i', j: `j' "
+>                                         }
+>                                         
+>                                                 
+>                                         else {
+>                                                 qui: replace dist_`t' = 0 if decile == `i'
+>                                                 local i = `i' + 1
+>                                                 qui: di "i:`i', j: `j' "
+> 
+>                         }
+>                                         
+>                 }
+>                          
+>                  
+> }                       
+> collapse (mean) dist_15 dist_18 dist_20 dist_30 dist_37 dist_40, by(decile)
+> save "$results/SEN2021_SWIFTPMT_leakage_rural_large.dta", replace 
+> restore 
+> 
+> 
+> * PMT Non-coverage by decile -- UNDERCOVERAGE 
+> preserve 
+> 
+>                 foreach t in 15 18 20 30 37 40 {        
+>                 
+>                 qui: gen dist_`t' = .
+>                 
+>                 qui: tab decile [aw = $weight] if poor_pmt_`t' == 0,    matcell(table)          
+>                 
+>                 qui: matrix list table          // cette partie du code est le seul moyen d'enregistrer les pourcentages de la commande "tab", et de sauter les déciles ayant 0 
+> observations qui ne s'affiche pas dans le tableau créé par la commande
+>                 local obs = r(N)                        
+>                 local cat = r(r)
+>                 
+>                 local i = 1
+>                 local j = 0 
+>                 qui: di `cat'
+>                 
+>                  while `i' <= 10 & `j'  <= `cat' {
+>                                 
+>                                 *qui: di "Calculating decile `i' (which is value `j' out of `cat' in the table)"
+> 
+>                                 qui: count if poor_pmt_`t' == 0 & decile == `i'
+>                                 local decile_obs = r(N)
+> 
+> 
+>                                 if `decile_obs' != 0 {
+>                                         
+>                                                 qui: replace dist_`t' = 100 * (table[`j'+1,1] / `obs') if decile == `i'
+>                                                 local i = `i' + 1       
+>                                                 local j = `j' + 1
+>                                                 qui: di "i:`i', j: `j' "
+>                                 }
+>                                 
+>                                         
+>                                 else {
+>                                         qui: replace dist_`t' = 0 if decile == `i'
+>                                         local i = `i' + 1
+>                                         qui: di "i:`i', j: `j' "
+> 
+>                 }
+>                                 
+>         }
+>                  
+>          
+> }                                                               
+> collapse (mean) dist_15 dist_18 dist_20 dist_30 dist_37 dist_40, by(decile)
+> save "$results/SEN2021_SWIFTPMT_undercoverage_rural_large.dta", replace 
+> restore                                                 
+> 
+> 
+> * PMT Non-Coverage Decile Graph 
+> use "$results/SEN2021_SWIFTPMT_undercoverage_rural_large.dta", clear 
+> sort decile
+> gen dist_20_opp = 100 - dist_20
+> graph twoway   ///              choosing poorest 20% as true poor population (dist_20)
+>         (bar dist_20_opp decile if decile <= 2, fcolor(maroon*0.6) lcolor(maroon*0.6)) ///
+>     (bar dist_20_opp decile if decile >= 3 & decile <= 5, fcolor(sand*0.6) lcolor(sand*0.6)) ///
+>     (bar dist_20_opp decile if decile >= 6,  fcolor(dkgreen*0.6) lcolor(dkgreen*0.6)), ///
+>         legend(off) ytitle("Percent of All Covered Households Rural", size(medsmall)) xtitle("Decile of True Consumption Level (true poor bottom 20%)", size(medsmall)) xlabel(1
+> (1)10, labsize(small)) ylabel(84(3)100,labsize(small))
+> gr save "$results/SEN2021_undercoverage_truepoor20_rural_large.gph",  replace
+> 
+> gen dist_37_opp = 100 - dist_37
+> graph twoway   ///              choosing poorest 37% as true poor population (dist_37)
+>         (bar dist_37_opp decile if decile <= 2, fcolor(maroon*0.6) lcolor(maroon*0.6)) ///
+>     (bar dist_37_opp decile if decile >= 3 & decile <= 5, fcolor(sand*0.6) lcolor(sand*0.6)) ///
+>     (bar dist_37_opp decile if decile >= 6,  fcolor(dkgreen*0.6) lcolor(dkgreen*0.6)), ///
+>         legend(off) ytitle("Percent of All Covered Households Rural", size(medsmall)) xtitle("Decile of True Consumption Level (true poor bottom 37%)", size(medsmall)) xlabel(1
+> (1)10, labsize(small)) ylabel(84(3)100,labsize(small))
+> gr save "$results/SEN2021_undercoverage_truepoor37_rural_large.gph",  replace
+> 
+> 
+> * PMT Coverage Decile Graph                                                                     
+> use "$results/SEN2021_SWIFTPMT_leakage_rural_large.dta", clear 
+> sort decile
+> graph twoway   ///              choosing poorest 20% as true poor population (dist_20)
+>         (bar dist_20 decile if decile <= 2, fcolor(dkgreen*0.6) lcolor(dkgreen*0.6)) ///
+>     (bar dist_20 decile if decile >= 3 & decile <= 5, fcolor(sand*0.6) lcolor(sand*0.6)) ///
+>     (bar dist_20 decile if decile >= 6,  fcolor(maroon*0.6) lcolor(maroon*0.6)), ///
+>          legend(off)ytitle("Percent of All Covered Households", size(medsmall)) xtitle("Decile of True Consumption Level (true poor bottom 20%)", size(medsmall)) xlabel(1(1)10,
+>  labsize(small)) ylabel(,labsize(small))  title("Distribution of eligible population Rural")
+> gr save "$results/SEN2021_leakage_truepoor20_rural_large.gph",  replace
+> 
+> graph twoway   ///              choosing poorest 20% as true poor population (dist_37)
+>         (bar dist_37 decile if decile <= 2, fcolor(dkgreen*0.6) lcolor(dkgreen*0.6)) ///
+>     (bar dist_37 decile if decile >= 3 & decile <= 5, fcolor(sand*0.6) lcolor(sand*0.6)) ///
+>     (bar dist_37 decile if decile >= 6,  fcolor(maroon*0.6) lcolor(maroon*0.6)), ///
+>          legend(off)ytitle("Percent of All Covered Households", size(medsmall)) xtitle("Decile of True Consumption Level (true poor bottom 37%)", size(medsmall)) xlabel(1(1)10,
+>  labsize(small)) ylabel(,labsize(small))  title("Distribution of eligible population Rural")
+> gr save "$results/SEN2021_leakage_truepoor37_rural_large.gph",  replace
+> 
+> */
+. 
+. capture log close

@@ -1,0 +1,183 @@
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jeremyschneider/Desktop/SEN PMT/log/SEN_PMT_HBSestimates_largermodel.log
+  log type:  text
+ opened on:  16 May 2025, 14:53:43
+
+. 
+. global weight popweight
+
+. global lnwelfare lpcexp
+
+. global welfare pcexp
+
+. 
+. ****************URBAN*****************************
+. use "$data/data4model_2021_2.dta", clear
+
+. keep if milieu==1 // (milieu: 1=urban, 2=rural)
+(3,198 observations deleted)
+
+. 
+. global xvar     c_connectowater c_typehousing_2 c_connectedtoint dem_alfa_french c_walls_2 a_gastank a_computer c_lighting_1 c_numberofrooms_c a_cupboard region_1 a_carpet c_housingocup_3 c_floor_2 a_fan region_6 a_satellite region_8 a_fridge c_conne
+> ctedtotv region_11 region_12 c_roof_1 dem_logsize dem_emp_rate
+
+. 
+. reg $lnwelfare $xvar [pw=$weight]
+(sum of wgt is 8,299,754.5)
+
+Linear regression                               Number of obs     =      3,922
+                                                F(25, 3896)       =     182.59
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.7051
+                                                Root MSE          =     .30708
+
+-----------------------------------------------------------------------------------
+                  |               Robust
+           lpcexp | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+------------------+----------------------------------------------------------------
+  c_connectowater |   .1288149   .0194557     6.62   0.000     .0906706    .1669591
+  c_typehousing_2 |   .0698544   .0216968     3.22   0.001     .0273162    .1123927
+ c_connectedtoint |   .2323117   .0286612     8.11   0.000     .1761192    .2885041
+  dem_alfa_french |   .0802081   .0164695     4.87   0.000     .0479185    .1124977
+        c_walls_2 |  -.1030714   .0294681    -3.50   0.000    -.1608458   -.0452971
+        a_gastank |   .0717618   .0184142     3.90   0.000     .0356594    .1078641
+       a_computer |    .138694   .0281762     4.92   0.000     .0834524    .1939356
+     c_lighting_1 |   .1107663   .0281806     3.93   0.000     .0555162    .1660165
+c_numberofrooms_c |   .0581046   .0056939    10.20   0.000     .0469412     .069268
+       a_cupboard |   .0818641   .0199408     4.11   0.000     .0427686    .1209596
+         region_1 |   .0932949   .0204181     4.57   0.000     .0532637    .1333262
+         a_carpet |   .0508334   .0172516     2.95   0.003     .0170103    .0846565
+  c_housingocup_3 |  -.0645629   .0228429    -2.83   0.005    -.1093481   -.0197778
+        c_floor_2 |   .1273091   .0235452     5.41   0.000     .0811469    .1734712
+            a_fan |   .0555234   .0182915     3.04   0.002     .0196615    .0913853
+         region_6 |    .103926   .0248128     4.19   0.000     .0552788    .1525733
+      a_satellite |   .1453664   .0243431     5.97   0.000       .09764    .1930928
+         region_8 |   .0648843   .0226033     2.87   0.004     .0205688    .1091997
+         a_fridge |   .0715522   .0175503     4.08   0.000     .0371436    .1059609
+  c_connectedtotv |   .0944053   .0176711     5.34   0.000     .0597599    .1290508
+        region_11 |   .1097234    .033185     3.31   0.001     .0446619    .1747849
+        region_12 |   .0766966   .0273052     2.81   0.005     .0231628    .1302304
+         c_roof_1 |   .0675355   .0212875     3.17   0.002     .0257998    .1092712
+      dem_logsize |  -.6296829   .0205993   -30.57   0.000    -.6700694   -.5892964
+     dem_emp_rate |   .1334933   .0306349     4.36   0.000     .0734314    .1935553
+            _cons |   13.55613   .0507428   267.15   0.000     13.45665    13.65562
+-----------------------------------------------------------------------------------
+
+. predict lpcexp_pred
+(option xb assumed; fitted values)
+
+. gen pcexp_pred=exp(lpcexp_pred)
+
+. 
+. tempfile urban_pred
+
+. save `urban_pred', replace emptyok
+(file /var/folders/hw/ylpkynv94_1gbcchyj5pw25m0000gn/T//S_00597.000001 not found)
+file /var/folders/hw/ylpkynv94_1gbcchyj5pw25m0000gn/T//S_00597.000001 saved as .dta format
+
+. 
+. ****************RURAL*****************************
+. use "$data/data4model_2021_2.dta", clear
+
+. keep if milieu==2 // (milieu: 1=urban, 2=rural)
+(3,922 observations deleted)
+
+. 
+. global xvar dem_hage a_fridge c_fuelfirst_3 dem_alfa_french a_moped a_fan region_2 region_3 a_tv c_lighting_1 region_6 region_7 l_sheep c_floor_2 c_walls_2 region_11 a_carpet region_13 dem_logsize c_floor_1 a_cupboard c_numberofrooms_c c_roof_1 a_cha
+> rcoaliron a_gastank
+
+. 
+. reg $lnwelfare $xvar [pw=$weight]
+(sum of wgt is 9,177,345)
+
+Linear regression                               Number of obs     =      3,198
+                                                F(25, 3172)       =     129.55
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.5797
+                                                Root MSE          =     .31022
+
+-----------------------------------------------------------------------------------
+                  |               Robust
+           lpcexp | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+------------------+----------------------------------------------------------------
+         dem_hage |   .0219067   .0082872     2.64   0.008     .0056579    .0381555
+         a_fridge |   .0929156   .0241263     3.85   0.000     .0456109    .1402204
+    c_fuelfirst_3 |   .0802567    .022414     3.58   0.000     .0363093    .1242042
+  dem_alfa_french |   .0484638   .0168978     2.87   0.004      .015332    .0815955
+          a_moped |   .1391459   .0234847     5.92   0.000     .0930992    .1851926
+            a_fan |   .0882931   .0236301     3.74   0.000     .0419611     .134625
+         region_2 |  -.0947856   .0322315    -2.94   0.003    -.1579823   -.0315888
+         region_3 |  -.0625951   .0219639    -2.85   0.004    -.1056599   -.0195303
+             a_tv |   .0891527   .0206261     4.32   0.000     .0487108    .1295947
+     c_lighting_1 |   .1259157   .0212775     5.92   0.000     .0841968    .1676347
+         region_6 |  -.1030886   .0235209    -4.38   0.000    -.1492064   -.0569708
+         region_7 |  -.1433932   .0264814    -5.41   0.000    -.1953157   -.0914708
+          l_sheep |   .0491145   .0145057     3.39   0.001     .0206729     .077556
+        c_floor_2 |   .0872231   .0298463     2.92   0.003     .0287031     .145743
+        c_walls_2 |  -.0581636   .0197159    -2.95   0.003    -.0968208   -.0195065
+        region_11 |   .1235762   .0305895     4.04   0.000      .063599    .1835533
+         a_carpet |   .0805573   .0166653     4.83   0.000     .0478814    .1132332
+        region_13 |  -.1802221   .0476056    -3.79   0.000    -.2735629   -.0868813
+      dem_logsize |  -.6084389   .0181588   -33.51   0.000    -.6440431   -.5728347
+        c_floor_1 |   .0462126   .0167553     2.76   0.006     .0133603     .079065
+       a_cupboard |   .0920893    .017921     5.14   0.000     .0569515    .1272272
+c_numberofrooms_c |   .0443472   .0055045     8.06   0.000     .0335545    .0551399
+         c_roof_1 |   .1519523   .0301164     5.05   0.000     .0929026    .2110019
+   a_charcoaliron |   .0660523   .0154994     4.26   0.000     .0356624    .0964421
+        a_gastank |   .0586013   .0181232     3.23   0.001     .0230668    .0941357
+            _cons |   13.62798   .0420521   324.07   0.000     13.54552    13.71043
+-----------------------------------------------------------------------------------
+
+. predict lpcexp_pred
+(option xb assumed; fitted values)
+
+. gen pcexp_pred=exp(lpcexp_pred)
+
+. 
+. append using `urban_pred'
+(label sample already defined)
+(label ouinon already defined)
+(label s00q01 already defined)
+(label s00q04 already defined)
+(label s01q16 already defined)
+(label s01q01 already defined)
+(label ab1 already defined)
+(label c_typehousing already defined)
+(label c_housingocup already defined)
+(label c_businessindwe already defined)
+(label c_walls already defined)
+(label c_roof already defined)
+(label c_floor already defined)
+(label c_connectowater already defined)
+(label c_water_dry already defined)
+(label c_water_rainy already defined)
+(label c_connectoelec already defined)
+(label c_lighting already defined)
+(label c_landline already defined)
+(label c_connectedtoint already defined)
+(label c_internettype already defined)
+(label c_connectedtotv already defined)
+(label fuel already defined)
+(label c_fuelfirst_r already defined)
+(label c_garbage already defined)
+(label c_toilet already defined)
+(label c_s_toilet_urb_rur already defined)
+(label c_waste already defined)
+(label l_petitrum_r already defined)
+(label l_grosrum_r already defined)
+(label l_poultry_r already defined)
+(label dem_hcsp already defined)
+(label dem_branch already defined)
+(label dem_hactiv7j already defined)
+(label dem_heduc already defined)
+(label dem_hmstat already defined)
+(label dem_hage already defined)
+(label dem_hactiv12m_new already defined)
+
+. 
+. save "$data/data4model_2021_IMPUTED_largermodel.dta", replace
+file /Users/jeremyschneider/Desktop/SEN PMT/data/data4model_2021_IMPUTED_largermodel.dta saved
+
+. 
+. capture log close

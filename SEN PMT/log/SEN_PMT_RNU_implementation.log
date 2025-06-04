@@ -1,0 +1,558 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jeremyschneider/Desktop/SEN PMT/log/SEN_PMT_RNU_implementation.log
+  log type:  text
+ opened on:   1 Jun 2025, 15:40:39
+
+. 
+. global weight popweight
+
+. global lnwelfare lpcexp 
+
+. 
+. ****************************************************************
+. * Load and append data
+. ****************************************************************
+. use "$data/data4model_2021_2.dta", clear
+
+. 
+. * Append registry data (target data)
+. append using "$data/RNU_2024_clean.dta", gen(append) force
+(note: variable hhid was str50 in the using data, but will be double now)
+(variable dem_heduc_1 was byte, now float to accommodate using data's values)
+(variable dem_branch_1 was byte, now float to accommodate using data's values)
+(variable dem_hage was int, now float to accommodate using data's values)
+(variable hhsize was byte, now float to accommodate using data's values)
+(variable milieu was byte, now float to accommodate using data's values)
+(variable a_ac was byte, now double to accommodate using data's values)
+(variable a_car was byte, now double to accommodate using data's values)
+(variable a_carpet was byte, now double to accommodate using data's values)
+(variable a_iron was byte, now double to accommodate using data's values)
+(variable a_charcoaliron was byte, now double to accommodate using data's values)
+(variable a_computer was byte, now double to accommodate using data's values)
+(variable a_cupboard was byte, now double to accommodate using data's values)
+(variable a_fan was byte, now double to accommodate using data's values)
+(variable a_fridge was byte, now double to accommodate using data's values)
+(variable a_gastank was byte, now double to accommodate using data's values)
+(variable a_living was byte, now double to accommodate using data's values)
+(variable a_moped was byte, now double to accommodate using data's values)
+(variable a_tv was byte, now double to accommodate using data's values)
+(variable a_satellite was byte, now double to accommodate using data's values)
+(variable a_stove was byte, now double to accommodate using data's values)
+(variable ar_tractor was byte, now double to accommodate using data's values)
+(variable c_connectedtoint was byte, now double to accommodate using data's values)
+(variable c_connectedtotv was byte, now double to accommodate using data's values)
+(variable c_connectowater was byte, now double to accommodate using data's values)
+(variable c_numberofrooms_c was byte, now float to accommodate using data's values)
+(variable c_housingocup_1 was byte, now float to accommodate using data's values)
+(variable c_housingocup_3 was byte, now float to accommodate using data's values)
+(variable l_sheep was byte, now float to accommodate using data's values)
+(label ouinon already defined)
+
+. gen survey = 0 
+
+. replace survey = 1 if append==1 
+(954,574 real changes made)
+
+. label define survey 0 "HBS 2021" 1 "RNU 2024"
+
+. label value survey survey
+
+. drop append
+
+. 
+. ****************************************************************
+. * Impute household expenditure in registry data
+. ****************************************************************
+. preserve
+
+. 
+. ** Urban *****
+. keep if milieu==1 // (milieu: 1=urban, 2=rural)
+(691,566 observations deleted)
+
+. 
+. global xvar     a_fridge a_computer c_walls_2 dem_alfa_french c_connectedtoint c_numberofrooms_c c_lighting_1 c_connectedtotv dem_logsize a_satellite region_2 c_floor_2 c_conne
+> ctowater c_typehousing_2 a_cupboard region_9 a_gastank dem_emp_rate
+
+. 
+. reg $lnwelfare $xvar [pw=$weight]
+(sum of wgt is 8,299,754.5)
+
+Linear regression                               Number of obs     =      3,922
+                                                F(18, 3903)       =     239.35
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.6955
+                                                Root MSE          =     .31175
+
+-----------------------------------------------------------------------------------
+                  |               Robust
+           lpcexp | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+------------------+----------------------------------------------------------------
+         a_fridge |    .088348   .0171686     5.15   0.000     .0546877    .1220083
+       a_computer |   .1523185   .0274852     5.54   0.000     .0984318    .2062053
+        c_walls_2 |  -.1313178   .0292126    -4.50   0.000    -.1885912   -.0740443
+  dem_alfa_french |   .0897212   .0168652     5.32   0.000     .0566557    .1227868
+ c_connectedtoint |   .2459578   .0288827     8.52   0.000     .1893313    .3025843
+c_numberofrooms_c |   .0633092   .0054624    11.59   0.000     .0525996    .0740187
+     c_lighting_1 |   .1414849    .027748     5.10   0.000     .0870829    .1958869
+  c_connectedtotv |   .0834705   .0171683     4.86   0.000     .0498108    .1171303
+      dem_logsize |  -.6346399   .0202559   -31.33   0.000    -.6743531   -.5949267
+      a_satellite |    .144858   .0241392     6.00   0.000     .0975314    .1921847
+         region_2 |  -.1309353   .0262631    -4.99   0.000    -.1824259   -.0794446
+        c_floor_2 |   .1427589   .0205131     6.96   0.000     .1025415    .1829764
+  c_connectowater |   .1323549   .0193354     6.85   0.000     .0944466    .1702633
+  c_typehousing_2 |   .0993696   .0214515     4.63   0.000     .0573124    .1414268
+       a_cupboard |   .0957279   .0197021     4.86   0.000     .0571005    .1343552
+         region_9 |  -.1544157   .0259849    -5.94   0.000     -.205361   -.1034704
+        a_gastank |   .0917778   .0175647     5.23   0.000     .0573408    .1262147
+     dem_emp_rate |   .1316892   .0305144     4.32   0.000     .0718634    .1915149
+            _cons |   13.60793   .0498437   273.01   0.000      13.5102    13.70565
+-----------------------------------------------------------------------------------
+
+. predict lpcexp_pred
+(option xb assumed; fitted values)
+(3,141 missing values generated)
+
+. gen pcexp_pred=exp(lpcexp_pred)
+(3,141 missing values generated)
+
+. 
+. fsum $xvar hhsize if survey==1 
+
+          Variable |        N     Mean       SD      Min      Max                                                                                                                              
+-------------------+---------------------------------------------
+          a_fridge |   266206     0.20     0.40     0.00     1.00  
+        a_computer |   266206     0.04     0.19     0.00     1.00  
+         c_walls_2 |   266206     0.13     0.34     0.00     1.00  
+   dem_alfa_french |   266206     0.28     0.45     0.00     1.00  
+  c_connectedtoint |   266206     0.13     0.34     0.00     1.00  
+ c_numberofrooms_c |   266206     3.30     1.64     1.00     7.00  
+      c_lighting_1 |   266206     0.85     0.36     0.00     1.00  
+   c_connectedtotv |   266206     0.36     0.48     0.00     1.00  
+       dem_logsize |   266136     1.89     0.49     0.00     4.09  
+       a_satellite |   266206     0.36     0.48     0.00     1.00  
+          region_2 |   266206     0.09     0.29     0.00     1.00  
+         c_floor_2 |   266205     0.18     0.38     0.00     1.00  
+   c_connectowater |   266206     0.37     0.48     0.00     1.00  
+   c_typehousing_2 |   266206     0.08     0.27     0.00     1.00  
+        a_cupboard |   266206     0.34     0.47     0.00     1.00  
+          region_9 |   266206     0.03     0.17     0.00     1.00  
+         a_gastank |   266206     0.35     0.48     0.00     1.00  
+      dem_emp_rate |   263066     0.74     0.29     0.00     1.00  
+            hhsize |   266136     7.45     3.66     1.00    60.00  
+
+. tempfile urban_RNU_pred
+
+. save `urban_RNU_pred', replace emptyok
+(file /var/folders/hw/ylpkynv94_1gbcchyj5pw25m0000gn/T//S_79547.000002 not found)
+file /var/folders/hw/ylpkynv94_1gbcchyj5pw25m0000gn/T//S_79547.000002 saved as .dta format
+
+. 
+. restore
+
+. 
+. ** Rural ***** 
+. keep if milieu==2 // (milieu: 1=urban, 2=rural)
+(270,128 observations deleted)
+
+. 
+. global xvar a_tv a_fridge a_charcoaliron c_roof_1 a_moped dem_logsize c_walls_1 c_numberofrooms_c a_fan a_carpet region_11 c_lighting_1 l_sheep a_cupboard
+
+. 
+. reg $lnwelfare $xvar [pw=$weight]
+(sum of wgt is 9,177,345)
+
+Linear regression                               Number of obs     =      3,198
+                                                F(14, 3183)       =     202.71
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.5619
+                                                Root MSE          =     .31616
+
+-----------------------------------------------------------------------------------
+                  |               Robust
+           lpcexp | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+------------------+----------------------------------------------------------------
+             a_tv |   .1077126   .0202808     5.31   0.000     .0679478    .1474774
+         a_fridge |   .1139955   .0247899     4.60   0.000     .0653898    .1626012
+   a_charcoaliron |   .0730993   .0153833     4.75   0.000     .0429372    .1032615
+         c_roof_1 |   .1869716   .0274059     6.82   0.000     .1332365    .2407066
+          a_moped |   .1377402   .0230502     5.98   0.000     .0925454     .182935
+      dem_logsize |  -.6136176   .0185836   -33.02   0.000    -.6500547   -.5771804
+        c_walls_1 |    .069763   .0162931     4.28   0.000      .037817     .101709
+c_numberofrooms_c |   .0457915   .0051685     8.86   0.000     .0356576    .0559254
+            a_fan |   .1026133   .0235973     4.35   0.000     .0563459    .1488807
+         a_carpet |   .0877755   .0165333     5.31   0.000     .0553585    .1201925
+        region_11 |   .1414563   .0301017     4.70   0.000     .0824356     .200477
+     c_lighting_1 |   .1354284   .0205155     6.60   0.000     .0952035    .1756533
+          l_sheep |    .064273   .0148779     4.32   0.000     .0351017    .0934443
+       a_cupboard |   .0950677   .0173626     5.48   0.000     .0610246    .1291108
+            _cons |   13.63715   .0342226   398.48   0.000     13.57005    13.70425
+-----------------------------------------------------------------------------------
+
+. predict lpcexp_pred
+(option xb assumed; fitted values)
+(86 missing values generated)
+
+. gen pcexp_pred=exp(lpcexp_pred)
+(86 missing values generated)
+
+. 
+. fsum $xvar hhsize if survey==1  
+
+          Variable |        N     Mean       SD      Min      Max                                                                                                                              
+-------------------+---------------------------------------------
+              a_tv |   688368     0.22     0.41     0.00     1.00  
+          a_fridge |   688368     0.06     0.25     0.00     1.00  
+    a_charcoaliron |   688368     0.15     0.36     0.00     1.00  
+          c_roof_1 |   688368     0.08     0.27     0.00     1.00  
+           a_moped |   688368     0.09     0.29     0.00     1.00  
+       dem_logsize |   688282     1.96     0.52     0.00     4.61  
+         c_walls_1 |   688368     0.58     0.49     0.00     1.00  
+ c_numberofrooms_c |   688368     3.69     1.69     1.00     7.31  
+             a_fan |   688368     0.20     0.40     0.00     1.00  
+          a_carpet |   688368     0.15     0.36     0.00     1.00  
+         region_11 |   688368     0.07     0.26     0.00     1.00  
+      c_lighting_1 |   688368     0.45     0.50     0.00     1.00  
+           l_sheep |   688368     0.26     0.44     0.00     1.00  
+        a_cupboard |   688368     0.14     0.35     0.00     1.00  
+            hhsize |   688282     8.00     4.09     1.00   100.00  
+
+. append using `urban_RNU_pred'
+(label survey already defined)
+(label tranch_age already defined)
+(label A18_VS1 already defined)
+(label NAISCM_VS1 already defined)
+(label A20_VS1 already defined)
+(label A21_VS1 already defined)
+(label ext_milieu already defined)
+(label I22B_VS1 already defined)
+(label I22_VS1 already defined)
+(label I19_VS1 already defined)
+(label I18_VS1 already defined)
+(label I17_VS1 already defined)
+(label I15_VS1 already defined)
+(label I14_VS1 already defined)
+(label I13_VS1 already defined)
+(label I12_VS1 already defined)
+(label I7_VS1 already defined)
+(label AJOUT_IND_VS1 already defined)
+(label I6_VS1 already defined)
+(label I5_0_VS1 already defined)
+(label I4_VS1 already defined)
+(label I3_VS1 already defined)
+(label I1_0_VS1 already defined)
+(label handicap_label already defined)
+(label lbl_Aucune already defined)
+(label lbl_Français already defined)
+(label lbl_Arabe already defined)
+(label lbl_Wolof already defined)
+(label lbl_Pulaar already defined)
+(label lbl_Serere already defined)
+(label lbl_Mandingue already defined)
+(label lbl_Diola already defined)
+(label lbl_Soninke already defined)
+(label lbl_Autres already defined)
+(label i21 already defined)
+(label i11_0 already defined)
+(label pmt_i15 already defined)
+(label pmt_m11p already defined)
+(label pmt_m11o already defined)
+(label pmt_m11n already defined)
+(label pmt_m11m already defined)
+(label pmt_m11k already defined)
+(label pmt_m11j already defined)
+(label pmt_m11i already defined)
+(label pmt_m11h already defined)
+(label pmt_m11g already defined)
+(label pmt_m11f already defined)
+(label pmt_m11e already defined)
+(label pmt_m11d already defined)
+(label pmt_m11c already defined)
+(label pmt_m11b already defined)
+(label pmt_m11a already defined)
+(label pmt_m13b already defined)
+(label pmt_m13_3 already defined)
+(label pmt_m13_2 already defined)
+(label pmt_m13_1 already defined)
+(label pmt_m9 already defined)
+(label pmt_m8 already defined)
+(label pmt_m7 already defined)
+(label pmt_m6 already defined)
+(label pmt_m5 already defined)
+(label pmt_m4 already defined)
+(label pmt_m1 already defined)
+(label tranch_age_CM already defined)
+(label m13b already defined)
+(label M9_VS1 already defined)
+(label M8_VS1 already defined)
+(label M7_VS1 already defined)
+(label M6_VS1 already defined)
+(label M5_VS1 already defined)
+(label M4_VS1 already defined)
+(label M2_VS1 already defined)
+(label M22_7_VS1 already defined)
+(label M22_6_VS1 already defined)
+(label M22_5_VS1 already defined)
+(label M22_4_VS1 already defined)
+(label M22_3_VS1 already defined)
+(label M22_2_VS1 already defined)
+(label M22_1_VS1 already defined)
+(label M21_VS1 already defined)
+(label M21_9_VS1 already defined)
+(label M21_99_VS1 already defined)
+(label M21_8_VS1 already defined)
+(label M21_7_VS1 already defined)
+(label M21_6_VS1 already defined)
+(label M21_5_VS1 already defined)
+(label M21_4_VS1 already defined)
+(label M21_3_VS1 already defined)
+(label M21_2_VS1 already defined)
+(label M21_27_VS1 already defined)
+(label M21_26_VS1 already defined)
+(label M21_25_VS1 already defined)
+(label M21_24_VS1 already defined)
+(label M21_23_VS1 already defined)
+(label M21_22_VS1 already defined)
+(label M21_21_VS1 already defined)
+(label M21_20_VS1 already defined)
+(label M21_1_VS1 already defined)
+(label M21_19_VS1 already defined)
+(label M21_18_VS1 already defined)
+(label M21_17_VS1 already defined)
+(label M21_16_VS1 already defined)
+(label M21_15_VS1 already defined)
+(label M21_14_VS1 already defined)
+(label M21_13_VS1 already defined)
+(label M21_12_VS1 already defined)
+(label M21_11_VS1 already defined)
+(label M21_10_VS1 already defined)
+(label M20X_VS1 already defined)
+(label M20K_VS1 already defined)
+(label M20J_VS1 already defined)
+(label M20I_VS1 already defined)
+(label M20H_VS1 already defined)
+(label M20G_VS1 already defined)
+(label M20F_VS1 already defined)
+(label M20E_VS1 already defined)
+(label M20D_VS1 already defined)
+(label M20C_VS1 already defined)
+(label M20B_VS1 already defined)
+(label M20A_VS1 already defined)
+(label M1_VS1 already defined)
+(label M19_VS1 already defined)
+(label M17_EXISTENCE_VS1 already defined)
+(label M15_VS1 already defined)
+(label M15BIS_VS1 already defined)
+(label M14_VS1 already defined)
+(label M13_3_VS1 already defined)
+(label M13_2_VS1 already defined)
+(label M13_1_VS1 already defined)
+(label M13C_VS1 already defined)
+(label M12R_VS1 already defined)
+(label M12Q_VS1 already defined)
+(label M12P_VS1 already defined)
+(label M12O_VS1 already defined)
+(label M12K_VS1 already defined)
+(label M12J_VS1 already defined)
+(label M12I_VS1 already defined)
+(label M12G_VS1 already defined)
+(label M12D_VS1 already defined)
+(label M12C_VS1 already defined)
+(label M12B_VS1 already defined)
+(label M12A_VS1 already defined)
+(label M11P_VS1 already defined)
+(label M11O_VS1 already defined)
+(label M11N_VS1 already defined)
+(label M11M_VS1 already defined)
+(label M11K_VS1 already defined)
+(label M11J_VS1 already defined)
+(label M11I_VS1 already defined)
+(label M11H_VS1 already defined)
+(label M11G_VS1 already defined)
+(label M11F_VS1 already defined)
+(label M11E_VS1 already defined)
+(label M11D_VS1 already defined)
+(label M11C_VS1 already defined)
+(label M11B_VS1 already defined)
+(label M11A_VS1 already defined)
+(label M10_VS1 already defined)
+(label _merge already defined)
+(label sample already defined)
+(label ouinon already defined)
+(label s00q01 already defined)
+(label s00q04 already defined)
+(label s01q16 already defined)
+(label s01q01 already defined)
+(label ab1 already defined)
+(label c_typehousing already defined)
+(label c_housingocup already defined)
+(label c_businessindwe already defined)
+(label c_walls already defined)
+(label c_roof already defined)
+(label c_floor already defined)
+(label c_connectowater already defined)
+(label c_water_dry already defined)
+(label c_water_rainy already defined)
+(label c_connectoelec already defined)
+(label c_lighting already defined)
+(label c_landline already defined)
+(label c_connectedtoint already defined)
+(label c_internettype already defined)
+(label c_connectedtotv already defined)
+(label fuel already defined)
+(label c_fuelfirst_r already defined)
+(label c_garbage already defined)
+(label c_toilet already defined)
+(label c_s_toilet_urb_rur already defined)
+(label c_waste already defined)
+(label l_petitrum_r already defined)
+(label l_grosrum_r already defined)
+(label l_poultry_r already defined)
+(label dem_hcsp already defined)
+(label dem_branch already defined)
+(label dem_hactiv7j already defined)
+(label dem_heduc already defined)
+(label dem_hmstat already defined)
+(label dem_hage already defined)
+(label dem_hactiv12m_new already defined)
+
+. 
+. 
+. 
+. ** National *****
+. /*
+> preserve 
+> global xvar     c_connectedtotv c_lighting_1 c_connectowater dem_alfa_french a_satellite region_1 c_walls_1 a_fan dem_logsize dem_emp_rate a_cupboard c_numberofrooms_c c_roof_1
+>  a_fridge c_floor_2
+> reg $lnwelfare $xvar [pw=$weight]
+> predict lpcexp_pred
+> gen pcexp_pred=exp(lpcexp_pred)
+> 
+> fsum $xvar [aw=$weight] if survey==1  
+> restore
+> */
+. ****************************************************************
+. * Create cutoffs
+. ****************************************************************
+. local list "15 18 20 30 37 40" //this local list used here and in next section
+
+. 
+. foreach t of numlist `list' {
+  2.         _pctile lpcexp_pred [aw=$weight] if survey==0, p(`t')
+  3.         g targetpop_`t'=r(r1)
+  4. }
+
+. 
+. * Add cutoff values into registry data 
+. foreach t of numlist `list' {
+  2.         egen cutoff_`t' = max(targetpop_`t')
+  3. }
+
+. 
+. ****************************************************************
+. * Calculate coverage in registry data 
+. ****************************************************************
+. foreach t of numlist `list' {
+  2.         g pmt_include_`t' = lpcexp_pred <= cutoff_`t'
+  3. }
+
+. 
+. display "included population portion in HBS"
+included population portion in HBS
+
+. fsum pmt_include_* [aw=$weight] if survey==0 // HBS, to check that cutoffs are set correctly 
+
+       Variable |        N     Mean       SD      Min      Max                                                                                                                              
+----------------+---------------------------------------------
+ pmt_include_15 |     7120     0.15     0.36     0.00     1.00  
+ pmt_include_18 |     7120     0.18     0.38     0.00     1.00  
+ pmt_include_20 |     7120     0.20     0.40     0.00     1.00  
+ pmt_include_30 |     7120     0.30     0.46     0.00     1.00  
+ pmt_include_37 |     7120     0.37     0.48     0.00     1.00  
+ pmt_include_40 |     7120     0.40     0.49     0.00     1.00  
+
+. 
+. display "included population portion in RNU"
+included population portion in RNU
+
+. sum pmt_include_* [aw=$weight] if survey==1 // RNU All
+
+    Variable |     Obs      Weight        Mean   Std. dev.       Min        Max
+-------------+-----------------------------------------------------------------
+pmt_inclu~15 | 954,418     7490855    .2285108   .4198735          0          1
+pmt_inclu~18 | 954,418     7490855    .2776052   .4478178          0          1
+pmt_inclu~20 | 954,418     7490855    .3043021   .4601115          0          1
+pmt_inclu~30 | 954,418     7490855     .459522   .4983591          0          1
+pmt_inclu~37 | 954,418     7490855    .5583759   .4965808          0          1
+-------------+-----------------------------------------------------------------
+pmt_inclu~40 | 954,418     7490855    .6024701   .4893875          0          1
+
+. 
+. display "included population portion in RNU, Urban population"
+included population portion in RNU, Urban population
+
+. fsum pmt_include_* [aw=$weight] if survey==1 & milieu==1 // RNU Urban
+
+       Variable |        N     Mean       SD      Min      Max                                                                                                                              
+----------------+---------------------------------------------
+ pmt_include_15 |   266136     0.11     0.31     0.00     1.00  
+ pmt_include_18 |   266136     0.14     0.35     0.00     1.00  
+ pmt_include_20 |   266136     0.16     0.36     0.00     1.00  
+ pmt_include_30 |   266136     0.27     0.44     0.00     1.00  
+ pmt_include_37 |   266136     0.35     0.48     0.00     1.00  
+ pmt_include_40 |   266136     0.39     0.49     0.00     1.00  
+
+. 
+. display "included population portion in RNU, Rural population"
+included population portion in RNU, Rural population
+
+. fsum pmt_include_* [aw=$weight] if survey==1 & milieu==2 // RNU Rural
+
+       Variable |        N     Mean       SD      Min      Max                                                                                                                              
+----------------+---------------------------------------------
+ pmt_include_15 |   688282     0.27     0.44     0.00     1.00  
+ pmt_include_18 |   688282     0.33     0.47     0.00     1.00  
+ pmt_include_20 |   688282     0.36     0.48     0.00     1.00  
+ pmt_include_30 |   688282     0.53     0.50     0.00     1.00  
+ pmt_include_37 |   688282     0.63     0.48     0.00     1.00  
+ pmt_include_40 |   688282     0.68     0.47     0.00     1.00  
+
+. 
+. su cutoff_20
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+   cutoff_20 |    961,694    12.59624           0   12.59624   12.59624
+
+. global cutoff=r(mean)
+
+. twoway kdensity lpcexp_pred if survey==0 & b40 == 1 [aw=$weight] || kdensity lpcexp_pred if survey==1 [aw=$weight], legend(on order(1 "HBS Bottom 40%" 2 "RNU")) title("Distribu
+> tion of predicted log expenditure (PMT scores)")  xline($cutoff)
+--Break--
+r(1);
+
+end of do-file
+
+--Break--
+r(1);
+
+. do "/var/folders/hw/ylpkynv94_1gbcchyj5pw25m0000gn/T//SD79547.000000"
+
+. clear all 
+
+. version 17
+
+. cap ssc install xtable
+
+. 
+. global path "/Users/jeremyschneider/Desktop/SEN PMT"
+
+. global data "$path/data"
+
+. global results "$path/results"
+
+. global log "$path/log"
+
+. 
+. capture log close

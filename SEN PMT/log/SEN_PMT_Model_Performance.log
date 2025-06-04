@@ -1,0 +1,256 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jeremyschneider/Desktop/SEN PMT/log/SEN_PMT_Model_Performance.log
+  log type:  text
+ opened on:   1 Jun 2025, 15:30:53
+
+. 
+. use "$data/data4model_2021_IMPUTED.dta", clear
+
+. 
+. global weight popweight
+
+. global lnwelfare lpcexp
+
+. global welfare pcexp
+
+. 
+. twoway kdensity lpcexp_pred [aw=$weight] || kdensity lpcexp_pred if b40==1 [aw=$weight], legend(on order(1 "All HBS" 2 "Bottom 40% HBS")) title("National HBS: Distribution of P
+> redicted Log Expenditure (PMT scores)", size(medsmall)) 
+
+. gr save "$results/HBS_pmtscore_distribution.gph",  replace
+file /Users/jeremyschneider/Desktop/SEN PMT/results/HBS_pmtscore_distribution.gph saved
+
+. 
+. gen samplesize = _N
+
+. xtile decile = $lnwelfare [aw=$weight], nq(10)
+
+. 
+. gen actual = pcexp
+
+. gen pmt = pcexp_pred
+
+. 
+. local list "15 18 20 30 37 40"
+
+. 
+. * Set cutoffs at specified percentiles in list above
+. foreach t of numlist `list' {
+  2.         foreach x of varlist actual pmt {
+  3.                 _pctile `x' [aw=$weight] , p(`t') // here we calculate the percentile value of actual and pmt
+  4.                 cap drop cut_`x'_`t'  poor_`x'_`t' 
+  5.                 g cut_`x'_`t'=r(r1)  // here we define the cutoffs 
+  6.                 g poor_`x'_`t'= (`x'<=cut_`x'_`t')  // here we define everyone who has a score below the cutoff as poor
+  7.         }
+  8. }
+
+. 
+. * Simpler format to calculate targeting perofrmance (if we dont need to calculate standard errors for example)
+. svyset, clear
+
+. 
+. foreach truepoor in poor_actual_20 poor_actual_37 {
+  2.         
+.         preserve
+  3. 
+.         foreach t of numlist `list' {
+  4.         
+.                 qui cap drop poor_pmtpoor_`t' nonpoor_pmtpoor_`t' poor_pmtnonpoor_`t' nonpoor_pmtnonpoor_`t'
+  5.                         
+.                 qui g fpoor_pmtpoor_`t'         =       `truepoor' == 1 & poor_pmt_`t'==1 // Household is actually poor and pmt predicted poor
+  6.                 qui g fnonpoor_pmtpoor_`t'      =       `truepoor' == 0 & poor_pmt_`t'==1 // Household is not poor but pmt predicted poor
+  7.                 qui g fpoor_pmtnonpoor_`t'      =       `truepoor' == 1 & poor_pmt_`t'==0 // Household is actually poor but pmt predicted not poor
+  8.                 qui g fnonpoor_pmtnonpoor_`t'=  `truepoor' == 0 & poor_pmt_`t'==0 // Household is not poor and pmt predicted not poor
+  9.                 
+.                 qui g ftotalaccuracy`t' = ((fpoor_pmtpoor_`t'+fnonpoor_pmtnonpoor_`t')/(fpoor_pmtpoor_`t'+fpoor_pmtnonpoor_`t'+fnonpoor_pmtpoor_`t'+fnonpoor_pmtnonpoor_`t')) //
+>  (correctly predicted poor + correctly pred nonpoor)/ Total sample size
+ 10.                 qui g fpovertyaccuracy`t'  = (fpoor_pmtpoor_`t'/(fpoor_pmtpoor_`t'+fpoor_pmtnonpoor_`t')) // (correctly predicted poor) / (all poor)
+ 11.                 qui g fnpovertyaccuracy`t' = (fnonpoor_pmtnonpoor_`t'/(fnonpoor_pmtpoor_`t'+fnonpoor_pmtnonpoor_`t')) // (correctly predicted not poor) / (all non poor)
+ 12.                 qui g fundercoverage`t'    = (fpoor_pmtnonpoor_`t'/(fpoor_pmtpoor_`t'+fpoor_pmtnonpoor_`t'))  // (poor but predicted not poor PMT) / (all true poor)
+ 13.                 qui g finclusionerror`t'   = (fnonpoor_pmtpoor_`t'/(fpoor_pmtpoor_`t'+fnonpoor_pmtpoor_`t')) // (not poor but PMT predicted poor) / (all PMT pred poor)
+ 14.                 
+.         }
+ 15.         
+.         fsum ftotalaccuracy* fpovertyaccuracy* fnpovertyaccuracy* fundercoverage* finclusionerror*  [aw=$weight] 
+ 16.         
+.         keep fundercoverage* finclusionerror*  $weight
+ 17.         collapse (mean) fundercoverage* finclusionerror*   [pw=$weight] 
+ 18. 
+.         save "$results/SEN2021_SWIFTPMT_targeting_natl_small_performance_`truepoor'.dta",replace
+ 19. 
+.         restore
+ 20. }
+
+            Variable |        N     Mean       SD      Min      Max                                                                                                                              
+---------------------+---------------------------------------------
+    ftotalaccuracy15 |     7120     0.87     0.34     0.00     1.00  
+    ftotalaccuracy18 |     7120     0.87     0.34     0.00     1.00  
+    ftotalaccuracy20 |     7120     0.87     0.34     0.00     1.00  
+    ftotalaccuracy30 |     7120     0.82     0.38     0.00     1.00  
+    ftotalaccuracy37 |     7120     0.79     0.41     0.00     1.00  
+    ftotalaccuracy40 |     7120     0.77     0.42     0.00     1.00  
+  fpovertyaccuracy15 |     1226     0.54     0.50     0.00     1.00  
+  fpovertyaccuracy18 |     1226     0.61     0.49     0.00     1.00  
+  fpovertyaccuracy20 |     1226     0.66     0.47     0.00     1.00  
+  fpovertyaccuracy30 |     1226     0.80     0.40     0.00     1.00  
+  fpovertyaccuracy37 |     1226     0.89     0.32     0.00     1.00  
+  fpovertyaccuracy40 |     1226     0.91     0.28     0.00     1.00  
+ fnpovertyaccuracy15 |     5894     0.95     0.22     0.00     1.00  
+ fnpovertyaccuracy18 |     5894     0.93     0.26     0.00     1.00  
+ fnpovertyaccuracy20 |     5894     0.92     0.28     0.00     1.00  
+ fnpovertyaccuracy30 |     5894     0.82     0.38     0.00     1.00  
+ fnpovertyaccuracy37 |     5894     0.76     0.43     0.00     1.00  
+ fnpovertyaccuracy40 |     5894     0.73     0.44     0.00     1.00  
+    fundercoverage15 |     1226     0.46     0.50     0.00     1.00  
+    fundercoverage18 |     1226     0.39     0.49     0.00     1.00  
+    fundercoverage20 |     1226     0.34     0.47     0.00     1.00  
+    fundercoverage30 |     1226     0.20     0.40     0.00     1.00  
+    fundercoverage37 |     1226     0.11     0.32     0.00     1.00  
+    fundercoverage40 |     1226     0.09     0.28     0.00     1.00  
+   finclusionerror15 |      730     0.28     0.45     0.00     1.00  
+   finclusionerror18 |      924     0.32     0.47     0.00     1.00  
+   finclusionerror20 |     1044     0.34     0.47     0.00     1.00  
+   finclusionerror30 |     1716     0.47     0.50     0.00     1.00  
+   finclusionerror37 |     2210     0.52     0.50     0.00     1.00  
+   finclusionerror40 |     2438     0.54     0.50     0.00     1.00  
+file /Users/jeremyschneider/Desktop/SEN PMT/results/SEN2021_SWIFTPMT_targeting_natl_small_performance_poor_actual_20.dta saved
+
+            Variable |        N     Mean       SD      Min      Max                                                                                                                              
+---------------------+---------------------------------------------
+    ftotalaccuracy15 |     7120     0.75     0.43     0.00     1.00  
+    ftotalaccuracy18 |     7120     0.77     0.42     0.00     1.00  
+    ftotalaccuracy20 |     7120     0.78     0.41     0.00     1.00  
+    ftotalaccuracy30 |     7120     0.81     0.40     0.00     1.00  
+    ftotalaccuracy37 |     7120     0.82     0.39     0.00     1.00  
+    ftotalaccuracy40 |     7120     0.82     0.39     0.00     1.00  
+  fpovertyaccuracy15 |     2328     0.37     0.48     0.00     1.00  
+  fpovertyaccuracy18 |     2328     0.43     0.50     0.00     1.00  
+  fpovertyaccuracy20 |     2328     0.47     0.50     0.00     1.00  
+  fpovertyaccuracy30 |     2328     0.64     0.48     0.00     1.00  
+  fpovertyaccuracy37 |     2328     0.76     0.43     0.00     1.00  
+  fpovertyaccuracy40 |     2328     0.79     0.41     0.00     1.00  
+ fnpovertyaccuracy15 |     4792     0.98     0.14     0.00     1.00  
+ fnpovertyaccuracy18 |     4792     0.97     0.17     0.00     1.00  
+ fnpovertyaccuracy20 |     4792     0.96     0.20     0.00     1.00  
+ fnpovertyaccuracy30 |     4792     0.90     0.30     0.00     1.00  
+ fnpovertyaccuracy37 |     4792     0.86     0.35     0.00     1.00  
+ fnpovertyaccuracy40 |     4792     0.83     0.38     0.00     1.00  
+    fundercoverage15 |     2328     0.63     0.48     0.00     1.00  
+    fundercoverage18 |     2328     0.57     0.50     0.00     1.00  
+    fundercoverage20 |     2328     0.53     0.50     0.00     1.00  
+    fundercoverage30 |     2328     0.36     0.48     0.00     1.00  
+    fundercoverage37 |     2328     0.24     0.43     0.00     1.00  
+    fundercoverage40 |     2328     0.21     0.41     0.00     1.00  
+   finclusionerror15 |      730     0.09     0.28     0.00     1.00  
+   finclusionerror18 |      924     0.11     0.31     0.00     1.00  
+   finclusionerror20 |     1044     0.13     0.33     0.00     1.00  
+   finclusionerror30 |     1716     0.21     0.41     0.00     1.00  
+   finclusionerror37 |     2210     0.24     0.43     0.00     1.00  
+   finclusionerror40 |     2438     0.27     0.44     0.00     1.00  
+file /Users/jeremyschneider/Desktop/SEN PMT/results/SEN2021_SWIFTPMT_targeting_natl_small_performance_poor_actual_37.dta saved
+
+. 
+. 
+. 
+. *** Undercoverage and Leakage barcharts for national models ***
+. use "$results/SEN2021_SWIFTPMT_targeting_natl_small_performance_poor_actual_20.dta", clear
+
+. gen model = "Smaller"
+
+. append using "$results/SEN2021_SWIFTPMT_targeting_natl_large_performance_poor_actual_20.dta"
+
+. replace model = "Larger" if model == ""
+(1 real change made)
+
+. cap drop small_model
+
+. 
+. gen long __id = _n
+
+. reshape long fundercoverage finclusionerror, i(__id) j(cutoff)
+(j = 15 18 20 30 37 40)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations                2   ->   12          
+Number of variables                  14   ->   5           
+j variable (6 values)                     ->   cutoff
+xij variables:
+fundercoverage15 fundercoverage18 ... fundercoverage40->fundercoverage
+finclusionerror15 finclusionerror18 ... finclusionerror40->finclusionerror
+-----------------------------------------------------------------------------
+
+. rename fundercoverage undercoverage
+
+. rename finclusionerror leakage
+
+. drop __id
+
+. 
+. gen under_s = undercoverage if model=="Smaller"
+(6 missing values generated)
+
+. gen under_l = undercoverage if model=="Larger"
+(6 missing values generated)
+
+. gen leak_s = leakage if model=="Smaller"
+(6 missing values generated)
+
+. gen leak_l = leakage if model=="Larger"
+(6 missing values generated)
+
+. 
+. * Undercoverage bar chart
+. graph bar under_s under_l, ///
+>     over(cutoff, label(angle(0))) ///
+>     title("National Performance: Undercoverage by Coverage Rate and Model", size(medlarge)) ///
+>         subtitle("Target Population: Bottom 20%") ///
+>     ytitle("Undercoverage") ///
+>     ylabel(0(.1).6) ///
+>     legend(order(1 "Smaller Models" 2 "Larger Models")) 
+
+.         
+. gr save "$results/SEN2021_SWIFTPMT_natl_undercoverage_models.gph",replace
+(file /Users/jeremyschneider/Desktop/SEN PMT/results/SEN2021_SWIFTPMT_natl_undercoverage_models.gph not found)
+file /Users/jeremyschneider/Desktop/SEN PMT/results/SEN2021_SWIFTPMT_natl_undercoverage_models.gph saved
+
+. 
+. 
+.         
+. * Leakage bar chart     
+. graph bar leak_s leak_l, ///
+>     over(cutoff, label(angle(0))) ///
+>     title("National Performance: Leakage by Coverage Rate and Model", size(medlarge)) ///
+>         subtitle("Target Population: Bottom 20%") ///
+>     ytitle("Leakage") ///
+>     ylabel(0(.1).6) ///
+>     legend(order(1 "Smaller Models" 2 "Larger Models")) 
+
+.         
+. gr save "$results/SEN2021_SWIFTPMT_natl_leakage_models.gph",replace
+(file /Users/jeremyschneider/Desktop/SEN PMT/results/SEN2021_SWIFTPMT_natl_leakage_models.gph not found)
+file /Users/jeremyschneider/Desktop/SEN PMT/results/SEN2021_SWIFTPMT_natl_leakage_models.gph saved
+
+. 
+end of do-file
+
+. do "/var/folders/hw/ylpkynv94_1gbcchyj5pw25m0000gn/T//SD79547.000000"
+
+. clear all 
+
+. version 17
+
+. cap ssc install xtable
+
+. 
+. global path "/Users/jeremyschneider/Desktop/SEN PMT"
+
+. global data "$path/data"
+
+. global results "$path/results"
+
+. global log "$path/log"
+
+. 
+. capture log close
