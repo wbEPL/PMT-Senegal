@@ -1,8 +1,6 @@
 # This repo includes the needed code to estimate senegal pmt with 2021 survey data
 
-First run 00_init.do
-
-Run 00_run.do to replicate results.
+All relevant files to estimate the final pmts are found in the SEN PMT folder. Previous iterations related to SWIFT and LASSO pmts are found in the "old" folder
 
 ## Step 1
 The step 1 creates the data, it is split in several different files per topic of the survey. It creates dummy versions, numeric versions and ordinal versions (not owned, owns one, owns more than one) off all livestock and asset variables. In the models only the dummies are used.
